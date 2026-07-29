@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Daraban.Platform.Messaging\Daraban.Platform.Messaging.csproj" />
+    <ProjectReference Include="..\..\Modules\Inventory\Daraban.Modules.Inventory.Services\Daraban.Modules.Inventory.Services.csproj" />
+  </ItemGroup>
+</Project>

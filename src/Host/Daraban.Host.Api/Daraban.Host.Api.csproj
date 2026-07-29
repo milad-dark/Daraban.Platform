@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" />
+    <PackageReference Include="OpenIddict.Validation.AspNetCore" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="StackExchange.Redis" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Modules\Identity\Daraban.Modules.Identity.Api\Daraban.Modules.Identity.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Assets\Daraban.Modules.Assets.Api\Daraban.Modules.Assets.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Inventory\Daraban.Modules.Inventory.Api\Daraban.Modules.Inventory.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\ServiceDesk\Daraban.Modules.ServiceDesk.Api\Daraban.Modules.ServiceDesk.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Financial\Daraban.Modules.Financial.Api\Daraban.Modules.Financial.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Knowledge\Daraban.Modules.Knowledge.Api\Daraban.Modules.Knowledge.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Automation\Daraban.Modules.Automation.Api\Daraban.Modules.Automation.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Notifications\Daraban.Modules.Notifications.Api\Daraban.Modules.Notifications.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Reporting\Daraban.Modules.Reporting.Api\Daraban.Modules.Reporting.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Identity\Daraban.Modules.Identity.Data\Daraban.Modules.Identity.Data.csproj" />
+    <ProjectReference Include="..\..\Modules\Assets\Daraban.Modules.Assets.Data\Daraban.Modules.Assets.Data.csproj" />
+    <ProjectReference Include="..\..\Modules\Inventory\Daraban.Modules.Inventory.Data\Daraban.Modules.Inventory.Data.csproj" />
+    <ProjectReference Include="..\..\Modules\ServiceDesk\Daraban.Modules.ServiceDesk.Data\Daraban.Modules.ServiceDesk.Data.csproj" />
+    <ProjectReference Include="..\..\Modules\Financial\Daraban.Modules.Financial.Data\Daraban.Modules.Financial.Data.csproj" />
+    <ProjectReference Include="..\..\Modules\Knowledge\Daraban.Modules.Knowledge.Data\Daraban.Modules.Knowledge.Data.csproj" />
+    <ProjectReference Include="..\..\Modules\Automation\Daraban.Modules.Automation.Data\Daraban.Modules.Automation.Data.csproj" />
+    <ProjectReference Include="..\..\Modules\Notifications\Daraban.Modules.Notifications.Data\Daraban.Modules.Notifications.Data.csproj" />
+    <ProjectReference Include="..\..\Modules\Reporting\Daraban.Modules.Reporting.Data\Daraban.Modules.Reporting.Data.csproj" />
+    <ProjectReference Include="..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

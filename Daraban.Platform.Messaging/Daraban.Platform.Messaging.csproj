@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<PackageReference Include="RabbitMQ.Client" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Options" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\src\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
+	  <ProjectReference Include="..\src\Shared\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />
+	</ItemGroup>
+
+</Project>
