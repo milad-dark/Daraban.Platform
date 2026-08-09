@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# JWT/RSA signing keys (Task 2.3) -- never commit these, load via
+# Jwt:SigningKeyPemPath / DARABAN_Jwt__SigningKeyPemPath instead.
+*.pem
+jwt-signing-key*
+*.key
