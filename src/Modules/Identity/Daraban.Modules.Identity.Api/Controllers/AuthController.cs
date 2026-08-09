@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Hosting;
 
 namespace Daraban.Modules.Identity.Api.Controllers;
 
@@ -43,7 +44,8 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken ct)
     {
         var result = await _authService.RegisterAsync(request, ct);
-        if (!result.IsSuccess) return ProblemFrom(result.Error!);
+        if (!result.IsSuccess)
+            return ProblemFrom(result.Error!);
         return CreatedAtAction(nameof(Register), result.Value);
     }
 
@@ -54,7 +56,8 @@ public class AuthController : ControllerBase
         var userAgent = Request.Headers.UserAgent.ToString();
 
         var result = await _authService.LoginAsync(request, ip, userAgent, ct);
-        if (!result.IsSuccess) return ProblemFrom(result.Error!);
+        if (!result.IsSuccess)
+            return ProblemFrom(result.Error!);
 
         SetRefreshCookie(result.Value.RefreshToken);
         return Ok(new { accessToken = result.Value.AccessToken, expiresAt = result.Value.AccessTokenExpiresAt, user = result.Value.User });
