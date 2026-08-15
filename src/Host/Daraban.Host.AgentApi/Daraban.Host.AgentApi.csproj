@@ -2,8 +2,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR" />
     <PackageReference Include="OpenIddict.Validation.AspNetCore" />
-    <PackageReference Include="Serilog.AspNetCore" />
-    <PackageReference Include="Serilog.Sinks.Console" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Daraban.Platform.Messaging\Daraban.Platform.Messaging.csproj" />
@@ -11,5 +9,6 @@
     <ProjectReference Include="..\..\Modules\Inventory\Daraban.Modules.Inventory.Data\Daraban.Modules.Inventory.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Assets\Daraban.Modules.Assets.Data\Daraban.Modules.Assets.Data.csproj" />
     <ProjectReference Include="..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Shared\Daraban.Platform.Hosting\Daraban.Platform.Hosting.csproj" />
   </ItemGroup>
 </Project>

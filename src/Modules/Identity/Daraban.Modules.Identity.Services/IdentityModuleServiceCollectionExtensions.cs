@@ -2,6 +2,7 @@ using Daraban.Modules.Identity.Data;
 using Daraban.Modules.Identity.Data.Entities;
 using Daraban.Modules.Identity.Data.Repositories;
 using Daraban.Modules.Identity.Services.Auth;
+using Daraban.Modules.Identity.Services.Authorization;
 using Daraban.Modules.Identity.Services.Users;
 using Daraban.Platform.Abstractions;
 using FluentValidation;
@@ -35,8 +36,11 @@ public static class IdentityModuleServiceCollectionExtensions
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IAuthService, AuthService>();
 
-        // TODO: register remaining Identity resources (Entities, Groups, Profiles,
-        // ProfileRights, UserProfileEntities) as they're built out, same shape as above.
+        // ---- Authorization (Task 2.4) ---------------------------------------------------
+        services.AddScoped<IEntityScopeAccessor, EntityScopeAccessor>();
+        services.AddScoped<IPermissionResolver, PermissionResolver>();
+
+        // TODO: register remaining Identity resources (Groups) as they're built out, same shape as above.
 
         return services;
     }

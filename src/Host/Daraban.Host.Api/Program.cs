@@ -9,7 +9,11 @@ using Daraban.Modules.Knowledge.Services;
 using Daraban.Modules.Notifications.Services;
 using Daraban.Modules.Reporting.Services;
 using Daraban.Modules.ServiceDesk.Services;
+using Daraban.Platform.Abstractions;
+using Daraban.Platform.Hosting;
+using Daraban.Platform.Hosting.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -19,8 +23,22 @@ var builder = WebApplication.CreateBuilder(args);
 // ---- Configuration (Task 2.1 SS4 / see appsettings.json) -----------------
 builder.Configuration.AddEnvironmentVariables(prefix: "DARABAN_");
 
-// ---- Logging ---------------------------------------------------------------
-builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
+// ---- Logging (Task 2.2): shared Serilog setup -- console + rolling file, structured. ----
+builder.Host.UseDarabanSerilog(applicationName: "Daraban.Host.Api");
+
+// ---- Exception handling + ProblemDetails (Task 2.2) -----------------------------------
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = context =>
+    {
+        context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
+        context.ProblemDetails.Extensions["instance"] = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+    };
+});
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+// ---- Health checks (Task 2.2) ----------------------------------------------------------
+builder.Services.AddDarabanHealthChecks(builder.Configuration);
 
 // ---- Module registration (Task 1.1 SS2.3: composition root wires every module) ----
 builder.Services
@@ -95,6 +113,25 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
             },
         };
     });
+
+// ---- Authorization (Task 2.4): Roles/Permissions/Policies/Dynamic Permission Provider --
+// RequirePermission(...) attributes set Policy = "permission:<module.action>";
+// DynamicPermissionPolicyProvider synthesizes an AuthorizationPolicy for any such policy
+// name on the fly (Task 1.3 SS4.2's permission strings are an open set -- pre-registering
+// one named policy per module.action combination doesn't scale). PermissionAuthorizationHandler
+// then checks the caller's resolved permission set (IPermissionResolver, backed by
+// Identity's UserProfileEntity/ProfileRight tables and cached) against the requirement.
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, DynamicPermissionPolicyProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+// Backs PermissionResolver's cache. AddDistributedMemoryCache() is a free, zero-dependency,
+// in-process IDistributedCache implementation -- swap to AddStackExchangeRedisCache() once
+// Redis is confirmed reliably available (Task 1.3's original plan); nothing else changes,
+// PermissionResolver only depends on the IDistributedCache interface.
+builder.Services.AddDistributedMemoryCache();
+
 builder.Services.AddAuthorization();
 
 // ---- Rate limiting (Task 2.3): auth endpoints are the classic brute-force/credential-
@@ -131,6 +168,10 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// UseExceptionHandler must be one of the first things in the pipeline -- anything before
+// it isn't protected by it.
+app.UseExceptionHandler();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -144,6 +185,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapDarabanHealthCheckEndpoints();
 // app.MapHub<DashboardHub>("/hubs/dashboard");
 // app.MapHub<TicketHub>("/hubs/tickets");
 

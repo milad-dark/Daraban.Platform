@@ -3,8 +3,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
-    <PackageReference Include="Serilog.AspNetCore" />
-    <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="StackExchange.Redis" />
   </ItemGroup>
   <ItemGroup>
@@ -27,5 +25,6 @@
     <ProjectReference Include="..\..\Modules\Notifications\Daraban.Modules.Notifications.Data\Daraban.Modules.Notifications.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Reporting\Daraban.Modules.Reporting.Data\Daraban.Modules.Reporting.Data.csproj" />
     <ProjectReference Include="..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Shared\Daraban.Platform.Hosting\Daraban.Platform.Hosting.csproj" />
   </ItemGroup>
 </Project>
