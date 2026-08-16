@@ -1,0 +1,75 @@
+﻿<div class="auth-page">
+  <mat-card class="auth-card">
+
+    <mat-card-header class="auth-card-header">
+      <div class="auth-logo">
+        <mat-icon class="auth-logo-icon">shield</mat-icon>
+      </div>
+      <mat-card-title>Welcome back</mat-card-title>
+      <mat-card-subtitle>Sign in to Daraban Platform</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+
+      @if (authStore.error()) {
+        <div class="auth-error-banner">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ authStore.error() }}</span>
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email address</mat-label>
+          <input
+            matInput
+            type="email"
+            formControlName="email"
+            placeholder="you@example.com"
+            autocomplete="email">
+          <mat-icon matSuffix>mail_outline</mat-icon>
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <mat-error>{{ getEmailError() }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            autocomplete="current-password">
+          <button
+            mat-icon-button matSuffix type="button"
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (form.get('password')?.invalid && form.get('password')?.touched) {
+            <mat-error>{{ getPasswordError() }}</mat-error>
+          }
+        </mat-form-field>
+
+        <button
+          mat-flat-button color="primary" type="submit"
+          class="full-width auth-submit-btn"
+          [disabled]="authStore.isLoading()">
+          @if (authStore.isLoading()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            Sign in
+          }
+        </button>
+
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions class="auth-card-actions">
+      <span>Don't have an account?</span>
+      <a mat-button color="primary" routerLink="/auth/register">Create account</a>
+    </mat-card-actions>
+
+  </mat-card>
+</div>
