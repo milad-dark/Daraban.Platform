@@ -367,3 +367,8 @@ FodyWeavers.xsd
 jwt-signing-key*
 *.key
 /0005-task-2.2-and-2.4-infrastructure-and-authorization.patch
+
+# Angular frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/

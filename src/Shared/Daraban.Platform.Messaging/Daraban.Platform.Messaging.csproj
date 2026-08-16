@@ -6,8 +6,8 @@
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\src\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
-	  <ProjectReference Include="..\src\Shared\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />
+	  <ProjectReference Include="..\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
+	  <ProjectReference Include="..\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />
 	</ItemGroup>
 
 </Project>

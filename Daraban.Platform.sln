@@ -126,7 +126,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daraban.Modules.Reporting.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daraban.Modules.ServiceDesk.Tests", "tests\UnitTests\Daraban.Modules.ServiceDesk.Tests\Daraban.Modules.ServiceDesk.Tests.csproj", "{8FE10967-2D28-42AE-9539-967BBD4C0C75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daraban.Platform.Messaging", "Daraban.Platform.Messaging\Daraban.Platform.Messaging.csproj", "{29C51075-6EF5-465D-ACD6-8679FFDA6289}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daraban.Platform.Messaging", "src\Shared\Daraban.Platform.Messaging\Daraban.Platform.Messaging.csproj", "{29C51075-6EF5-465D-ACD6-8679FFDA6289}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
