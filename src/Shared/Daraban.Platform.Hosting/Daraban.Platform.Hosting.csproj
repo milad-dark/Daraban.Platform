@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+	<ItemGroup>
+		<!-- Configuration validation -->
+		<!--<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />-->
+		<!-- Authorization (Task 2.4): JwtRegisteredClaimNames for reading claims in CurrentUser;
+         IDistributedCache abstractions for the permission-resolution cache. -->
+		<PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
+		<PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" />
+		<PackageReference Include="AspNetCore.HealthChecks.Redis" />
+		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
+		<PackageReference Include="Serilog" />
+		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="Serilog.Enrichers.Environment" />
+		<PackageReference Include="Serilog.Enrichers.Process" />
+		<PackageReference Include="Serilog.Enrichers.Thread" />
+		<PackageReference Include="Serilog.Sinks.Console" />
+		<PackageReference Include="Serilog.Sinks.File" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+		<!--<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />-->
+
+	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />
+    <ProjectReference Include="..\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

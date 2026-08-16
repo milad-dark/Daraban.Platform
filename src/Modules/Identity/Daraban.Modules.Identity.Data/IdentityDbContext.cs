@@ -9,9 +9,11 @@ public class IdentityDbContext : DbContext
 
     public DbSet<User> Users => Set<User>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
-    // Entities, Groups, Profiles, ProfileRights, UserProfileEntities
-    // follow the identical shape -- omitted here to keep this scaffold readable; add
-    // alongside User as each is built out (Task 1.2 SS3).
+    public DbSet<EntityNode> Entities => Set<EntityNode>();
+    public DbSet<Profile> Profiles => Set<Profile>();
+    public DbSet<ProfileRight> ProfileRights => Set<ProfileRight>();
+    public DbSet<UserProfileEntity> UserProfileEntities => Set<UserProfileEntity>();
+    // Groups follows the identical shape -- add alongside as it's built out (Task 1.2 SS3).
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
