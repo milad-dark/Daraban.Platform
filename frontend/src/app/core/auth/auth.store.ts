@@ -1,4 +1,4 @@
-﻿import { inject, computed } from '@angular/core';
+import { inject, computed } from '@angular/core';
 import {
   signalStore,
   withState,
