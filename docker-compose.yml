@@ -1,0 +1,241 @@
+# =============================================================================
+# Daraban Platform — Docker Compose
+# =============================================================================
+services:
+   postgres:
+     image: postgres:16-alpine
+     container_name: daraban-postgres
+     restart: unless-stopped
+     environment:
+       POSTGRES_USER: ${POSTGRES_USER:-daraban}
+       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_in_production}
+       POSTGRES_DB: ${POSTGRES_DB:-daraban_platform}
+     volumes:
+       - pgdata:/var/lib/postgresql/data
+     healthcheck:
+       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-daraban} -d ${POSTGRES_DB:-daraban_platform}"]
+       interval: 10s
+       timeout: 5s
+       retries: 5
+       start_period: 30s
+     networks:
+       - daraban-net
+ 
+   redis:
+     image: redis:7-alpine
+     container_name: daraban-redis
+     restart: unless-stopped
+     command: redis-server --appendonly yes
+     volumes:
+       - redisdata:/data
+     healthcheck:
+       test: ["CMD", "redis-cli", "ping"]
+       interval: 10s
+       timeout: 5s
+       retries: 5
+     networks:
+       - daraban-net
+ 
+   rabbitmq:
+     image: rabbitmq:3-management-alpine
+     container_name: daraban-rabbitmq
+     restart: unless-stopped
+     environment:
+       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-daraban}
+       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-change_me_in_production}
+     volumes:
+       - rabbitmqdata:/var/lib/rabbitmq
+     healthcheck:
+       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+       interval: 15s
+       timeout: 10s
+       retries: 5
+       start_period: 30s
+     networks:
+       - daraban-net
+ 
+   # ── Backend Hosts ──────────────────────────────────────────────────────────
+ 
+   host-api:
+     build:
+       context: .
+       dockerfile: docker/host-api.Dockerfile
+     container_name: daraban-host-api
+     restart: unless-stopped
+     environment:
+       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+       - ASPNETCORE_URLS=http:// :8080
+       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DefaultConnection}
+       - ConnectionStrings__Redis=${CONNECTIONSTRINGS__Redis}
+       - RabbitMq__HostName=${RABBITMQ__HostName:-rabbitmq}
+       - RabbitMq__Port=${RABBITMQ__Port:-5672}
+       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
+       - Jwt__SigningKeyPemPath=${JWT__SigningKeyPemPath:-/app/certs/jwt-signing-key.pem}
+       - Jwt__Issuer=${JWT__Issuer:-https://daraban.local}
+       - Jwt__Audience=${JWT__Audience:-daraban-api}
+     volumes:
+       - ./certs:/app/certs:ro
+     depends_on:
+       postgres:
+         condition: service_healthy
+       redis:
+         condition: service_healthy
+       rabbitmq:
+         condition: service_healthy
+     healthcheck:
+       test: ["CMD", "curl", "-f", "http://localhost:8080/health/live"]
+       interval: 15s
+       timeout: 5s
+       retries: 3
+       start_period: 20s
+     networks:
+       - daraban-net
+ 
+   host-agentapi:
+     build:
+       context: .
+       dockerfile: docker/host-agentapi.Dockerfile
+     container_name: daraban-host-agentapi
+     restart: unless-stopped
+     environment:
+       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+       - ASPNETCORE_URLS=http:// :8081
+       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DefaultConnection}
+       - ConnectionStrings__Redis=${CONNECTIONSTRINGS__Redis}
+       - RabbitMq__HostName=${RABBITMQ__HostName:-rabbitmq}
+       - RabbitMq__Port=${RABBITMQ__Port:-5672}
+       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
+       - Jwt__SigningKeyPemPath=${JWT__SigningKeyPemPath:-/app/certs/jwt-signing-key.pem}
+       - Jwt__Issuer=${JWT__Issuer:-https://daraban.local}
+       - Jwt__Audience=${JWT__Audience:-daraban-api}
+     volumes:
+       - ./certs:/app/certs:ro
+     depends_on:
+       postgres:
+         condition: service_healthy
+       redis:
+         condition: service_healthy
+       rabbitmq:
+         condition: service_healthy
+     healthcheck:
+       test: ["CMD", "curl", "-f", "http://localhost:8081/health/live"]
+       interval: 15s
+       timeout: 5s
+       retries: 3
+       start_period: 20s
+     networks:
+       - daraban-net
+ 
+   # ── Workers ────────────────────────────────────────────────────────────────
+ 
+   worker-automation:
+     build:
+       context: .
+       dockerfile: docker/worker-automation.Dockerfile
+     container_name: daraban-worker-automation
+     restart: unless-stopped
+     environment:
+       - DOTNET_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DefaultConnection}
+       - ConnectionStrings__Redis=${CONNECTIONSTRINGS__Redis}
+       - RabbitMq__HostName=${RABBITMQ__HostName:-rabbitmq}
+       - RabbitMq__Port=${RABBITMQ__Port:-5672}
+       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
+     depends_on:
+       postgres:
+         condition: service_healthy
+       redis:
+         condition: service_healthy
+       rabbitmq:
+         condition: service_healthy
+     networks:
+       - daraban-net
+ 
+   worker-notifications:
+     build:
+       context: .
+       dockerfile: docker/worker-notifications.Dockerfile
+     container_name: daraban-worker-notifications
+     restart: unless-stopped
+     environment:
+       - DOTNET_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DefaultConnection}
+       - ConnectionStrings__Redis=${CONNECTIONSTRINGS__Redis}
+       - RabbitMq__HostName=${RABBITMQ__HostName:-rabbitmq}
+       - RabbitMq__Port=${RABBITMQ__Port:-5672}
+       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
+     depends_on:
+       postgres:
+         condition: service_healthy
+       redis:
+         condition: service_healthy
+       rabbitmq:
+         condition: service_healthy
+     networks:
+       - daraban-net
+ 
+   worker-reporting:
+     build:
+       context: .
+       dockerfile: docker/worker-reporting.Dockerfile
+     container_name: daraban-worker-reporting
+     restart: unless-stopped
+     environment:
+       - DOTNET_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DefaultConnection}
+       - ConnectionStrings__Redis=${CONNECTIONSTRINGS__Redis}
+       - RabbitMq__HostName=${RABBITMQ__HostName:-rabbitmq}
+       - RabbitMq__Port=${RABBITMQ__Port:-5672}
+       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
+     depends_on:
+       postgres:
+         condition: service_healthy
+       redis:
+         condition: service_healthy
+       rabbitmq:
+         condition: service_healthy
+     networks:
+       - daraban-net
+ 
+   # ── Frontend ───────────────────────────────────────────────────────────────
+ 
+   frontend:
+     build:
+       context: ./frontend
+       dockerfile: ../docker/frontend.Dockerfile
+       target: production
+     container_name: daraban-frontend
+     restart: unless-stopped
+     networks:
+       - daraban-net
+ 
+   # ── Reverse Proxy ──────────────────────────────────────────────────────────
+ 
+   nginx:
+     image: nginx:1.27-alpine
+     container_name: daraban-nginx
+     restart: unless-stopped
+     ports:
+       - "${NGINX_PORT:-80}:80"
+     volumes:
+       - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+     depends_on:
+       - host-api
+       - host-agentapi
+       - frontend
+     networks:
+       - daraban-net
+ 
+volumes:
+   pgdata:
+   redisdata:
+   rabbitmqdata:
+ 
+networks:
+   daraban-net:
+     driver: bridge
