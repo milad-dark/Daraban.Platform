@@ -1,4 +1,6 @@
 using Daraban.Modules.Assets.Data;
+using Daraban.Modules.Assets.Data.Repositories;
+using Daraban.Modules.Assets.Services.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +19,23 @@ public static class AssetsModuleServiceCollectionExtensions
 
         services.AddValidatorsFromAssembly(typeof(AssetsModuleServiceCollectionExtensions).Assembly);
 
-        // TODO: register this module's I<Resource>Service / I<Resource>Repository pairs here
-        // as they're built out (see Identity/Assets for the concrete pattern).
+        // ---- Repositories ----
+        services.AddScoped<IAssetRepository, AssetRepository>();
+        services.AddScoped<IAssetTypeRepository, AssetTypeRepository>();
+        services.AddScoped<IAssetCategoryRepository, AssetCategoryRepository>();
+        services.AddScoped<IAssetAssignmentRepository, AssetAssignmentRepository>();
+        services.AddScoped<IAssetStatusHistoryRepository, AssetStatusHistoryRepository>();
+        services.AddScoped<ILocationRepository, LocationRepository>();
+        services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
+
+        // ---- Services (Task 3.2: CRUD) ----
+        services.AddScoped<IAssetService, AssetService>();
+        services.AddScoped<IAssetTypeService, AssetTypeService>();
+        services.AddScoped<IAssetCategoryService, AssetCategoryService>();
+        services.AddScoped<ILocationService, LocationService>();
+        services.AddScoped<IManufacturerService, ManufacturerService>();
+
+        // TODO: register IAssetAssignmentService, IAssetLifecycleService when built (Tasks 3.3, 3.4)
 
         return services;
     }
