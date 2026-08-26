@@ -7,4 +7,5 @@ public interface IAssetCategoryRepository
     Task<AssetCategory?> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task AddAsync(AssetCategory category, CancellationToken ct = default);
     Task UpdateAsync(AssetCategory category, CancellationToken ct = default);
+    Task SaveChangesAsync(CancellationToken ct = default);
 }

@@ -7,4 +7,5 @@ public interface IAssetTypeRepository
     Task<AssetType?> GetByIdWithFieldsAsync(Guid id, CancellationToken ct = default);
     Task AddAsync(AssetType assetType, CancellationToken ct = default);
     Task UpdateAsync(AssetType assetType, CancellationToken ct = default);
+    Task SaveChangesAsync(CancellationToken ct = default);
 }

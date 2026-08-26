@@ -8,7 +8,18 @@ public class AssetsDbContext : DbContext
 {
     public AssetsDbContext(DbContextOptions<AssetsDbContext> options) : base(options) { }
 
-    public DbSet<Computer> Computers => Set<Computer>();
+    public DbSet<Asset> Assets => Set<Asset>();
+    public DbSet<AssetType> AssetTypes => Set<AssetType>();
+    public DbSet<AssetCategory> AssetCategories => Set<AssetCategory>();
+    public DbSet<AssetField> AssetFields => Set<AssetField>();
+    public DbSet<AssetFieldValue> AssetFieldValues => Set<AssetFieldValue>();
+    public DbSet<AssetModel> AssetModels => Set<AssetModel>();
+    public DbSet<AssetRelationship> AssetRelationships => Set<AssetRelationship>();
+    public DbSet<AssetAssignment> AssetAssignments => Set<AssetAssignment>();
+    public DbSet<AssetStatusHistory> AssetStatusHistories => Set<AssetStatusHistory>();
+    public DbSet<AssetDocument> AssetDocuments => Set<AssetDocument>();
+    public DbSet<Location> Locations => Set<Location>();
+    public DbSet<Manufacturer> Manufacturers => Set<Manufacturer>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

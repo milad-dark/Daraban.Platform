@@ -18,4 +18,5 @@ public interface IAssetRepository
     Task<bool> ExistsAsync(Guid id, CancellationToken ct = default);
     Task<bool> AssetTagExistsAsync(string assetTag, Guid? excludeId, CancellationToken ct = default);
     Task<bool> SerialNumberExistsAsync(string serialNumber, Guid? excludeId, CancellationToken ct = default);
+    Task SaveChangesAsync(CancellationToken ct = default);
 }
