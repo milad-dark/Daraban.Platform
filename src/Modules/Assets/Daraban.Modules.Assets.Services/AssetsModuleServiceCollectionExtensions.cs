@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Daraban.Modules.Assets.Services;
 
 /// <summary>Composition root entry point for this module -- called once from each Host's
-/// Program.cs (Task 1.1 SS1). Plain DI registration, no MediatR handler scanning.</summary>
+/// Program.cs. Plain DI registration, no MediatR handler scanning.</summary>
 public static class AssetsModuleServiceCollectionExtensions
 {
     public static IServiceCollection AddAssetsModule(this IServiceCollection services, IConfiguration configuration)
@@ -35,7 +35,10 @@ public static class AssetsModuleServiceCollectionExtensions
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IManufacturerService, ManufacturerService>();
 
-        // TODO: register IAssetAssignmentService, IAssetLifecycleService when built (Tasks 3.3, 3.4)
+        // ---- Services (Task 3.3: Assignment) ----
+        services.AddScoped<IAssetAssignmentService, AssetAssignmentService>();
+
+        // TODO: register IAssetLifecycleService when built (Task 3.4)
 
         return services;
     }
