@@ -38,7 +38,8 @@ public static class AssetsModuleServiceCollectionExtensions
         // ---- Services (Task 3.3: Assignment) ----
         services.AddScoped<IAssetAssignmentService, AssetAssignmentService>();
 
-        // TODO: register IAssetLifecycleService when built (Task 3.4)
+        // ---- Services (Task 3.4: Lifecycle) ----
+        services.AddScoped<IAssetLifecycleService, AssetLifecycleService>();
 
         return services;
     }
