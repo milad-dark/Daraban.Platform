@@ -41,6 +41,10 @@ public static class AssetsModuleServiceCollectionExtensions
         // ---- Services (Task 3.4: Lifecycle) ----
         services.AddScoped<IAssetLifecycleService, AssetLifecycleService>();
 
+        // ---- Services (Task 3.5: Bulk Operations) ----
+        services.AddScoped<IAssetImportService, AssetImportService>();
+        services.AddScoped<IAssetExportService, AssetExportService>();
+
         return services;
     }
 }
