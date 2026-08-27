@@ -20,6 +20,11 @@ public class AssetTypeRepository : IAssetTypeRepository
             .Include(t => t.Fields)
             .FirstOrDefaultAsync(t => t.Id == id, ct);
 
+    public Task<AssetType?> GetByNameAsync(string name, CancellationToken ct = default)
+        => _db.AssetTypes
+            .Include(t => t.Category)
+            .FirstOrDefaultAsync(t => t.Name == name && !t.DeletedAt.HasValue, ct);
+
     public async Task AddAsync(AssetType assetType, CancellationToken ct = default)
         => await _db.AssetTypes.AddAsync(assetType, ct);
 

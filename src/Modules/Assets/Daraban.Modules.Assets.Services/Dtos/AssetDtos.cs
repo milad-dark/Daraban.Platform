@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
 using Daraban.Modules.Assets.Data.Entities;
 namespace Daraban.Modules.Assets.Services.Dtos;
+
 public record AssetDto(
     Guid Id,
     string Name,
@@ -69,3 +68,21 @@ public record AssignAssetRequest(AssignmentTargetType TargetType, Guid TargetId,
 public record AssetAssignmentDto(Guid Id, AssignmentTargetType TargetType, Guid TargetId, string? TargetName, DateTimeOffset AssignedAt, DateTimeOffset? UnassignedAt, bool IsCurrent, string? Notes);
 public record LifecycleTransitionRequest(AssetStatus ToStatus, string? Reason, string? Notes);
 public record AssetStatusHistoryDto(Guid Id, AssetStatus FromStatus, AssetStatus ToStatus, Guid ActorUserId, string? Reason, DateTimeOffset OccurredAt);
+
+// ---- Import/Export DTOs (Task 3.5) ----
+public record ImportAssetRow(
+    string Name,
+    string AssetType,
+    string? AssetTag,
+    string? SerialNumber,
+    string? Status,
+    string? PurchaseDate,
+    string? PurchaseCost,
+    string? PurchaseCurrency,
+    string? WarrantyExpiry,
+    string? OrderNumber,
+    string? SupplierName,
+    string? Notes);
+public record ImportRowResult(int RowNumber, bool Success, string? AssetName, IReadOnlyList<string> Errors);
+public record ImportResult(bool DryRun, int TotalRows, int SuccessCount, int ErrorCount, IReadOnlyList<ImportRowResult> Rows);
+public record ExportRequest(string Format, string? Status, Guid? AssetTypeId, Guid? LocationId, string? Search);
