@@ -157,9 +157,8 @@ public class LifecycleTransitionRequestValidator : AbstractValidator<LifecycleTr
 {
     public LifecycleTransitionRequestValidator()
     {
-        RuleFor(x => x.Reason)
-            .NotEmpty().WithMessage("Reason is required for lifecycle transitions.");
-
+        // Reason is required only for Retire and Dispose (per roadmap Task 3.4).
+        // Other transitions (Archive, Restore, Maintain) accept optional reason.
         RuleFor(x => x.Notes)
             .MaximumLength(2000).WithMessage("Notes must not exceed 2000 characters.");
     }
