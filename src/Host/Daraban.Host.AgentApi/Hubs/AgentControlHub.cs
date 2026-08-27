@@ -15,7 +15,7 @@ namespace Daraban.Host.AgentApi.Hubs;
 /// Group membership: each agent is automatically added to a group named by its agent ID,
 /// so the server can push to a specific agent via Clients.Group(agentId).
 /// </summary>
-[Authorize]
+[Authorize(Policy = "agent:scope:commands:submit")]
 public class AgentControlHub : Hub
 {
     private readonly ILogger<AgentControlHub> _logger;

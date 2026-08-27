@@ -14,7 +14,7 @@ namespace Daraban.Host.AgentApi.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/v1/agents/commands")]
-[Authorize]
+[Authorize(Policy = "agent:scope:commands:submit")]
 public class AgentCommandsController : ControllerBase
 {
     private readonly IAgentService _agentService;
