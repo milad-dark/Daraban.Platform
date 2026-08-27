@@ -1,0 +1,195 @@
+<div class="asset-detail-page">
+  @if (store.isLoadingDetail()) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  @if (store.selectedAsset(); as asset) {
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-left">
+        <button mat-icon-button (click)="onBack()" matTooltip="Back to list">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div>
+          <h1>{{ asset.name }}</h1>
+          <div class="header-meta">
+            <span class="status-badge" [style.background]="getStatusColor(asset.status) + '22'" [style.color]="getStatusColor(asset.status)">
+              {{ getStatusLabel(asset.status) }}
+            </span>
+            @if (asset.assetTag) {
+              <code class="tag-code">{{ asset.assetTag }}</code>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button mat-stroked-button (click)="onEdit()">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button mat-stroked-button color="warn" (click)="onDelete()">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <!-- Lifecycle Transitions -->
+    @if (allowedTransitions.length > 0) {
+      <mat-card class="lifecycle-card">
+        <mat-card-header>
+          <mat-icon mat-card-avatar>autorenew</mat-icon>
+          <mat-card-title>State Transitions</mat-card-title>
+          <mat-card-subtitle>Move this asset to a different lifecycle state</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="transition-buttons">
+            @for (target of allowedTransitions; track target) {
+              <button
+                mat-stroked-button
+                (click)="onTransition(target)"
+                [disabled]="store.isSaving()">
+                <mat-icon [style.color]="getStatusColor(target)">arrow_forward</mat-icon>
+                {{ getStatusLabel(target) }}
+              </button>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Tabs -->
+    <mat-tab-group animationDuration="200ms">
+      <!-- Details Tab -->
+      <mat-tab label="Details">
+        <div class="tab-content">
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Asset Type</span>
+              <span class="detail-value">{{ asset.assetTypeName }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Serial Number</span>
+              <span class="detail-value">{{ asset.serialNumber ?? '—' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Location</span>
+              <span class="detail-value">{{ asset.locationName ?? '—' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Manufacturer</span>
+              <span class="detail-value">{{ asset.manufacturerName ?? '—' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Model</span>
+              <span class="detail-value">{{ asset.assetModelName ?? '—' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Purchase Date</span>
+              <span class="detail-value">{{ asset.purchaseDate ?? '—' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Purchase Cost</span>
+              <span class="detail-value">
+                {{ asset.purchaseCost != null ? (asset.purchaseCost | currency:asset.purchaseCurrency) : '—' }}
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Warranty Expiry</span>
+              <span class="detail-value">{{ asset.warrantyExpiry ?? '—' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Order Number</span>
+              <span class="detail-value">{{ asset.notes ?? '—' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Supplier</span>
+              <span class="detail-value">{{ asset.notes ?? '—' }}</span>
+            </div>
+          </div>
+          @if (asset.notes) {
+            <mat-divider></mat-divider>
+            <div class="notes-section">
+              <h3>Notes</h3>
+              <p>{{ asset.notes }}</p>
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Assignment Tab -->
+      <mat-tab label="Assignment">
+        <div class="tab-content">
+          @if (store.assignments().length === 0) {
+            <div class="empty-tab">
+              <mat-icon>person_off</mat-icon>
+              <p>No assignment history</p>
+            </div>
+          } @else {
+            <mat-list>
+              @for (assignment of store.assignments(); track assignment.id) {
+                <mat-list-item>
+                  <mat-icon matListItemIcon>
+                    {{ assignment.targetType === 'User' ? 'person' : 'business' }}
+                  </mat-icon>
+                  <span matListItemTitle>
+                    {{ assignment.targetName ?? assignment.targetId }}
+                    @if (assignment.isCurrent) {
+                      <span class="current-badge">Current</span>
+                    }
+                  </span>
+                  <span matListItemLine>
+                    Assigned {{ assignment.assignedAt | date:'medium' }}
+                    @if (assignment.unassignedAt) {
+                      · Unassigned {{ assignment.unassignedAt | date:'medium' }}
+                    }
+                  </span>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              }
+            </mat-list>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- History Tab -->
+      <mat-tab label="History">
+        <div class="tab-content">
+          @if (store.lifecycleHistory().length === 0) {
+            <div class="empty-tab">
+              <mat-icon>history</mat-icon>
+              <p>No lifecycle history</p>
+            </div>
+          } @else {
+            <mat-list>
+              @for (entry of store.lifecycleHistory(); track entry.id) {
+                <mat-list-item>
+                  <mat-icon matListItemIcon [style.color]="getStatusColor(entry.toStatus)">
+                    swap_horiz
+                  </mat-icon>
+                  <span matListItemTitle>
+                    {{ getStatusLabel(entry.fromStatus) }} → {{ getStatusLabel(entry.toStatus) }}
+                  </span>
+                  <span matListItemLine>
+                    {{ entry.occurredAt | date:'medium' }}
+                    @if (entry.reason) {
+                      · {{ entry.reason }}
+                    }
+                  </span>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              }
+            </mat-list>
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  }
+
+  @if (store.error()) {
+    <div class="error-banner">
+      <mat-icon>error</mat-icon>
+      {{ store.error() }}
+    </div>
+  }
+</div>

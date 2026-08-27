@@ -1,0 +1,67 @@
+.import-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  h1 { margin: 0; font-size: 1.6rem; font-weight: 600; }
+}
+
+.upload-zone {
+  border: 2px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+
+  &:hover {
+    border-color: #1976d2;
+    background: rgba(25, 118, 210, 0.04);
+  }
+
+  .upload-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: rgba(0, 0, 0, 0.38);
+  }
+
+  .upload-text {
+    margin: 12px 0 0;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.upload-options {
+  margin-top: 16px;
+}
+
+.upload-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.error-row {
+  background: #fff8e1;
+}
+
+.error-text {
+  color: #c62828;
+  font-size: 0.85rem;
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #ffebee;
+  border-radius: 8px;
+  color: #c62828;
+}
