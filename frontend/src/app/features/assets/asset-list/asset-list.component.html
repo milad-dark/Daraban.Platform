@@ -1,0 +1,165 @@
+<div class="asset-list-page">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Assets</h1>
+    <div class="header-actions">
+      <button mat-stroked-button [matMenuTriggerFor]="exportMenu">
+        <mat-icon>download</mat-icon>
+        Export
+      </button>
+      <mat-menu #exportMenu="matMenu">
+        <button mat-menu-item (click)="onExport('csv')">
+          <mat-icon>description</mat-icon>
+          Export as CSV
+        </button>
+        <button mat-menu-item (click)="onExport('xlsx')">
+          <mat-icon>table_chart</mat-icon>
+          Export as Excel
+        </button>
+      </mat-menu>
+
+      <button mat-stroked-button routerLink="/assets/import">
+        <mat-icon>upload</mat-icon>
+        Import
+      </button>
+
+      <button mat-flat-button color="primary" (click)="onCreate()">
+        <mat-icon>add</mat-icon>
+        New Asset
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <mat-card class="filter-card">
+    <div class="filter-row">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search assets</mat-label>
+        <input matInput [formControl]="searchControl" placeholder="Name, tag, serial..." />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="status-field">
+        <mat-label>Status</mat-label>
+        <mat-select [formControl]="statusFilter">
+          <mat-option [value]="null">All Statuses</mat-option>
+          @for (option of statusOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-card>
+
+  <!-- Progress bar -->
+  @if (store.isLoading()) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  <!-- Data Table -->
+  <mat-card class="table-card">
+    <table mat-table [dataSource]="store.items()" matSort (matSortChange)="onSort($event)">
+      <!-- Name -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+        <td mat-cell *matCellDef="let row">
+          <a class="asset-link" (click)="onView(row)">{{ row.name }}</a>
+        </td>
+      </ng-container>
+
+      <!-- Asset Tag -->
+      <ng-container matColumnDef="assetTag">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tag</th>
+        <td mat-cell *matCellDef="let row">
+          <code class="tag-code">{{ row.assetTag ?? '—' }}</code>
+        </td>
+      </ng-container>
+
+      <!-- Type -->
+      <ng-container matColumnDef="assetTypeName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+        <td mat-cell *matCellDef="let row">{{ row.assetTypeName }}</td>
+      </ng-container>
+
+      <!-- Status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="status-badge" [attr.data-status]="row.status">
+            {{ getStatusLabel(row.status) }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Location -->
+      <ng-container matColumnDef="locationName">
+        <th mat-header-cell *matHeaderCellDef>Location</th>
+        <td mat-cell *matCellDef="let row">{{ row.locationName ?? '—' }}</td>
+      </ng-container>
+
+      <!-- Warranty -->
+      <ng-container matColumnDef="warrantyExpiry">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Warranty</th>
+        <td mat-cell *matCellDef="let row">{{ row.warrantyExpiry ?? '—' }}</td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button [matMenuTriggerFor]="rowMenu" matTooltip="Actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #rowMenu="matMenu">
+            <button mat-menu-item (click)="onView(row)">
+              <mat-icon>visibility</mat-icon>
+              <span>View Details</span>
+            </button>
+            <button mat-menu-item (click)="onEdit(row)">
+              <mat-icon>edit</mat-icon>
+              <span>Edit</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="onDelete(row)" class="delete-action">
+              <mat-icon color="warn">delete</mat-icon>
+              <span>Delete</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="onView(row)"></tr>
+    </table>
+
+    @if (!store.isLoading() && store.items().length === 0) {
+      <div class="empty-state">
+        <mat-icon>inventory_2</mat-icon>
+        <p>No assets found</p>
+        <button mat-flat-button color="primary" (click)="onCreate()">
+          <mat-icon>add</mat-icon>
+          Create First Asset
+        </button>
+      </div>
+    }
+
+    <mat-paginator
+      [length]="store.totalCount()"
+      [pageSize]="store.pageSize()"
+      [pageIndex]="store.page() - 1"
+      [pageSizeOptions]="[10, 20, 50, 100]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </mat-card>
+
+  @if (store.error()) {
+    <div class="error-banner">
+      <mat-icon>error</mat-icon>
+      {{ store.error() }}
+      <button mat-icon-button (click)="store.clearError()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
+</div>

@@ -1,0 +1,140 @@
+.asset-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.filter-card {
+  padding: 16px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+
+  .search-field {
+    flex: 1;
+  }
+
+  .status-field {
+    width: 200px;
+  }
+}
+
+.table-card {
+  overflow: hidden;
+
+  table {
+    width: 100%;
+  }
+
+  tr:hover {
+    cursor: pointer;
+  }
+}
+
+.asset-link {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.tag-code {
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+
+  &[data-status='InStock'] {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  &[data-status='InUse'] {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+  &[data-status='UnderMaintenance'] {
+    background: #fff3e0;
+    color: #e65100;
+  }
+  &[data-status='Archived'] {
+    background: #f3e5f5;
+    color: #6a1b9a;
+  }
+  &[data-status='Retired'] {
+    background: #ffebee;
+    color: #c62828;
+  }
+  &[data-status='Disposed'] {
+    background: #f5f5f5;
+    color: #616161;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  color: rgba(0, 0, 0, 0.54);
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+  }
+
+  p {
+    margin: 0 0 20px;
+    font-size: 1.1rem;
+  }
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #ffebee;
+  border-radius: 8px;
+  color: #c62828;
+  font-size: 0.9rem;
+}
+
+.delete-action {
+  color: #c62828;
+}
