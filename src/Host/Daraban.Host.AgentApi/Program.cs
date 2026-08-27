@@ -1,3 +1,5 @@
+using Daraban.Modules.Identity.Data.Repositories;
+using Daraban.Modules.Identity.Services.Agents;
 using Daraban.Modules.Inventory.Services;
 using Daraban.Platform.Hosting;
 using Daraban.Platform.Messaging;
@@ -39,6 +41,11 @@ builder.Services.AddAuthentication(OpenIddict.Validation.AspNetCore.OpenIddictVa
 // TODO: AddOpenIddictValidation() client config + AddAuthorizationBuilder().AddPolicy("AgentScope", ...)
 builder.Services.AddAuthorization();
 
+// ---- Agent services (Task 4.1: Communication Design) ----
+builder.Services.AddScoped<IAgentRepository, AgentRepository>();
+builder.Services.AddScoped<IAgentService, AgentService>();
+builder.Services.AddScoped<IAgentAuthService, AgentAuthService>();
+
 // ---- RabbitMQ publisher for raw inventory submissions (Task 1.1 SS5.4) ------------
 // Pure RabbitMQ.Client, not MassTransit -- MassTransit's newer versions require a
 // commercial license for the features this project would actually use; RabbitMQ.Client
@@ -56,6 +63,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapDarabanHealthCheckEndpoints();
-// app.MapHub<AgentControlHub>("/hubs/agent-control");
+app.MapHub<Daraban.Host.AgentApi.Hubs.AgentControlHub>("/hubs/agent-control");
 
 app.Run();

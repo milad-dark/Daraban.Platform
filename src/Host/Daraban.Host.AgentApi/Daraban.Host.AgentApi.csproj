@@ -8,6 +8,7 @@
     <ProjectReference Include="..\..\Modules\Inventory\Daraban.Modules.Inventory.Api\Daraban.Modules.Inventory.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Inventory\Daraban.Modules.Inventory.Data\Daraban.Modules.Inventory.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Assets\Daraban.Modules.Assets.Data\Daraban.Modules.Assets.Data.csproj" />
+    <ProjectReference Include="..\..\Modules\Identity\Daraban.Modules.Identity.Services\Daraban.Modules.Identity.Services.csproj" />
     <ProjectReference Include="..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
     <ProjectReference Include="..\..\Shared\Daraban.Platform.Hosting\Daraban.Platform.Hosting.csproj" />
   </ItemGroup>
