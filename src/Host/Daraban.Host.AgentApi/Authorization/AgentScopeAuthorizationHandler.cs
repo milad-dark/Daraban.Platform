@@ -72,6 +72,23 @@ public sealed class AgentScopeAuthorizationHandler : AuthorizationHandler<AgentS
             return required.StartsWith(prefix, StringComparison.OrdinalIgnoreCase);
         }
 
+        // Dot-separated legacy format: only exact "daraban.agent.<domain>" matches "<domain>:*"
+        // The Agent requests scope "daraban.agent.inventory" but policies use colon format.
+        // Tight match: only 3 segments starting with "daraban.agent." qualify.
+        if (granted.Contains('.') && required.Contains(':'))
+        {
+            var segments = granted.Split('.', StringSplitOptions.RemoveEmptyEntries);
+            if (segments.Length == 3
+                && string.Equals(segments[0], "daraban", StringComparison.OrdinalIgnoreCase)
+                && string.Equals(segments[1], "agent", StringComparison.OrdinalIgnoreCase))
+            {
+                var domain = segments[2];
+                var requiredBase = required.Split(':')[0];
+                if (string.Equals(domain, requiredBase, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+        }
+
         return false;
     }
 }

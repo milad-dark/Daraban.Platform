@@ -1,3 +1,4 @@
+using Daraban.Modules.Inventory.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Daraban.Modules.Inventory.Data;
@@ -7,6 +8,8 @@ namespace Daraban.Modules.Inventory.Data;
 public class InventoryDbContext : DbContext
 {
     public InventoryDbContext(DbContextOptions<InventoryDbContext> options) : base(options) { }
+
+    public DbSet<RawInventorySubmission> RawInventorySubmissions => Set<RawInventorySubmission>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
