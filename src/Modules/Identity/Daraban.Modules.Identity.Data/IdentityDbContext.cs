@@ -20,6 +20,10 @@ public class IdentityDbContext : DbContext
     public DbSet<AgentCredential> AgentCredentials => Set<AgentCredential>();
     public DbSet<AgentAuditLog> AgentAuditLogs => Set<AgentAuditLog>();
 
+    // ---- Remote commands (Task 4.4: Remote Commands) ----
+    public DbSet<AgentCommand> AgentCommands => Set<AgentCommand>();
+    public DbSet<CommandResult> CommandResults => Set<CommandResult>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("identity");
