@@ -1,4 +1,5 @@
 using Daraban.Modules.Inventory.Data;
+using Daraban.Modules.Inventory.Data.Repositories;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +18,9 @@ public static class InventoryModuleServiceCollectionExtensions
 
         services.AddValidatorsFromAssembly(typeof(InventoryModuleServiceCollectionExtensions).Assembly);
 
-        // TODO: register this module's I<Resource>Service / I<Resource>Repository pairs here
-        // as they're built out (see Identity/Assets for the concrete pattern).
+        // Inventory submission pipeline (Task 4.3)
+        services.AddScoped<IInventoryRepository, InventoryRepository>();
+        services.AddScoped<IInventoryService, InventoryService>();
 
         return services;
     }
