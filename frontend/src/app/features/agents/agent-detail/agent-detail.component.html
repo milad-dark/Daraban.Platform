@@ -1,0 +1,278 @@
+<div class="agent-detail-page">
+  @if (store.isLoadingDetail()) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  @if (store.selectedAgent(); as detail) {
+    <!-- Agent Header -->
+    <div class="agent-header">
+      <div class="agent-title">
+        <app-heartbeat-indicator
+          [status]="getHeartbeatStatus()"
+          [lastActiveAt]="detail.agent.lastActiveAt"
+        ></app-heartbeat-indicator>
+        <h1>{{ detail.agent.name }}</h1>
+        <span class="status-badge" [attr.data-status]="detail.agent.status">
+          {{ detail.agent.status }}
+        </span>
+        <span class="type-chip">{{ detail.agent.type }}</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <mat-tab-group animationDuration="200ms" (selectedIndexChange)="onTabChange($event)">
+      <!-- Tab 1: Info -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>info</mat-icon>
+          Info
+        </ng-template>
+        <div class="tab-content">
+          <div class="info-grid">
+            <mat-card class="info-card">
+              <h3>General</h3>
+              <mat-list>
+                <mat-list-item>
+                  <span matListItemTitle>Name</span>
+                  <span matListItemLine>{{ detail.agent.name }}</span>
+                </mat-list-item>
+                @if (detail.agent.description) {
+                  <mat-list-item>
+                    <span matListItemTitle>Description</span>
+                    <span matListItemLine>{{ detail.agent.description }}</span>
+                  </mat-list-item>
+                }
+                <mat-list-item>
+                  <span matListItemTitle>Type</span>
+                  <span matListItemLine>{{ detail.agent.type }}</span>
+                </mat-list-item>
+                <mat-list-item>
+                  <span matListItemTitle>Status</span>
+                  <span matListItemLine>
+                    <span class="status-badge" [attr.data-status]="detail.agent.status">
+                      {{ detail.agent.status }}
+                    </span>
+                  </span>
+                </mat-list-item>
+                <mat-list-item>
+                  <span matListItemTitle>Created</span>
+                  <span matListItemLine>{{ detail.agent.createdAt | date:'medium' }}</span>
+                </mat-list-item>
+                @if (detail.agent.lastActiveAt) {
+                  <mat-list-item>
+                    <span matListItemTitle>Last Active</span>
+                    <span matListItemLine>{{ detail.agent.lastActiveAt | date:'medium' }}</span>
+                  </mat-list-item>
+                }
+              </mat-list>
+            </mat-card>
+
+            <mat-card class="info-card">
+              <h3>Security</h3>
+              <mat-list>
+                <mat-list-item>
+                  <span matListItemTitle>Allowed Scopes</span>
+                  <span matListItemLine>
+                    <code>{{ detail.agent.allowedScopes || 'None' }}</code>
+                  </span>
+                </mat-list-item>
+                <mat-list-item>
+                  <span matListItemTitle>Rate Limit</span>
+                  <span matListItemLine>
+                    {{ detail.agent.rateLimitPerMinute > 0 ? detail.agent.rateLimitPerMinute + ' req/min' : 'Unlimited' }}
+                  </span>
+                </mat-list-item>
+                <mat-list-item>
+                  <span matListItemTitle>Active Credentials</span>
+                  <span matListItemLine>{{ detail.credentialCount }}</span>
+                </mat-list-item>
+              </mat-list>
+            </mat-card>
+
+            <mat-card class="info-card">
+              <h3>Command Stats</h3>
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <div class="stat-value">{{ detail.totalCommands }}</div>
+                  <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-item success">
+                  <div class="stat-value">{{ detail.completedCommands }}</div>
+                  <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-item danger">
+                  <div class="stat-value">{{ detail.failedCommands }}</div>
+                  <div class="stat-label">Failed</div>
+                </div>
+                <div class="stat-item warning">
+                  <div class="stat-value">{{ detail.pendingCommands }}</div>
+                  <div class="stat-label">Pending</div>
+                </div>
+              </div>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Tab 2: Inventory -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>inventory_2</mat-icon>
+          Inventory
+        </ng-template>
+        <div class="tab-content">
+          @if (store.isLoadingInventory()) {
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          }
+
+          @if (store.inventorySnapshot(); as snapshot) {
+            <mat-card class="inventory-card">
+              <h3>Latest Inventory Submission</h3>
+              <mat-list>
+                <mat-list-item>
+                  <span matListItemTitle>Device ID</span>
+                  <span matListItemLine><code>{{ snapshot.deviceId }}</code></span>
+                </mat-list-item>
+                @if (snapshot.itemType) {
+                  <mat-list-item>
+                    <span matListItemTitle>Item Type</span>
+                    <span matListItemLine>{{ snapshot.itemType }}</span>
+                  </mat-list-item>
+                }
+                <mat-list-item>
+                  <span matListItemTitle>Action</span>
+                  <span matListItemLine>{{ snapshot.action }}</span>
+                </mat-list-item>
+                <mat-list-item>
+                  <span matListItemTitle>Status</span>
+                  <span matListItemLine>
+                    <span class="status-badge" [attr.data-status]="snapshot.status">
+                      {{ snapshot.status }}
+                    </span>
+                  </span>
+                </mat-list-item>
+                @if (snapshot.deviceCount !== null) {
+                  <mat-list-item>
+                    <span matListItemTitle>Devices Found</span>
+                    <span matListItemLine>{{ snapshot.deviceCount }}</span>
+                  </mat-list-item>
+                }
+                <mat-list-item>
+                  <span matListItemTitle>Submitted At</span>
+                  <span matListItemLine>{{ snapshot.submittedAt | date:'medium' }}</span>
+                </mat-list-item>
+                <mat-list-item>
+                  <span matListItemTitle>Received At</span>
+                  <span matListItemLine>{{ snapshot.receivedAt | date:'medium' }}</span>
+                </mat-list-item>
+                @if (snapshot.processedAt) {
+                  <mat-list-item>
+                    <span matListItemTitle>Processed At</span>
+                    <span matListItemLine>{{ snapshot.processedAt | date:'medium' }}</span>
+                  </mat-list-item>
+                }
+              </mat-list>
+            </mat-card>
+          } @else {
+            <div class="empty-state">
+              <mat-icon>inventory_2</mat-icon>
+              <p>No inventory submissions yet</p>
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Tab 3: Commands -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>terminal</mat-icon>
+          Commands
+        </ng-template>
+        <div class="tab-content">
+          <!-- Command Panel -->
+          <app-command-panel [agentId]="agentId()"></app-command-panel>
+
+          <mat-divider></mat-divider>
+
+          <!-- Command History -->
+          <h3>Command History</h3>
+          @if (store.isLoadingCommands()) {
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          }
+
+          @if (store.commandHistory().length > 0) {
+            <div class="command-list">
+              @for (cmd of store.commandHistory(); track cmd.commandId) {
+                <mat-card class="command-card">
+                  <div class="command-header">
+                    <span class="command-type">{{ cmd.commandType }}</span>
+                    <span class="command-status" [attr.data-status]="cmd.status">
+                      {{ cmd.status }}
+                    </span>
+                  </div>
+                  <div class="command-meta">
+                    <span>Created: {{ cmd.createdAt | date:'short' }}</span>
+                    @if (cmd.completedAt) {
+                      <span>Completed: {{ cmd.completedAt | date:'short' }}</span>
+                    }
+                    @if (cmd.executionDurationMs > 0) {
+                      <span>Duration: {{ formatDuration(cmd.executionDurationMs) }}</span>
+                    }
+                    @if (cmd.exitCode !== null) {
+                      <span>Exit Code: {{ cmd.exitCode }}</span>
+                    }
+                  </div>
+                  @if (cmd.lastError) {
+                    <div class="command-error">
+                      <mat-icon>error</mat-icon>
+                      {{ cmd.lastError }}
+                    </div>
+                  }
+                  @if (cmd.payload) {
+                    <div class="command-payload">
+                      <code>{{ cmd.payload }}</code>
+                    </div>
+                  }
+                </mat-card>
+              }
+            </div>
+          } @else {
+            <div class="empty-state">
+              <mat-icon>terminal</mat-icon>
+              <p>No commands yet</p>
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Tab 4: Logs -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>receipt_long</mat-icon>
+          Logs
+        </ng-template>
+        <div class="tab-content">
+          <div class="empty-state">
+            <mat-icon>receipt_long</mat-icon>
+            <p>Audit logs coming soon</p>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  } @else if (!store.isLoadingDetail()) {
+    <div class="empty-state">
+      <mat-icon>computer</mat-icon>
+      <p>Agent not found</p>
+    </div>
+  }
+
+  @if (store.error()) {
+    <div class="error-banner">
+      <mat-icon>error</mat-icon>
+      {{ store.error() }}
+      <button mat-icon-button (click)="store.clearError()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
+</div>

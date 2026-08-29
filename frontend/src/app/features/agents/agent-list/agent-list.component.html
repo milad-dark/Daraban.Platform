@@ -1,0 +1,188 @@
+<div class="agent-list-page">
+  <!-- Fleet Summary Cards -->
+  @if (store.fleetSummary(); as summary) {
+    <div class="fleet-summary">
+      <mat-card class="summary-card">
+        <div class="summary-value">{{ summary.totalAgents }}</div>
+        <div class="summary-label">Total Agents</div>
+      </mat-card>
+      <mat-card class="summary-card online">
+        <div class="summary-value">{{ summary.onlineAgents }}</div>
+        <div class="summary-label">Online</div>
+      </mat-card>
+      <mat-card class="summary-card offline">
+        <div class="summary-value">{{ summary.offlineAgents }}</div>
+        <div class="summary-label">Offline</div>
+      </mat-card>
+      <mat-card class="summary-card warning">
+        <div class="summary-value">{{ summary.pendingCommands }}</div>
+        <div class="summary-label">Pending Commands</div>
+      </mat-card>
+      <mat-card class="summary-card danger">
+        <div class="summary-value">{{ summary.failedCommandsLast24h }}</div>
+        <div class="summary-label">Failed (24h)</div>
+      </mat-card>
+    </div>
+  }
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Agents</h1>
+  </div>
+
+  <!-- Filters -->
+  <mat-card class="filter-card">
+    <div class="filter-row">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search agents</mat-label>
+        <input matInput [formControl]=\"searchControl\" placeholder="Name, hostname..." />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Status</mat-label>
+        <mat-select [formControl]="statusFilter">
+          <mat-option [value]="null">All Statuses</mat-option>
+          @for (option of statusOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Type</mat-label>
+        <mat-select [formControl]="typeFilter">
+          <mat-option [value]="null">All Types</mat-option>
+          @for (option of typeOptions; track option.value) {
+            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-card>
+
+  <!-- Progress bar -->
+  @if (store.isLoadingList()) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  <!-- Data Table -->
+  <mat-card class="table-card">
+    <table mat-table [dataSource]="store.agents()" matSort (matSortChange)="onSort($event)">
+      <!-- Status / Heartbeat -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="status-cell">
+            <app-heartbeat-indicator
+              [status]="getHeartbeatStatus(row)"
+              [lastActiveAt]="row.lastActiveAt"
+            ></app-heartbeat-indicator>
+            <span class="status-badge" [attr.data-status]="row.status">
+              {{ row.status }}
+            </span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Name -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+        <td mat-cell *matCellDef="let row">
+          <a class="agent-link" (click)="onView(row)">{{ row.name }}</a>
+        </td>
+      </ng-container>
+
+      <!-- Hostname -->
+      <ng-container matColumnDef="hostname">
+        <th mat-header-cell *matHeaderCellDef>Hostname</th>
+        <td mat-cell *matCellDef="let row">
+          <code class="tag-code">{{ row.hostname ?? '—' }}</code>
+        </td>
+      </ng-container>
+
+      <!-- Type -->
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="type-label">{{ row.type }}</span>
+        </td>
+      </ng-container>
+
+      <!-- OS -->
+      <ng-container matColumnDef="os">
+        <th mat-header-cell *matHeaderCellDef>OS</th>
+        <td mat-cell *matCellDef="let row">{{ row.operatingSystem ?? '—' }}</td>
+      </ng-container>
+
+      <!-- Last Seen -->
+      <ng-container matColumnDef="lastSeen">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Seen</th>
+        <td mat-cell *matCellDef="let row">
+          @if (row.lastActiveAt) {
+            <span class="time-ago">{{ row.lastActiveAt | date:'short' }}</span>
+          } @else {
+            <span class="no-data">Never</span>
+          }
+        </td>
+      </ng-container>
+
+      <!-- Commands -->
+      <ng-container matColumnDef="commands">
+        <th mat-header-cell *matHeaderCellDef>Commands</th>
+        <td mat-cell *matCellDef="let row">
+          @if (row.pendingCommandCount > 0) {
+            <mat-chip class="pending-chip">{{ row.pendingCommandCount }} pending</mat-chip>
+          } @else {
+            <span class="no-data">0</span>
+          }
+        </td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button [matMenuTriggerFor]="rowMenu" matTooltip="Actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #rowMenu="matMenu">
+            <button mat-menu-item (click)="onView(row)">
+              <mat-icon>visibility</mat-icon>
+              <span>View Details</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="onView(row)"></tr>
+    </table>
+
+    @if (!store.isLoadingList() && store.agents().length === 0) {
+      <div class="empty-state">
+        <mat-icon>computer</mat-icon>
+        <p>No agents found</p>
+      </div>
+    }
+
+    <mat-paginator
+      [length]="store.totalCount()"
+      [pageSize]="store.pageSize()"
+      [pageIndex]="store.page() - 1"
+      [pageSizeOptions]="[10, 20, 50, 100]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </mat-card>
+
+  @if (store.error()) {
+    <div class="error-banner">
+      <mat-icon>error</mat-icon>
+      {{ store.error() }}
+      <button mat-icon-button (click)="store.clearError()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  }
+</div>

@@ -1,6 +1,7 @@
 using Daraban.Modules.Identity.Data.Entities;
 using Daraban.Modules.Identity.Data.Repositories;
 using Daraban.Platform.Common;
+using Daraban.Platform.Contracts.Agents;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -9,8 +10,13 @@ namespace Daraban.Modules.Identity.Services.Agents;
 public class AgentService : IAgentService
 {
     private readonly IAgentRepository _repo;
+    private readonly IAgentCommandRepository _commandRepo;
 
-    public AgentService(IAgentRepository repo) => _repo = repo;
+    public AgentService(IAgentRepository repo, IAgentCommandRepository commandRepo)
+    {
+        _repo = repo;
+        _commandRepo = commandRepo;
+    }
 
     // ---- Agent CRUD ----
 
@@ -257,6 +263,110 @@ public class AgentService : IAgentService
         agent.LastActiveAt = DateTimeOffset.UtcNow;
         _repo.Update(agent);
         await _repo.SaveChangesAsync(ct);
+    }
+
+    // ---- Dashboard (Task 4.5) ----
+
+    private const int DefaultHeartbeatThresholdMinutes = 5;
+
+    public async Task<IReadOnlyList<AgentListItemDto>> GetAgentListAsync(
+        AgentStatus? status, AgentType? type, string? search,
+        int page, int pageSize, CancellationToken ct = default)
+    {
+        var skip = (page - 1) * pageSize;
+        var agents = await _repo.GetPagedAsync(null, status, type, search, skip, pageSize, ct);
+        var threshold = DateTimeOffset.UtcNow.AddMinutes(-DefaultHeartbeatThresholdMinutes);
+
+        // Batch-fetch pending command counts per agent (1 query, not N)
+        var agentIds = agents.Select(a => a.Id).ToList();
+        var pendingCounts = await _commandRepo.GetPendingCountByAgentIdsAsync(agentIds, ct);
+
+        var items = new List<AgentListItemDto>(agents.Count);
+        foreach (var a in agents)
+        {
+            pendingCounts.TryGetValue(a.Id, out var pendingCount);
+            items.Add(new AgentListItemDto(
+                a.Id, a.Name, a.Description, a.Type, a.Status,
+                Hostname: null, // populated by inventory data if available
+                OperatingSystem: null,
+                a.LastActiveAt,
+                IsOnline: a.LastActiveAt.HasValue && a.LastActiveAt > threshold,
+                PendingCommandCount: pendingCount,
+                TotalCommandCount: 0, // total not needed for list view
+                a.CreatedAt));
+        }
+
+        return items;
+    }
+
+    public async Task<int> GetAgentListCountAsync(
+        AgentStatus? status, AgentType? type, string? search, CancellationToken ct = default)
+        => await _repo.GetCountAsync(null, status, type, search, ct);
+
+    public async Task<AgentDetailDto?> GetAgentDetailAsync(Guid agentId, CancellationToken ct = default)
+    {
+        var agent = await _repo.GetByIdAsync(agentId, ct);
+        if (agent is null) return null;
+
+        var credentials = await _repo.GetCredentialsByAgentIdAsync(agentId, ct);
+        // Single aggregate query instead of fetching all commands
+        var stats = await _commandRepo.GetAggregateStatsAsync(
+            agentIds: [agentId], ct: ct);
+
+        return new AgentDetailDto(
+            Agent: MapToDto(agent),
+            CredentialCount: credentials.Count(c => c.IsActive),
+            TotalCommands: stats.TotalCommands,
+            CompletedCommands: stats.CompletedCommands,
+            FailedCommands: stats.FailedCommands,
+            PendingCommands: stats.PendingCommands,
+            LastInventoryAt: null, // populated by controller with inventory data
+            LastInventoryStatus: null);
+    }
+
+    public async Task<AgentFleetSummaryDto> GetFleetSummaryAsync(CancellationToken ct = default)
+    {
+        var allAgents = await _repo.GetPagedAsync(null, null, null, null, 0, 10000, ct);
+        var threshold = DateTimeOffset.UtcNow.AddMinutes(-DefaultHeartbeatThresholdMinutes);
+        var now = DateTimeOffset.UtcNow;
+
+        // Single aggregate query instead of N+1 per-agent command queries
+        var todayStats = await _commandRepo.GetAggregateStatsAsync(since: now.Date, ct: ct);
+        var last24hStats = await _commandRepo.GetAggregateStatsAsync(since: now.AddHours(-24), ct: ct);
+        var pendingStats = await _commandRepo.GetAggregateStatsAsync(ct: ct);
+
+        return new AgentFleetSummaryDto(
+            TotalAgents: allAgents.Count,
+            OnlineAgents: allAgents.Count(a => a.LastActiveAt.HasValue && a.LastActiveAt > threshold && a.Status == AgentStatus.Active),
+            OfflineAgents: allAgents.Count(a => (!a.LastActiveAt.HasValue || a.LastActiveAt <= threshold) && a.Status == AgentStatus.Active),
+            SuspendedAgents: allAgents.Count(a => a.Status == AgentStatus.Suspended),
+            TotalCommandsToday: todayStats.TotalCommands,
+            PendingCommands: pendingStats.PendingCommands,
+            FailedCommandsLast24h: last24hStats.FailedCommands);
+    }
+
+    public async Task<IReadOnlyList<AgentCommandHistoryEntry>> GetCommandHistoryAsync(
+        Guid agentId, int page, int pageSize, CancellationToken ct = default)
+    {
+        var skip = (page - 1) * pageSize;
+        var commands = await _commandRepo.GetCommandsByAgentAsync(agentId, skip, pageSize, ct);
+
+        // Batch-fetch results (1 query, not N)
+        var commandIds = commands.Select(c => c.Id).ToList();
+        var results = await _commandRepo.GetResultsByCommandIdsAsync(commandIds, ct);
+
+        var entries = new List<AgentCommandHistoryEntry>(commands.Count);
+        foreach (var c in commands)
+        {
+            results.TryGetValue(c.Id, out var result);
+            entries.Add(new AgentCommandHistoryEntry(
+                c.Id, c.CommandType.ToString(), c.Status.ToString(), c.Payload,
+                result?.ExitCode, c.LastError,
+                c.CreatedAt, c.CompletedAt,
+                result?.ExecutionDurationMs ?? 0));
+        }
+
+        return entries;
     }
 
     // ---- Helpers ----

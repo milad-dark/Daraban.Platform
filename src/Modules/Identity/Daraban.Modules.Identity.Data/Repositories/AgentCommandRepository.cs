@@ -66,6 +66,66 @@ public class AgentCommandRepository(IdentityDbContext db) : IAgentCommandReposit
     public async Task<CommandResult?> GetResultByCommandIdAsync(Guid commandId, CancellationToken ct = default)
         => await db.CommandResults.FirstOrDefaultAsync(r => r.CommandId == commandId, ct);
 
+    public async Task<IReadOnlyDictionary<Guid, CommandResult>> GetResultsByCommandIdsAsync(
+        IEnumerable<Guid> commandIds, CancellationToken ct = default)
+    {
+        var ids = commandIds.ToList();
+        if (ids.Count == 0)
+            return new Dictionary<Guid, CommandResult>();
+
+        var results = await db.CommandResults
+            .Where(r => ids.Contains(r.CommandId))
+            .ToListAsync(ct);
+
+        return results.ToDictionary(r => r.CommandId, r => r);
+    }
+
+    // ---- Aggregate stats (dashboard) ----
+
+    public async Task<CommandAggregateStats> GetAggregateStatsAsync(
+        IEnumerable<Guid>? agentIds = null, DateTimeOffset? since = null, CancellationToken ct = default)
+    {
+        var query = db.AgentCommands.AsQueryable();
+
+        if (agentIds is not null)
+        {
+            var ids = agentIds.ToList();
+            if (ids.Count > 0)
+                query = query.Where(c => ids.Contains(c.AgentId));
+        }
+
+        if (since.HasValue)
+            query = query.Where(c => c.CreatedAt >= since.Value);
+
+        return new CommandAggregateStats(
+            TotalCommands: await query.CountAsync(ct),
+            CompletedCommands: await query.CountAsync(c => c.Status == CommandStatus.Completed, ct),
+            FailedCommands: await query.CountAsync(c => c.Status == CommandStatus.Failed, ct),
+            PendingCommands: await query.CountAsync(c => c.Status == CommandStatus.Queued || c.Status == CommandStatus.Dispatched, ct));
+    }
+
+    public async Task<IReadOnlyDictionary<Guid, int>> GetPendingCountByAgentIdsAsync(
+        IEnumerable<Guid> agentIds, CancellationToken ct = default)
+    {
+        var ids = agentIds.ToList();
+        if (ids.Count == 0)
+            return new Dictionary<Guid, int>();
+
+        var pendingCounts = await db.AgentCommands
+            .Where(c => ids.Contains(c.AgentId) &&
+                        (c.Status == CommandStatus.Queued || c.Status == CommandStatus.Dispatched))
+            .GroupBy(c => c.AgentId)
+            .Select(g => new { AgentId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.AgentId, x => x.Count, ct);
+
+        // Ensure all agent IDs have an entry (even if 0 pending)
+        var result = new Dictionary<Guid, int>(ids.Count);
+        foreach (var id in ids)
+            result[id] = pendingCounts.GetValueOrDefault(id, 0);
+
+        return result;
+    }
+
     // ---- Write: State transitions ----
 
     public async Task<int> SaveChangesAsync(CancellationToken ct = default)

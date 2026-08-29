@@ -122,3 +122,76 @@ public sealed record AgentCommandResponse(
     Guid CommandId,
     string Status,
     DateTimeOffset QueuedAt);
+
+// ---- Dashboard DTOs (Task 4.5: Agent Dashboard) ----
+
+/// <summary>
+/// Agent summary for the list view. Includes online/offline status
+/// derived from LastActiveAt vs heartbeat threshold.
+/// </summary>
+public sealed record AgentListItemDto(
+    Guid Id,
+    string Name,
+    string? Description,
+    AgentType Type,
+    AgentStatus Status,
+    string? Hostname,
+    string? OperatingSystem,
+    DateTimeOffset? LastActiveAt,
+    bool IsOnline,
+    int PendingCommandCount,
+    int TotalCommandCount,
+    DateTimeOffset CreatedAt);
+
+/// <summary>
+/// Full agent detail including credential count, command stats, and inventory status.
+/// </summary>
+public sealed record AgentDetailDto(
+    AgentDto Agent,
+    int CredentialCount,
+    int TotalCommands,
+    int CompletedCommands,
+    int FailedCommands,
+    int PendingCommands,
+    DateTimeOffset? LastInventoryAt,
+    string? LastInventoryStatus);
+
+/// <summary>
+/// Aggregate fleet status for the dashboard overview cards.
+/// </summary>
+public sealed record AgentFleetSummaryDto(
+    int TotalAgents,
+    int OnlineAgents,
+    int OfflineAgents,
+    int SuspendedAgents,
+    int TotalCommandsToday,
+    int PendingCommands,
+    int FailedCommandsLast24h);
+
+/// <summary>
+/// Snapshot of the agent's latest inventory submission.
+/// </summary>
+public sealed record AgentInventorySnapshotDto(
+    long SubmissionId,
+    string DeviceId,
+    string? ItemType,
+    string Action,
+    string Status,
+    int? DeviceCount,
+    DateTimeOffset SubmittedAt,
+    DateTimeOffset ReceivedAt,
+    DateTimeOffset? ProcessedAt);
+
+/// <summary>
+/// Command history entry for the agent detail view.
+/// </summary>
+public sealed record AgentCommandHistoryEntry(
+    Guid CommandId,
+    string CommandType,
+    string Status,
+    string? Payload,
+    int? ExitCode,
+    string? LastError,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? CompletedAt,
+    int ExecutionDurationMs);

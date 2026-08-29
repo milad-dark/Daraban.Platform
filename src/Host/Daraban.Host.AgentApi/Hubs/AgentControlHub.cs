@@ -22,11 +22,13 @@ public class AgentControlHub : Hub
 {
     private readonly ILogger<AgentControlHub> _logger;
     private readonly IAgentCommandService _commandService;
+    private readonly IAgentService _agentService;
 
-    public AgentControlHub(ILogger<AgentControlHub> logger, IAgentCommandService commandService)
+    public AgentControlHub(ILogger<AgentControlHub> logger, IAgentCommandService commandService, IAgentService agentService)
     {
         _logger = logger;
         _commandService = commandService;
+        _agentService = agentService;
     }
 
     public override async Task OnConnectedAsync()
@@ -126,7 +128,7 @@ public class AgentControlHub : Hub
         var agentId = GetAgentId();
         if (agentId is null) return;
 
-        // TODO: Call IAgentService.TouchLastActiveAsync(agentId.Value)
+        await _agentService.TouchLastActiveAsync(agentId.Value);
         await Clients.Caller.SendAsync("HeartbeatAck", DateTimeOffset.UtcNow);
     }
 
