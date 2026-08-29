@@ -9,5 +9,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Contracts\Daraban.Platform.Contracts.csproj" />
   </ItemGroup>
 </Project>

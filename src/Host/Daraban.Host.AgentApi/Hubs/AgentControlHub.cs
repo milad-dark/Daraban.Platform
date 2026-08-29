@@ -1,3 +1,5 @@
+using Daraban.Modules.Identity.Services.Agents;
+using Daraban.Platform.Contracts.Agents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
@@ -19,8 +21,13 @@ namespace Daraban.Host.AgentApi.Hubs;
 public class AgentControlHub : Hub
 {
     private readonly ILogger<AgentControlHub> _logger;
+    private readonly IAgentCommandService _commandService;
 
-    public AgentControlHub(ILogger<AgentControlHub> logger) => _logger = logger;
+    public AgentControlHub(ILogger<AgentControlHub> logger, IAgentCommandService commandService)
+    {
+        _logger = logger;
+        _commandService = commandService;
+    }
 
     public override async Task OnConnectedAsync()
     {
@@ -58,9 +65,11 @@ public class AgentControlHub : Hub
         var agentId = GetAgentId();
         if (agentId is null) return;
 
-        _logger.LogInformation("Agent {AgentId} acknowledged command {CommandId}", agentId, commandId);
-        // TODO: Update command status in DB, publish AgentCommandAcknowledgedEvent
-        await Task.CompletedTask;
+        var ok = await _commandService.AcknowledgeCommandAsync(agentId.Value, commandId);
+        _logger.LogInformation("Agent {AgentId} acknowledged command {CommandId}: {Ok}", agentId, commandId, ok ? "ok" : "not-found");
+
+        if (ok)
+            await Clients.Caller.SendAsync("CommandAcknowledged", commandId);
     }
 
     /// <summary>
@@ -71,10 +80,42 @@ public class AgentControlHub : Hub
         var agentId = GetAgentId();
         if (agentId is null) return;
 
-        _logger.LogInformation("Agent {AgentId} reported command {CommandId} result: {Success}",
-            agentId, commandId, success ? "success" : $"failure: {errorMessage}");
-        // TODO: Update command status, publish AgentCommandCompletedEvent
-        await Task.CompletedTask;
+        var request = new CommandResultRequest(
+            Success: success,
+            Output: resultPayload,
+            ErrorMessage: errorMessage,
+            ExitCode: null,
+            ExecutionDurationMs: 0);
+
+        try
+        {
+            var response = await _commandService.ReportResultAsync(agentId.Value, commandId, request);
+            _logger.LogInformation("Agent {AgentId} reported command {CommandId}: {Status}",
+                agentId, commandId, response.Status);
+
+            // Notify all SignalR clients (Angular UI) of the command completion
+            await Clients.All.SendAsync("CommandCompleted", new
+            {
+                commandId,
+                agentId = agentId.Value,
+                status = response.Status.ToString(),
+                receivedAt = response.ReceivedAt,
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning("Agent {AgentId} reported unknown command {CommandId}: {Error}",
+                agentId, commandId, ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Server pushes a command to a specific agent via SignalR.
+    /// Called by CommandDispatchWorker after picking up a queued command.
+    /// </summary>
+    public async Task SendCommandToAgent(Guid agentId, PendingCommandDto command)
+    {
+        await Clients.Group(agentId.ToString()).SendAsync("ReceiveCommand", command);
     }
 
     /// <summary>

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Host\Daraban.Host.AgentApi\Daraban.Host.AgentApi.csproj" />
+    <ProjectReference Include="..\..\Modules\Identity\Daraban.Modules.Identity.Services\Daraban.Modules.Identity.Services.csproj" />
+    <ProjectReference Include="..\..\Shared\Daraban.Platform.Messaging\Daraban.Platform.Messaging.csproj" />
+  </ItemGroup>
+</Project>

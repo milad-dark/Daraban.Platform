@@ -1,6 +1,7 @@
 using Daraban.Modules.Identity.Data;
 using Daraban.Modules.Identity.Data.Entities;
 using Daraban.Modules.Identity.Data.Repositories;
+using Daraban.Modules.Identity.Services.Agents;
 using Daraban.Modules.Identity.Services.Auth;
 using Daraban.Modules.Identity.Services.Authorization;
 using Daraban.Modules.Identity.Services.Users;
@@ -39,6 +40,10 @@ public static class IdentityModuleServiceCollectionExtensions
         // ---- Authorization (Task 2.4) ---------------------------------------------------
         services.AddScoped<IEntityScopeAccessor, EntityScopeAccessor>();
         services.AddScoped<IPermissionResolver, PermissionResolver>();
+
+        // ---- Agent Command services (Task 4.4: Remote Commands) ----
+        services.AddScoped<IAgentCommandRepository, AgentCommandRepository>();
+        services.AddScoped<IAgentCommandService, AgentCommandService>();
 
         // TODO: register remaining Identity resources (Groups) as they're built out, same shape as above.
 
