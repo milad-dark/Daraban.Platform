@@ -38,4 +38,15 @@ public interface IAgentService
 
     // ---- Session / Activity ----
     Task TouchLastActiveAsync(Guid agentId, CancellationToken ct = default);
+
+    // ---- Dashboard (Task 4.5) ----
+    Task<IReadOnlyList<AgentListItemDto>> GetAgentListAsync(
+        AgentStatus? status, AgentType? type, string? search,
+        int page, int pageSize, CancellationToken ct = default);
+    Task<int> GetAgentListCountAsync(
+        AgentStatus? status, AgentType? type, string? search, CancellationToken ct = default);
+    Task<AgentDetailDto?> GetAgentDetailAsync(Guid agentId, CancellationToken ct = default);
+    Task<AgentFleetSummaryDto> GetFleetSummaryAsync(CancellationToken ct = default);
+    Task<IReadOnlyList<AgentCommandHistoryEntry>> GetCommandHistoryAsync(
+        Guid agentId, int page, int pageSize, CancellationToken ct = default);
 }

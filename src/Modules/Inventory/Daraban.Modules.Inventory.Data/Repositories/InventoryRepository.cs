@@ -33,6 +33,29 @@ public class InventoryRepository : IInventoryRepository
         => await _db.RawInventorySubmissions
             .CountAsync(x => x.AgentId == agentId, ct);
 
+    public async Task<RawInventorySubmission?> GetLatestByAgentIdAsync(Guid agentId, CancellationToken ct = default)
+        => await _db.RawInventorySubmissions
+            .Where(x => x.AgentId == agentId)
+            .OrderByDescending(x => x.ReceivedAt)
+            .FirstOrDefaultAsync(ct);
+
+    public async Task<IReadOnlyDictionary<Guid, RawInventorySubmission>> GetLatestByAgentIdsAsync(
+        IEnumerable<Guid> agentIds, CancellationToken ct = default)
+    {
+        var ids = agentIds.ToList();
+        if (ids.Count == 0)
+            return new Dictionary<Guid, RawInventorySubmission>();
+
+        // Get the latest submission per agent using GroupBy + First()
+        var latest = await _db.RawInventorySubmissions
+            .Where(x => ids.Contains(x.AgentId))
+            .GroupBy(x => x.AgentId)
+            .Select(g => g.OrderByDescending(x => x.ReceivedAt).First())
+            .ToListAsync(ct);
+
+        return latest.ToDictionary(x => x.AgentId, x => x);
+    }
+
     public async Task<RawInventorySubmission?> GetByIdUnscopedAsync(long id, CancellationToken ct = default)
         => await _db.RawInventorySubmissions
             .FirstOrDefaultAsync(x => x.Id == id, ct);

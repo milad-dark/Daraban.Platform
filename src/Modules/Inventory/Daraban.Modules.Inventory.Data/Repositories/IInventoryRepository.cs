@@ -24,6 +24,13 @@ public interface IInventoryRepository
     /// <summary>Count submissions for an agent.</summary>
     Task<int> GetCountAsync(Guid agentId, CancellationToken ct = default);
 
+    /// <summary>Get the most recent submission for an agent (inventory snapshot).</summary>
+    Task<RawInventorySubmission?> GetLatestByAgentIdAsync(Guid agentId, CancellationToken ct = default);
+
+    /// <summary>Get the most recent submission for multiple agents (batch query for dashboard list).</summary>
+    Task<IReadOnlyDictionary<Guid, RawInventorySubmission>> GetLatestByAgentIdsAsync(
+        IEnumerable<Guid> agentIds, CancellationToken ct = default);
+
     /// <summary>Find a submission by ID without agentId scoping (trusted internal use).
     /// Used by background worker which has no agent context.</summary>
     Task<RawInventorySubmission?> GetByIdUnscopedAsync(long id, CancellationToken ct = default);

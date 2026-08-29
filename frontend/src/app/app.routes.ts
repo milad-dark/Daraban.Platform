@@ -34,6 +34,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/assets/asset.routes').then((m) => m.ASSET_ROUTES),
       },
+      {
+        path: 'agents',
+        loadChildren: () =>
+          import('./features/agents/agents.routes').then((m) => m.AGENT_ROUTES),
+      },
     ],
   },
   {

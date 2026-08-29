@@ -41,6 +41,25 @@ public interface IAgentCommandRepository
 
     Task<CommandResult?> GetResultByCommandIdAsync(Guid commandId, CancellationToken ct = default);
 
+    /// <summary>Get results for multiple commands in one query (batch for dashboard).</summary>
+    Task<IReadOnlyDictionary<Guid, CommandResult>> GetResultsByCommandIdsAsync(
+        IEnumerable<Guid> commandIds, CancellationToken ct = default);
+
+    // ---- Aggregate stats (dashboard) ----
+    /// <summary>Get command counts by status across all agents (or filtered by agent IDs).</summary>
+    Task<CommandAggregateStats> GetAggregateStatsAsync(
+        IEnumerable<Guid>? agentIds = null, DateTimeOffset? since = null, CancellationToken ct = default);
+
+    /// <summary>Get pending command count per agent in one query (for dashboard list view).</summary>
+    Task<IReadOnlyDictionary<Guid, int>> GetPendingCountByAgentIdsAsync(
+        IEnumerable<Guid> agentIds, CancellationToken ct = default);
+
     // ---- Write: State transitions ----
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 }
+
+public sealed record CommandAggregateStats(
+    int TotalCommands,
+    int CompletedCommands,
+    int FailedCommands,
+    int PendingCommands);
