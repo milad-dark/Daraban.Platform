@@ -7,6 +7,7 @@ using Daraban.Modules.Identity.Services.Auth;
 using Daraban.Modules.Inventory.Services;
 using Daraban.Modules.Knowledge.Services;
 using Daraban.Modules.Notifications.Services;
+using Daraban.Modules.Discovery.Services;
 using Daraban.Modules.Reporting.Services;
 using Daraban.Modules.ServiceDesk.Services;
 using Daraban.Platform.Abstractions;
@@ -50,7 +51,8 @@ builder.Services
     .AddKnowledgeModule(builder.Configuration)
     .AddAutomationModule(builder.Configuration)
     .AddNotificationsModule(builder.Configuration)
-    .AddReportingModule(builder.Configuration);
+    .AddReportingModule(builder.Configuration)
+    .AddDiscoveryModule(builder.Configuration);
 
 // ---- Controllers: every module's *.Api assembly must be added as an MVC
 // Application Part -- ASP.NET Core does NOT auto-discover controllers living in a
@@ -66,6 +68,7 @@ mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Knowledge.Api.AssemblyMarke
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Automation.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Notifications.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Reporting.Api.AssemblyMarker).Assembly);
+mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Discovery.Api.AssemblyMarker).Assembly);
 
 // ---- Auth (Task 2.3): validates JWTs issued directly by AuthService/JwtTokenService ---
 // (a plain JWT Bearer setup, not OpenIddict -- see AuthController's doc comment for why
@@ -145,6 +148,13 @@ builder.Services.AddRateLimiter(options =>
         opt.PermitLimit = 10;
         opt.Window = TimeSpan.FromMinutes(1);
         opt.QueueLimit = 0; // reject immediately over the limit -- these are interactive attempts, not background work worth queuing
+    });
+    // Discovery scan rate limiting - prevent scan abuse
+    options.AddFixedWindowLimiter("discovery-scan", opt =>
+    {
+        opt.PermitLimit = 5; // 5 scans per minute per user
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueLimit = 2; // Queue up to 2 scans if limit reached
     });
 });
 

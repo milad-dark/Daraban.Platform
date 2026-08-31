@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\Modules\Automation\Daraban.Modules.Automation.Api\Daraban.Modules.Automation.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Notifications\Daraban.Modules.Notifications.Api\Daraban.Modules.Notifications.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Reporting\Daraban.Modules.Reporting.Api\Daraban.Modules.Reporting.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Discovery\Daraban.Modules.Discovery.Api\Daraban.Modules.Discovery.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Identity\Daraban.Modules.Identity.Data\Daraban.Modules.Identity.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Assets\Daraban.Modules.Assets.Data\Daraban.Modules.Assets.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Inventory\Daraban.Modules.Inventory.Data\Daraban.Modules.Inventory.Data.csproj" />
@@ -25,6 +26,7 @@
     <ProjectReference Include="..\..\Modules\Automation\Daraban.Modules.Automation.Data\Daraban.Modules.Automation.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Notifications\Daraban.Modules.Notifications.Data\Daraban.Modules.Notifications.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Reporting\Daraban.Modules.Reporting.Data\Daraban.Modules.Reporting.Data.csproj" />
+    <ProjectReference Include="..\..\Modules\Discovery\Daraban.Modules.Discovery.Data\Daraban.Modules.Discovery.Data.csproj" />
     <ProjectReference Include="..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
     <ProjectReference Include="..\..\Shared\Daraban.Platform.Hosting\Daraban.Platform.Hosting.csproj" />
   </ItemGroup>
