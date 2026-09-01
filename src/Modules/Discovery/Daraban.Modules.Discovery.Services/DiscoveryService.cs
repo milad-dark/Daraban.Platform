@@ -1,12 +1,18 @@
 using Daraban.Modules.Discovery.Data.Entities;
 using Daraban.Modules.Discovery.Data.Repositories;
+using Daraban.Modules.Discovery.Services.Snmp;
+using Microsoft.Extensions.Logging;
 
 namespace Daraban.Modules.Discovery.Services;
 
 /// <summary>
-/// Service implementation for network device discovery (Task 5.1).
+/// Service implementation for network device discovery (Task 5.1 + 5.2).
 /// </summary>
-public class DiscoveryService(IDiscoveryRepository repository, ICredentialEncryptionService encryptionService) : IDiscoveryService
+public class DiscoveryService(
+    IDiscoveryRepository repository,
+    ICredentialEncryptionService encryptionService,
+    ISnmpDiscoveryEngine snmpEngine,
+    ILogger<DiscoveryService> logger) : IDiscoveryService
 {
 
     // DiscoveryRange operations
@@ -404,6 +410,143 @@ public class DiscoveryService(IDiscoveryRepository repository, ICredentialEncryp
             await repository.UpdateRangeAsync(range, ct);
             await repository.SaveChangesAsync(ct);
         }
+    }
+
+    // ── SNMP Discovery (Task 5.2) ────────────────────────────────────────
+
+    public async Task<DeviceResponse?> DiscoverDeviceAsync(
+        string ipAddress,
+        Guid rangeId,
+        Guid scanId,
+        CancellationToken ct = default)
+    {
+        var range = await repository.GetRangeByIdAsync(rangeId, ct);
+        if (range == null)
+            throw new InvalidOperationException($"Range '{rangeId}' not found.");
+
+        // Build connection info from range's SNMP credential
+        var connection = await BuildConnectionInfoAsync(range, ct);
+        if (connection == null)
+        {
+            logger.LogWarning("No SNMP credential configured for range {RangeId}", rangeId);
+            return null;
+        }
+
+        // Perform SNMP discovery
+        var discoveryResult = await snmpEngine.DiscoverAsync(
+            ipAddress, connection, timeoutMs: 3000, ct);
+
+        if (discoveryResult == null)
+            return null;
+
+        // Map to DeviceResponse and store
+        var deviceResponse = new DeviceResponse(
+            Id: 0, // will be assigned by DB
+            ScanId: scanId,
+            RangeId: rangeId,
+            IpAddress: ipAddress,
+            MacAddress: discoveryResult.Interfaces.FirstOrDefault()?.MacAddress,
+            Hostname: discoveryResult.SysName ?? ipAddress,
+            OsGuess: discoveryResult.DeviceType,
+            OsVersion: discoveryResult.OsVersion,
+            Vendor: discoveryResult.Vendor,
+            Model: discoveryResult.Model,
+            SerialNumber: discoveryResult.SerialNumber,
+            OpenPorts: null, // populated by port scan if needed
+            SysDescr: discoveryResult.SysDescr,
+            SysName: discoveryResult.SysName,
+            SysLocation: discoveryResult.SysLocation,
+            SysContact: discoveryResult.SysContact,
+            SnmpUptime: discoveryResult.SysUpTime,
+            PingMs: null,
+            Ttl: null,
+            AssetCreated: false,
+            AssetId: null,
+            DiscoveredAt: DateTimeOffset.UtcNow,
+            LastSeenAt: DateTimeOffset.UtcNow
+        );
+
+        // Check if device already exists for this range
+        var existingDevice = await repository.GetDeviceByIpAndRangeAsync(ipAddress, rangeId, ct);
+        if (existingDevice != null)
+        {
+            // Update existing device
+            existingDevice.Hostname = deviceResponse.Hostname;
+            existingDevice.OsGuess = deviceResponse.OsGuess;
+            existingDevice.OsVersion = deviceResponse.OsVersion;
+            existingDevice.Vendor = deviceResponse.Vendor;
+            existingDevice.Model = deviceResponse.Model;
+            existingDevice.SerialNumber = deviceResponse.SerialNumber;
+            existingDevice.SysDescr = deviceResponse.SysDescr;
+            existingDevice.SysName = deviceResponse.SysName;
+            existingDevice.SysLocation = deviceResponse.SysLocation;
+            existingDevice.SysContact = deviceResponse.SysContact;
+            existingDevice.SnmpUptime = deviceResponse.SnmpUptime;
+            existingDevice.MacAddress = deviceResponse.MacAddress ?? existingDevice.MacAddress;
+            existingDevice.LastSeenAt = DateTimeOffset.UtcNow;
+
+            await repository.UpdateDeviceAsync(existingDevice, ct);
+            await repository.SaveChangesAsync(ct);
+
+            return deviceResponse with { Id = existingDevice.Id };
+        }
+        else
+        {
+            // Add new device
+            var newDevice = new DiscoveredDevice
+            {
+                ScanId = scanId,
+                RangeId = rangeId,
+                IpAddress = ipAddress,
+                MacAddress = deviceResponse.MacAddress,
+                Hostname = deviceResponse.Hostname,
+                OsGuess = deviceResponse.OsGuess,
+                OsVersion = deviceResponse.OsVersion,
+                Vendor = deviceResponse.Vendor,
+                Model = deviceResponse.Model,
+                SerialNumber = deviceResponse.SerialNumber,
+                SysDescr = deviceResponse.SysDescr,
+                SysName = deviceResponse.SysName,
+                SysLocation = deviceResponse.SysLocation,
+                SysContact = deviceResponse.SysContact,
+                SnmpUptime = deviceResponse.SnmpUptime,
+                PingMs = deviceResponse.PingMs,
+                Ttl = deviceResponse.Ttl,
+                DiscoveredAt = DateTimeOffset.UtcNow
+            };
+
+            await repository.AddDeviceAsync(newDevice, ct);
+            await repository.SaveChangesAsync(ct);
+
+            return deviceResponse with { Id = newDevice.Id };
+        }
+    }
+
+    private async Task<SnmpConnectionInfo?> BuildConnectionInfoAsync(
+        DiscoveryRange range,
+        CancellationToken ct)
+    {
+        if (range.SnmpCredentialId == null)
+            return null;
+
+        var credential = await repository.GetCredentialByIdAsync(range.SnmpCredentialId.Value, ct);
+        if (credential == null)
+            return null;
+
+        // Decrypt sensitive fields
+        return new SnmpConnectionInfo
+        {
+            Version = credential.Version,
+            CommunityString = credential.CommunityString != null
+                ? encryptionService.Decrypt(credential.CommunityString) : null,
+            UserName = credential.UserName,
+            AuthProtocol = (int)credential.AuthProtocol,
+            AuthPassphrase = credential.AuthPassphrase != null
+                ? encryptionService.Decrypt(credential.AuthPassphrase) : null,
+            PrivProtocol = (int)credential.PrivProtocol,
+            PrivPassphrase = credential.PrivPassphrase != null
+                ? encryptionService.Decrypt(credential.PrivPassphrase) : null
+        };
     }
 
     // Mapping methods
