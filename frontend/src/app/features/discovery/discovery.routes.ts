@@ -29,4 +29,11 @@ export const DISCOVERY_ROUTES: Routes = [
         (m) => m.NetworkMapComponent
       ),
   },
+  {
+    path: 'import-rules',
+    loadComponent: () =>
+      import('./import-rule-editor/import-rule-editor.component').then(
+        (m) => m.ImportRuleEditorComponent
+      ),
+  },
 ];

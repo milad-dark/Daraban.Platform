@@ -12,6 +12,9 @@ public class DiscoveryDbContext(DbContextOptions<DiscoveryDbContext> options) : 
     public DbSet<DiscoveredDevice> DiscoveredDevices => Set<DiscoveredDevice>();
     public DbSet<SnmpCredential> SnmpCredentials => Set<SnmpCredential>();
     public DbSet<DiscoveryRule> DiscoveryRules => Set<DiscoveryRule>();
+    public DbSet<ImportRule> ImportRules => Set<ImportRule>();
+    public DbSet<ImportRuleCriteria> ImportRuleCriteria => Set<ImportRuleCriteria>();
+    public DbSet<ImportRuleAction> ImportRuleActions => Set<ImportRuleAction>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

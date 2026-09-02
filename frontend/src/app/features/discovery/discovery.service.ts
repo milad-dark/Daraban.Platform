@@ -106,4 +106,37 @@ export class DiscoveryService {
   deleteRule(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/rules/${id}`);
   }
+
+  // Import Rules (GLPI-style)
+  getImportRules(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/import-rules`);
+  }
+
+  getImportRuleById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/import-rules/${id}`);
+  }
+
+  createImportRule(rule: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/import-rules`, rule);
+  }
+
+  updateImportRule(id: string, rule: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/import-rules/${id}`, rule);
+  }
+
+  deleteImportRule(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/import-rules/${id}`);
+  }
+
+  getImportRuleFields(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/import-rules/fields`);
+  }
+
+  getImportRuleOperators(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/import-rules/operators`);
+  }
+
+  getImportRuleActionTypes(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/import-rules/action-types`);
+  }
 }
