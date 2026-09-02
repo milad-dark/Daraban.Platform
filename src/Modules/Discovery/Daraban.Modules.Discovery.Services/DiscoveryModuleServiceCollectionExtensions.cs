@@ -25,6 +25,9 @@ public static class DiscoveryModuleServiceCollectionExtensions
         services.AddScoped<ISnmpDiscoveryEngine, SnmpDiscoveryEngine>();
         services.AddScoped<IDiscoveryService, DiscoveryService>();
 
+        // Import Rules Engine (GLPI-style)
+        services.AddScoped<IImportRuleService, ImportRuleService>();
+
         return services;
     }
 }

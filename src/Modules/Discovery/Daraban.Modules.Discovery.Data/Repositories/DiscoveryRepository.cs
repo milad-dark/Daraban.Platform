@@ -303,6 +303,54 @@ public class DiscoveryRepository(DiscoveryDbContext context) : IDiscoveryReposit
         }
     }
 
+    // ImportRule operations (GLPI-style)
+    public async Task<ImportRule?> GetImportRuleByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        return await context.ImportRules
+            .Include(r => r.Criteria)
+            .Include(r => r.Actions)
+            .FirstOrDefaultAsync(r => r.Id == id, ct);
+    }
+
+    public async Task<List<ImportRule>> GetAllImportRulesAsync(CancellationToken ct = default)
+    {
+        return await context.ImportRules
+            .Include(r => r.Criteria)
+            .Include(r => r.Actions)
+            .OrderBy(r => r.Priority)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<ImportRule>> GetActiveImportRulesAsync(CancellationToken ct = default)
+    {
+        return await context.ImportRules
+            .Include(r => r.Criteria)
+            .Include(r => r.Actions)
+            .Where(r => r.IsActive)
+            .OrderBy(r => r.Priority)
+            .ToListAsync(ct);
+    }
+
+    public async Task AddImportRuleAsync(ImportRule rule, CancellationToken ct = default)
+    {
+        await context.ImportRules.AddAsync(rule, ct);
+    }
+
+    public async Task UpdateImportRuleAsync(ImportRule rule, CancellationToken ct = default)
+    {
+        context.ImportRules.Update(rule);
+        await Task.CompletedTask;
+    }
+
+    public async Task DeleteImportRuleAsync(Guid id, CancellationToken ct = default)
+    {
+        var rule = await context.ImportRules.FindAsync(new object[] { id }, ct);
+        if (rule != null)
+        {
+            context.ImportRules.Remove(rule);
+        }
+    }
+
     // Save changes
     public async Task<int> SaveChangesAsync(CancellationToken ct = default)
     {

@@ -52,6 +52,14 @@ public interface IDiscoveryRepository
     Task UpdateRuleAsync(DiscoveryRule rule, CancellationToken ct = default);
     Task DeleteRuleAsync(Guid id, CancellationToken ct = default);
 
+    // ImportRule operations (GLPI-style)
+    Task<ImportRule?> GetImportRuleByIdAsync(Guid id, CancellationToken ct = default);
+    Task<List<ImportRule>> GetAllImportRulesAsync(CancellationToken ct = default);
+    Task<List<ImportRule>> GetActiveImportRulesAsync(CancellationToken ct = default);
+    Task AddImportRuleAsync(ImportRule rule, CancellationToken ct = default);
+    Task UpdateImportRuleAsync(ImportRule rule, CancellationToken ct = default);
+    Task DeleteImportRuleAsync(Guid id, CancellationToken ct = default);
+
     // Save changes
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 }
