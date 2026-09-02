@@ -119,26 +119,13 @@ public class IPScannerEngine : IIPScanner
         int timeoutMs,
         CancellationToken ct)
     {
+        var client = new TcpClient();
         try
         {
-            using var client = new TcpClient();
-            var connectTask = client.ConnectAsync(ipAddress, port);
-            var timeoutTask = Task.Delay(timeoutMs, ct);
+            using var timeoutCts = new CancellationTokenSource(timeoutMs);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutCts.Token);
             
-            var completedTask = await Task.WhenAny(connectTask, timeoutTask);
-            
-            if (completedTask == timeoutTask)
-            {
-                return new PortScanResult(
-                    IpAddress: ipAddress,
-                    Port: port,
-                    IsOpen: false,
-                    ServiceName: GetServiceName(port),
-                    ErrorMessage: "Connection timeout"
-                );
-            }
-
-            await connectTask;
+            await client.ConnectAsync(ipAddress, port, linkedCts.Token);
             
             // Grab banner if connected
             string? banner = null;
@@ -168,6 +155,26 @@ public class IPScannerEngine : IIPScanner
                 Banner: banner
             );
         }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            return new PortScanResult(
+                IpAddress: ipAddress,
+                Port: port,
+                IsOpen: false,
+                ServiceName: GetServiceName(port),
+                ErrorMessage: "Scan cancelled"
+            );
+        }
+        catch (OperationCanceledException)
+        {
+            return new PortScanResult(
+                IpAddress: ipAddress,
+                Port: port,
+                IsOpen: false,
+                ServiceName: GetServiceName(port),
+                ErrorMessage: "Connection timeout"
+            );
+        }
         catch (SocketException)
         {
             return new PortScanResult(
@@ -186,6 +193,10 @@ public class IPScannerEngine : IIPScanner
                 ServiceName: GetServiceName(port),
                 ErrorMessage: ex.Message
             );
+        }
+        finally
+        {
+            client.Dispose();
         }
     }
 
