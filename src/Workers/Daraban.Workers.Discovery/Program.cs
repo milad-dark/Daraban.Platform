@@ -1,4 +1,7 @@
 using Daraban.Modules.Discovery.Services;
+using Daraban.Modules.Discovery.Services.Processing;
+using Daraban.Modules.Discovery.Services.Scheduling;
+using Daraban.Platform.Messaging;
 using Daraban.Workers.Discovery;
 using Serilog;
 
@@ -11,6 +14,9 @@ builder.Services.AddSerilog();
 // Discovery module (provides IDiscoveryService + repository + DbContext)
 builder.Services.AddDiscoveryModule(builder.Configuration);
 
+// RabbitMQ for publishing DiscoveryCompletedEvent
+builder.Services.AddRabbitMqMessaging(builder.Configuration);
+
 // IP Scanner engine
 builder.Services.AddSingleton<IPScannerOptions>(new IPScannerOptions
 {
@@ -22,8 +28,13 @@ builder.Services.AddSingleton<IPScannerOptions>(new IPScannerOptions
 });
 builder.Services.AddSingleton<IIPScanner, IPScannerEngine>();
 
-// Background scan worker
+// Discovery scheduler and result processor
+builder.Services.AddScoped<IDiscoveryScheduler, DiscoveryScheduler>();
+builder.Services.AddScoped<IDiscoveryResultProcessor, DiscoveryResultProcessor>();
+
+// Background workers
 builder.Services.AddHostedService<ScanWorker>();
+builder.Services.AddHostedService<DiscoverySchedulerWorker>();
 
 var host = builder.Build();
 host.Run();

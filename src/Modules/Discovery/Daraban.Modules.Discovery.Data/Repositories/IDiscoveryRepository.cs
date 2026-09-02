@@ -27,6 +27,8 @@ public interface IDiscoveryRepository
     // DiscoveredDevice operations
     Task<DiscoveredDevice?> GetDeviceByIdAsync(long id, CancellationToken ct = default);
     Task<DiscoveredDevice?> GetDeviceByIpAndRangeAsync(string ipAddress, Guid rangeId, CancellationToken ct = default);
+    Task<DiscoveredDevice?> GetDeviceByMacAddressAsync(string macAddress, CancellationToken ct = default);
+    Task<DiscoveredDevice?> GetDeviceByHostnameAsync(string hostname, CancellationToken ct = default);
     Task<List<DiscoveredDevice>> GetDevicesByScanIdAsync(Guid scanId, CancellationToken ct = default);
     Task<List<DiscoveredDevice>> GetDevicesByRangeIdAsync(Guid rangeId, CancellationToken ct = default);
     Task<List<DiscoveredDevice>> GetRecentDevicesAsync(int count, CancellationToken ct = default);

@@ -6,5 +6,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Daraban.Modules.Discovery.Data\Daraban.Modules.Discovery.Data.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
   </ItemGroup>
 </Project>
