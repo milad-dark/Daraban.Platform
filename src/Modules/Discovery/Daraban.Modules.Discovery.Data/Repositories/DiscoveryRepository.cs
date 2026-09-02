@@ -145,6 +145,18 @@ public class DiscoveryRepository(DiscoveryDbContext context) : IDiscoveryReposit
             .FirstOrDefaultAsync(d => d.IpAddress == ipAddress && d.RangeId == rangeId, ct);
     }
 
+    public async Task<DiscoveredDevice?> GetDeviceByMacAddressAsync(string macAddress, CancellationToken ct = default)
+    {
+        return await context.DiscoveredDevices
+            .FirstOrDefaultAsync(d => d.MacAddress == macAddress, ct);
+    }
+
+    public async Task<DiscoveredDevice?> GetDeviceByHostnameAsync(string hostname, CancellationToken ct = default)
+    {
+        return await context.DiscoveredDevices
+            .FirstOrDefaultAsync(d => d.Hostname == hostname, ct);
+    }
+
     public async Task<List<DiscoveredDevice>> GetDevicesByScanIdAsync(Guid scanId, CancellationToken ct = default)
     {
         return await context.DiscoveredDevices
