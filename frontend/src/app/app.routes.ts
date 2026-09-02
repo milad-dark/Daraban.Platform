@@ -39,6 +39,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/agents/agents.routes').then((m) => m.AGENT_ROUTES),
       },
+      {
+        path: 'discovery',
+        loadChildren: () =>
+          import('./features/discovery/discovery.routes').then((m) => m.DISCOVERY_ROUTES),
+      },
     ],
   },
   {
