@@ -53,4 +53,7 @@ public interface IDiscoveryService
     // Scheduled scan support
     Task<List<RangeResponse>> GetRangesDueForScanAsync(CancellationToken ct = default);
     Task UpdateRangeLastScanTimeAsync(Guid rangeId, DateTimeOffset lastScanAt, CancellationToken ct = default);
+
+    // SNMP Discovery (Task 5.2)
+    Task<DeviceResponse?> DiscoverDeviceAsync(string ipAddress, Guid rangeId, Guid scanId, CancellationToken ct = default);
 }

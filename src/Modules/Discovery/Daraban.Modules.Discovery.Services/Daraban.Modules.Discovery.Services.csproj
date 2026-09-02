@@ -2,6 +2,7 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Lextm.SharpSnmpLib" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Daraban.Modules.Discovery.Data\Daraban.Modules.Discovery.Data.csproj" />

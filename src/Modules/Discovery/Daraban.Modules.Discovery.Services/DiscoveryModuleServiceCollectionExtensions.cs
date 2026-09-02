@@ -1,5 +1,6 @@
 using Daraban.Modules.Discovery.Data;
 using Daraban.Modules.Discovery.Data.Repositories;
+using Daraban.Modules.Discovery.Services.Snmp;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,9 +19,10 @@ public static class DiscoveryModuleServiceCollectionExtensions
 
         services.AddValidatorsFromAssembly(typeof(DiscoveryModuleServiceCollectionExtensions).Assembly);
 
-        // Discovery module (Task 5.1)
+        // Discovery module (Task 5.1 + 5.2)
         services.AddScoped<IDiscoveryRepository, DiscoveryRepository>();
         services.AddScoped<ICredentialEncryptionService, CredentialEncryptionService>();
+        services.AddScoped<ISnmpDiscoveryEngine, SnmpDiscoveryEngine>();
         services.AddScoped<IDiscoveryService, DiscoveryService>();
 
         return services;
