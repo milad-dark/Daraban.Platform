@@ -1,4 +1,6 @@
 using Daraban.Modules.ServiceDesk.Data;
+using Daraban.Modules.ServiceDesk.Data.Repositories;
+using Daraban.Modules.ServiceDesk.Services.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +19,15 @@ public static class ServiceDeskModuleServiceCollectionExtensions
 
         services.AddValidatorsFromAssembly(typeof(ServiceDeskModuleServiceCollectionExtensions).Assembly);
 
-        // TODO: register this module's I<Resource>Service / I<Resource>Repository pairs here
-        // as they're built out (see Identity/Assets for the concrete pattern).
+        // Repositories
+        services.AddScoped<ITicketRepository, TicketRepository>();
+        services.AddScoped<ITicketTaskRepository, TicketTaskRepository>();
+        services.AddScoped<ITicketTemplateRepository, TicketTemplateRepository>();
+
+        // Services
+        services.AddScoped<ITicketService, TicketService>();
+        services.AddScoped<ITicketTaskService, TicketTaskService>();
+        services.AddScoped<ITicketTemplateService, TicketTemplateService>();
 
         return services;
     }
