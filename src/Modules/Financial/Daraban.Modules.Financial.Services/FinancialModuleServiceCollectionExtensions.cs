@@ -1,4 +1,6 @@
 using Daraban.Modules.Financial.Data;
+using Daraban.Modules.Financial.Data.Repositories;
+using Daraban.Modules.Financial.Services.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +19,19 @@ public static class FinancialModuleServiceCollectionExtensions
 
         services.AddValidatorsFromAssembly(typeof(FinancialModuleServiceCollectionExtensions).Assembly);
 
-        // TODO: register this module's I<Resource>Service / I<Resource>Repository pairs here
-        // as they're built out (see Identity/Assets for the concrete pattern).
+        // Repositories
+        services.AddScoped<IBudgetRepository, BudgetRepository>();
+        services.AddScoped<ISupplierRepository, SupplierRepository>();
+        services.AddScoped<IContractRepository, ContractRepository>();
+        services.AddScoped<IInfocomRepository, InfocomRepository>();
+        services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+
+        // Services
+        services.AddScoped<IBudgetService, BudgetService>();
+        services.AddScoped<ISupplierService, SupplierService>();
+        services.AddScoped<IContractService, ContractService>();
+        services.AddScoped<IInfocomService, InfocomService>();
+        services.AddScoped<IPurchaseService, PurchaseService>();
 
         return services;
     }
