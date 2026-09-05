@@ -1,3 +1,4 @@
+using Daraban.Modules.Knowledge.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Daraban.Modules.Knowledge.Data;
@@ -7,6 +8,13 @@ namespace Daraban.Modules.Knowledge.Data;
 public class KnowledgeDbContext : DbContext
 {
     public KnowledgeDbContext(DbContextOptions<KnowledgeDbContext> options) : base(options) { }
+
+    // ---- Knowledge Base (Task 6.4) ----
+    public DbSet<KbCategory> Categories => Set<KbCategory>();
+    public DbSet<KbArticle> Articles => Set<KbArticle>();
+    public DbSet<KbArticleTarget> ArticleTargets => Set<KbArticleTarget>();
+    public DbSet<KbFeedback> Feedback => Set<KbFeedback>();
+    public DbSet<KbTicketLink> TicketLinks => Set<KbTicketLink>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

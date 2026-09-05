@@ -13,6 +13,7 @@ using Daraban.Modules.ServiceDesk.Services;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Hosting;
 using Daraban.Platform.Hosting.Authorization;
+using Daraban.Platform.Messaging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
@@ -40,6 +41,14 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // ---- Health checks (Task 2.2) ----------------------------------------------------------
 builder.Services.AddDarabanHealthChecks(builder.Configuration);
+
+// ---- Messaging (Task 1.1 SS1): registers IEventPublisher -------------------------------
+// Must come BEFORE the module registrations below. Assets' AssetLifecycleService, Discovery's
+// DiscoveryResultProcessor, Inventory's InventoryService and Knowledge's KbArticleService all
+// take an IEventPublisher constructor dependency -- without this line every one of them throws
+// InvalidOperationException the first time it's resolved. Host.AgentApi already did this
+// (Program.cs line 86); Host.Api did not.
+builder.Services.AddRabbitMqMessaging(builder.Configuration);
 
 // ---- Module registration (Task 1.1 SS2.3: composition root wires every module) ----
 builder.Services
