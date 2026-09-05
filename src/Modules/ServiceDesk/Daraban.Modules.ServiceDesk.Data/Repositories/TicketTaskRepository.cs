@@ -33,6 +33,13 @@ public class TicketTaskRepository : ITicketTaskRepository
     public async Task UpdateAsync(TicketTask task, CancellationToken ct = default)
     {
         _context.TicketTasks.Update(task);
+        await Task.CompletedTask;
+    }
+
+    public async Task RemoveAsync(TicketTask task, CancellationToken ct = default)
+    {
+        _context.TicketTasks.Remove(task);
+        await Task.CompletedTask;
     }
 
     public async Task<bool> ExistsAsync(Guid id, CancellationToken ct = default)

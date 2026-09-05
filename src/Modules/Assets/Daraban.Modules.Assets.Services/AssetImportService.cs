@@ -168,16 +168,49 @@ public class AssetImportService : IAssetImportService
             BadDataFound = null,
         };
         using var csv = new CsvReader(reader, config);
-        csv.Context.RegisterClassMap<ImportAssetRowMap>();
 
+        // Read() + ReadHeader() must both be called before the record loop. Read() alone advances
+        // onto the header line but does NOT register it as the header, so reading fields by name
+        // would fail with ColumnCount: 0.
+        if (!csv.Read())
+            return Task.FromResult(rows); // completely empty file, not even a header
+
+        csv.ReadHeader();
+
+        // Fields are read by header name rather than via GetRecord<ImportAssetRow>() + a ClassMap.
+        // ImportAssetRow is a positional record with no parameterless constructor, and CsvHelper's
+        // ClassMap path requires one -- GetRecord() threw
+        // MissingMethodException("Constructor 'ImportAssetRow()' was not found") on every single
+        // upload. Reading by name also makes CSV parsing behave like ParseExcelAsync, which
+        // already maps columns by header, so a reordered or partial column set works in both.
         while (csv.Read())
         {
-            var record = csv.GetRecord<ImportAssetRow>();
-            if (record is not null)
-                rows.Add(record);
+            rows.Add(new ImportAssetRow(
+                Name: Field(csv, "Name") ?? string.Empty,
+                AssetType: Field(csv, "AssetType") ?? string.Empty,
+                AssetTag: Field(csv, "AssetTag"),
+                SerialNumber: Field(csv, "SerialNumber"),
+                Status: Field(csv, "Status"),
+                PurchaseDate: Field(csv, "PurchaseDate"),
+                PurchaseCost: Field(csv, "PurchaseCost"),
+                PurchaseCurrency: Field(csv, "PurchaseCurrency"),
+                WarrantyExpiry: Field(csv, "WarrantyExpiry"),
+                OrderNumber: Field(csv, "OrderNumber"),
+                SupplierName: Field(csv, "SupplierName"),
+                Notes: Field(csv, "Notes")));
         }
 
         return Task.FromResult(rows);
+    }
+
+    /// <summary>Reads one field by header name, returning null for an absent column or an empty
+    /// cell so downstream "is this set?" checks work uniformly.</summary>
+    private static string? Field(CsvReader csv, string header)
+    {
+        if (!csv.TryGetField<string>(header, out var value))
+            return null;
+
+        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }
 
     private Task<List<ImportAssetRow>> ParseExcelAsync(Stream stream, CancellationToken ct)
@@ -266,23 +299,4 @@ public class AssetImportService : IAssetImportService
 
     private static decimal? ParseDecimal(string? value)
         => decimal.TryParse(value, out var result) ? result : null;
-
-    private sealed class ImportAssetRowMap : ClassMap<ImportAssetRow>
-    {
-        public ImportAssetRowMap()
-        {
-            Map(m => m.Name).Name("Name");
-            Map(m => m.AssetType).Name("AssetType");
-            Map(m => m.AssetTag).Name("AssetTag");
-            Map(m => m.SerialNumber).Name("SerialNumber");
-            Map(m => m.Status).Name("Status");
-            Map(m => m.PurchaseDate).Name("PurchaseDate");
-            Map(m => m.PurchaseCost).Name("PurchaseCost");
-            Map(m => m.PurchaseCurrency).Name("PurchaseCurrency");
-            Map(m => m.WarrantyExpiry).Name("WarrantyExpiry");
-            Map(m => m.OrderNumber).Name("OrderNumber");
-            Map(m => m.SupplierName).Name("SupplierName");
-            Map(m => m.Notes).Name("Notes");
-        }
-    }
 }

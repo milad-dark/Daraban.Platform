@@ -15,7 +15,11 @@ public static class ServiceDeskModuleServiceCollectionExtensions
     public static IServiceCollection AddServiceDeskModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ServiceDeskDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Postgres")));
+            options.UseNpgsql(
+                configuration.GetConnectionString("Postgres"),
+                // Keeps this module's migration history inside its own schema instead of sharing
+                // one public.__EFMigrationsHistory with every other module.
+                npgsql => npgsql.MigrationsHistoryTable("__EFMigrationsHistory", "servicedesk")));
 
         services.AddValidatorsFromAssembly(typeof(ServiceDeskModuleServiceCollectionExtensions).Assembly);
 

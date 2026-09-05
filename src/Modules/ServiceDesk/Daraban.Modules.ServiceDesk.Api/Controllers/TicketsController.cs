@@ -58,7 +58,11 @@ public class TicketsController : ControllerBase
     [RequirePermission("servicedesk.write")]
     public async Task<IActionResult> Create([FromBody] CreateTicketRequest request, CancellationToken ct)
     {
-        var result = await _ticketService.CreateAsync(request, _currentUser.UserId, ct);
+        // The tenant comes from the caller's validated JWT, never from the request body -- a
+        // client must not be able to file a ticket into someone else's entity.
+        var result = await _ticketService.CreateAsync(
+            request, _currentUser.ActiveEntityId, _currentUser.UserId, ct);
+
         if (!result.IsSuccess)
             return ProblemFrom(result.Error!);
         return CreatedAtAction(nameof(GetById), new { id = result.Value.Id }, result.Value);
@@ -129,6 +133,16 @@ public class TicketsController : ControllerBase
     public async Task<IActionResult> Close(Guid id, CancellationToken ct)
     {
         var result = await _ticketService.CloseAsync(id, _currentUser.UserId, ct);
+        if (!result.IsSuccess)
+            return ProblemFrom(result.Error!);
+        return Ok(result.Value);
+    }
+
+    [HttpGet("{id:guid}/history")]
+    [RequirePermission("servicedesk.read")]
+    public async Task<IActionResult> GetHistory(Guid id, CancellationToken ct)
+    {
+        var result = await _ticketService.GetHistoryAsync(id, ct);
         if (!result.IsSuccess)
             return ProblemFrom(result.Error!);
         return Ok(result.Value);

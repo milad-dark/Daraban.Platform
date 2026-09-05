@@ -19,7 +19,16 @@ public interface ITicketService
         CancellationToken ct = default);
 
     Task<Result<TicketDto>> GetByIdAsync(Guid id, CancellationToken ct = default);
-    Task<Result<TicketDto>> CreateAsync(CreateTicketRequest request, Guid actorUserId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Creates a ticket inside <paramref name="entityNodeId"/>. That parameter is not optional:
+    /// the tenant scope has to come from the caller's resolved context, and an earlier version
+    /// assigned the actor's user id to Ticket.EntityId, which put every new ticket in a
+    /// nonexistent entity and hid it from every list query.
+    /// </summary>
+    Task<Result<TicketDto>> CreateAsync(
+        CreateTicketRequest request, Guid entityNodeId, Guid actorUserId, CancellationToken ct = default);
+
     Task<Result<TicketDto>> UpdateAsync(Guid id, UpdateTicketRequest request, Guid actorUserId, CancellationToken ct = default);
     Task<Result> DeleteAsync(Guid id, Guid actorUserId, CancellationToken ct = default);
     Task<Result<TicketDto>> ChangeStatusAsync(Guid id, TicketStatus newStatus, Guid actorUserId, string? reason, CancellationToken ct = default);
@@ -27,6 +36,10 @@ public interface ITicketService
     Task<Result<TicketDto>> EscalateAsync(Guid id, Guid actorUserId, CancellationToken ct = default);
     Task<Result<TicketDto>> SolveAsync(Guid id, Guid actorUserId, string? solution, CancellationToken ct = default);
     Task<Result<TicketDto>> CloseAsync(Guid id, Guid actorUserId, CancellationToken ct = default);
+
+    /// <summary>Audit trail for one ticket, newest first.</summary>
+    Task<Result<IReadOnlyList<TicketHistoryDto>>> GetHistoryAsync(Guid id, CancellationToken ct = default);
+
     Task<Result<int>> GetOpenCountAsync(Guid entityNodeId, CancellationToken ct = default);
     Task<Result<int>> GetOverdueCountAsync(Guid entityNodeId, CancellationToken ct = default);
 }

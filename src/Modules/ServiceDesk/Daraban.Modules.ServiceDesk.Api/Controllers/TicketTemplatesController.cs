@@ -25,9 +25,11 @@ public class TicketTemplatesController : ControllerBase
 
     [HttpGet]
     [RequirePermission("servicedesk.read")]
-    public async Task<IActionResult> GetAll(CancellationToken ct)
+    public async Task<IActionResult> GetAll([FromQuery] bool includeInactive = false, CancellationToken ct = default)
     {
-        var result = await _ticketTemplateService.GetAllAsync(_currentUser.ActiveEntityId, ct);
+        var result = await _ticketTemplateService.GetAllAsync(
+            _currentUser.ActiveEntityId, includeInactive, ct);
+
         if (!result.IsSuccess)
             return ProblemFrom(result.Error!);
         return Ok(result.Value);

@@ -5,6 +5,7 @@ namespace Daraban.Modules.ServiceDesk.Services.Dtos;
 // ---- Ticket DTOs ----
 public record TicketDto(
     Guid Id,
+    Guid EntityId,
     TicketType Type,
     TicketStatus Status,
     TicketPriority Priority,
@@ -13,6 +14,7 @@ public record TicketDto(
     int? CalculatedScore,
     string Title,
     string? Description,
+    string? Solution,
     DateTimeOffset OpenedAt,
     DateTimeOffset? LastUpdated,
     DateTimeOffset? ClosedAt,

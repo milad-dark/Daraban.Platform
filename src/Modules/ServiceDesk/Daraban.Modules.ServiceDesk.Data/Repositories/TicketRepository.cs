@@ -58,7 +58,7 @@ public class TicketRepository : ITicketRepository
             query = query.Where(t => t.AssignedGroupId == assignedGroupId.Value);
 
         if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(t => t.Title.Contains(search));
+            query = query.Where(t => EF.Functions.ILike(t.Title, $"%{search}%"));
 
         var totalCount = await query.CountAsync(ct);
 
@@ -70,6 +70,30 @@ public class TicketRepository : ITicketRepository
 
         return (items, totalCount);
     }
+
+    public async Task<int> CountOpenAsync(Guid entityNodeId, CancellationToken ct = default)
+        => await _context.Tickets
+            .Where(t => t.EntityId == entityNodeId && TicketStatuses.Open.Contains(t.Status))
+            .CountAsync(ct);
+
+    public async Task<int> CountOverdueAsync(
+        Guid entityNodeId, DateTimeOffset asOf, CancellationToken ct = default)
+        => await _context.Tickets
+            .Where(t => t.EntityId == entityNodeId
+                        && TicketStatuses.Open.Contains(t.Status)
+                        && t.DueDate != null
+                        && t.DueDate < asOf)
+            .CountAsync(ct);
+
+    public async Task AddHistoryAsync(TicketHistory history, CancellationToken ct = default)
+        => await _context.TicketHistories.AddAsync(history, ct);
+
+    public async Task<IReadOnlyList<TicketHistory>> GetHistoryAsync(
+        Guid ticketId, CancellationToken ct = default)
+        => await _context.TicketHistories.AsNoTracking()
+            .Where(h => h.TicketId == ticketId)
+            .OrderByDescending(h => h.OccurredAt)
+            .ToListAsync(ct);
 
     public async Task AddAsync(Ticket ticket, CancellationToken ct = default)
     {

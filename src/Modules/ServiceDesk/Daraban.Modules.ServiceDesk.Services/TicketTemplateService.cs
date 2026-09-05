@@ -15,32 +15,41 @@ public class TicketTemplateService : ITicketTemplateService
         _ticketTemplateRepository = ticketTemplateRepository;
     }
 
-    public async Task<Result<IReadOnlyList<TicketTemplateDto>>> GetAllAsync(Guid entityNodeId, CancellationToken ct = default)
+    public async Task<Result<IReadOnlyList<TicketTemplateDto>>> GetAllAsync(
+        Guid entityNodeId, bool includeInactive = false, CancellationToken ct = default)
     {
-        var templates = await _ticketTemplateRepository.GetAllAsync(entityNodeId, ct);
-        IReadOnlyList<TicketTemplateDto> dtos = templates.Select(MapToDto).ToList();
-        return Result<IReadOnlyList<TicketTemplateDto>>.Success(dtos);
+        var templates = await _ticketTemplateRepository.GetAllAsync(entityNodeId, includeInactive, ct);
+        var dtos = templates.Select(MapToDto).ToList();
+        return Result.Success<IReadOnlyList<TicketTemplateDto>>(dtos);
     }
 
     public async Task<Result<TicketTemplateDto>> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         var template = await _ticketTemplateRepository.GetByIdAsync(id, ct);
         if (template is null)
-            return Result.Failure<TicketTemplateDto>(new Error("TICKET_TEMPLATE.NOT_FOUND", "Ticket template not found.", ErrorType.NotFound));
+            return Result.Failure<TicketTemplateDto>(NotFound());
 
-        return Result<TicketTemplateDto>.Success(MapToDto(template));
+        return Result.Success(MapToDto(template));
     }
 
-    public async Task<Result<TicketTemplateDto>> CreateAsync(CreateTicketTemplateRequest request, Guid entityNodeId, Guid actorUserId, CancellationToken ct = default)
+    public async Task<Result<TicketTemplateDto>> CreateAsync(
+        CreateTicketTemplateRequest request, Guid entityNodeId, Guid actorUserId, CancellationToken ct = default)
     {
-        // Check for duplicate name
+        if (entityNodeId == Guid.Empty)
+            return Result.Failure<TicketTemplateDto>(new Error(
+                "TICKET_TEMPLATE.ENTITY_REQUIRED",
+                "A tenant entity is required to create a template.", ErrorType.Validation));
+
         var nameExists = await _ticketTemplateRepository.NameExistsAsync(request.Name, entityNodeId, null, ct);
         if (nameExists)
-            return Result.Failure<TicketTemplateDto>(new Error("TICKET_TEMPLATE.NAME_EXISTS", "A template with this name already exists.", ErrorType.Conflict));
+            return Result.Failure<TicketTemplateDto>(NameExists(request.Name));
 
+        var now = DateTimeOffset.UtcNow;
         var template = new TicketTemplate
         {
-            Id = Guid.NewGuid(),
+            // UUIDv7, matching every other module -- Guid.NewGuid() is v4 and produces random
+            // index inserts on a table clustered by id.
+            Id = Guid.CreateVersion7(),
             EntityId = entityNodeId,
             Name = request.Name,
             Description = request.Description,
@@ -57,26 +66,26 @@ public class TicketTemplateService : ITicketTemplateService
             IsActive = true,
             CreatedById = actorUserId,
             UpdatedById = actorUserId,
-            CreatedAt = DateTimeOffset.UtcNow,
-            UpdatedAt = DateTimeOffset.UtcNow
+            CreatedAt = now,
+            UpdatedAt = now,
         };
 
         await _ticketTemplateRepository.AddAsync(template, ct);
         await _ticketTemplateRepository.SaveChangesAsync(ct);
 
-        return Result<TicketTemplateDto>.Success(MapToDto(template));
+        return Result.Success(MapToDto(template));
     }
 
-    public async Task<Result<TicketTemplateDto>> UpdateAsync(Guid id, UpdateTicketTemplateRequest request, Guid actorUserId, CancellationToken ct = default)
+    public async Task<Result<TicketTemplateDto>> UpdateAsync(
+        Guid id, UpdateTicketTemplateRequest request, Guid actorUserId, CancellationToken ct = default)
     {
         var template = await _ticketTemplateRepository.GetByIdAsync(id, ct);
         if (template is null)
-            return Result.Failure<TicketTemplateDto>(new Error("TICKET_TEMPLATE.NOT_FOUND", "Ticket template not found.", ErrorType.NotFound));
+            return Result.Failure<TicketTemplateDto>(NotFound());
 
-        // Check for duplicate name (excluding current template)
         var nameExists = await _ticketTemplateRepository.NameExistsAsync(request.Name, template.EntityId, id, ct);
         if (nameExists)
-            return Result.Failure<TicketTemplateDto>(new Error("TICKET_TEMPLATE.NAME_EXISTS", "A template with this name already exists.", ErrorType.Conflict));
+            return Result.Failure<TicketTemplateDto>(NameExists(request.Name));
 
         template.Name = request.Name;
         template.Description = request.Description;
@@ -97,19 +106,26 @@ public class TicketTemplateService : ITicketTemplateService
         await _ticketTemplateRepository.UpdateAsync(template, ct);
         await _ticketTemplateRepository.SaveChangesAsync(ct);
 
-        return Result<TicketTemplateDto>.Success(MapToDto(template));
+        return Result.Success(MapToDto(template));
     }
 
     public async Task<Result> DeleteAsync(Guid id, Guid actorUserId, CancellationToken ct = default)
     {
         var template = await _ticketTemplateRepository.GetByIdAsync(id, ct);
         if (template is null)
-            return Result.Failure(new Error("TICKET_TEMPLATE.NOT_FOUND", "Ticket template not found.", ErrorType.NotFound));
+            return Result.Failure(NotFound());
 
-        // Soft delete
+        if (template.IsDeleted)
+            return Result.Failure(new Error(
+                "TICKET_TEMPLATE.ALREADY_DELETED", "Template is already deleted.", ErrorType.BusinessRule));
+
+        var now = DateTimeOffset.UtcNow;
         template.IsDeleted = true;
-        template.DeletedAt = DateTimeOffset.UtcNow;
-        template.UpdatedAt = DateTimeOffset.UtcNow;
+        template.DeletedAt = now;
+        // Deactivated as well as deleted: the soft-delete query filter hides the row, but leaving
+        // IsActive true would make a restored template silently reappear in pickers.
+        template.IsActive = false;
+        template.UpdatedAt = now;
         template.UpdatedById = actorUserId;
 
         await _ticketTemplateRepository.UpdateAsync(template, ct);
@@ -117,6 +133,12 @@ public class TicketTemplateService : ITicketTemplateService
 
         return Result.Success();
     }
+
+    private static Error NotFound()
+        => new("TICKET_TEMPLATE.NOT_FOUND", "Ticket template not found.", ErrorType.NotFound);
+
+    private static Error NameExists(string name)
+        => new("TICKET_TEMPLATE.NAME_EXISTS", $"A template named '{name}' already exists.", ErrorType.Conflict);
 
     private static TicketTemplateDto MapToDto(TicketTemplate template) => new(
         template.Id,

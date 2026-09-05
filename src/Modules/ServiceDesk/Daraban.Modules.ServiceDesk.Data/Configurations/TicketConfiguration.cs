@@ -36,6 +36,7 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
         builder.Property(t => t.CalculatedScore).HasColumnName("calculated_score");
         builder.Property(t => t.Title).HasColumnName("title").IsRequired().HasMaxLength(500);
         builder.Property(t => t.Description).HasColumnName("description").HasMaxLength(10000);
+        builder.Property(t => t.Solution).HasColumnName("solution").HasMaxLength(10000);
         builder.Property(t => t.OpenedAt).HasColumnName("opened_at").IsRequired();
         builder.Property(t => t.LastUpdated).HasColumnName("last_updated");
         builder.Property(t => t.ClosedAt).HasColumnName("closed_at");

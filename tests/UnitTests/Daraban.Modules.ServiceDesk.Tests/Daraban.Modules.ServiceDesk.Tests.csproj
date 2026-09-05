@@ -7,5 +7,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Modules\ServiceDesk\Daraban.Modules.ServiceDesk.Services\Daraban.Modules.ServiceDesk.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\ServiceDesk\Daraban.Modules.ServiceDesk.Data\Daraban.Modules.ServiceDesk.Data.csproj" />
   </ItemGroup>
 </Project>

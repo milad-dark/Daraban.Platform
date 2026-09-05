@@ -32,6 +32,12 @@ public class Ticket : TenantScopedEntity
     /// <summary>Detailed description (HTML allowed for rich text).</summary>
     public string? Description { get; set; }
 
+    /// <summary>
+    /// How the ticket was resolved, captured when it moves to Solved. Without this column the
+    /// technician's fix description had nowhere to live and was silently discarded.
+    /// </summary>
+    public string? Solution { get; set; }
+
     /// <summary>Date the ticket was opened.</summary>
     public DateTimeOffset OpenedAt { get; set; } = DateTimeOffset.UtcNow;
 
@@ -47,10 +53,15 @@ public class Ticket : TenantScopedEntity
     /// <summary>Due date based on SLA.</summary>
     public DateTimeOffset? DueDate { get; set; }
 
-    /// <summary>Escalation level (0=Normal, 1=First, 2=Second).</summary>
+    /// <summary>Escalation level (0=Normal, 1=First, 2=Second). Capped at
+    /// <see cref="MaxEscalationLevel"/>.</summary>
     public int EscalationLevel { get; set; } = 0;
 
-    /// <summary>Whether ticket is escalated.</summary>
+    /// <summary>Highest escalation level a ticket can reach (0 = not escalated).</summary>
+    public const int MaxEscalationLevel = 2;
+
+    /// <summary>Whether ticket is escalated. Derived from <see cref="EscalationLevel"/> -- kept as
+    /// a stored column because it is indexed and filtered on directly.</summary>
     public bool IsEscalated { get; set; } = false;
 
     /// <summary>User who created the ticket (requester).</summary>
@@ -111,6 +122,34 @@ public enum TicketStatus
     Solved = 6,
     Closed = 7,
     Cancelled = 8
+}
+
+/// <summary>
+/// Statuses that count as "open" for dashboard and SLA purposes -- everything a technician still
+/// owes work on. Solved is excluded (the work is done, only closure validation remains), as are
+/// Closed and Cancelled.
+/// </summary>
+public static class TicketStatuses
+{
+    public static readonly TicketStatus[] Open =
+    [
+        TicketStatus.New,
+        TicketStatus.Assigned,
+        TicketStatus.InProgress,
+        TicketStatus.WaitingForUser,
+        TicketStatus.WaitingForSupplier,
+    ];
+
+    /// <summary>Terminal statuses -- no further transitions are permitted out of these.</summary>
+    public static readonly TicketStatus[] Terminal =
+    [
+        TicketStatus.Closed,
+        TicketStatus.Cancelled,
+    ];
+
+    public static bool IsOpen(TicketStatus status) => Open.Contains(status);
+
+    public static bool IsTerminal(TicketStatus status) => Terminal.Contains(status);
 }
 
 public enum TicketPriority

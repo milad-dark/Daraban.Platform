@@ -33,6 +33,39 @@ public class TicketHistory : BaseEntity
 
     // Navigation property
     public Ticket Ticket { get; set; } = null!;
+
+    /// <summary>
+    /// Builds one audit row. Every service that mutates a ticket goes through this so the shape of
+    /// the audit trail is identical regardless of which code path wrote it -- and so adding a
+    /// mutation without recording it becomes a visible omission rather than the default.
+    /// </summary>
+    public static TicketHistory Record(
+        Guid ticketId,
+        Guid actorUserId,
+        string fieldName,
+        string? oldValue,
+        string? newValue,
+        TicketHistoryAction action,
+        string? comment = null)
+    {
+        var now = DateTimeOffset.UtcNow;
+        return new TicketHistory
+        {
+            Id = Guid.CreateVersion7(),
+            TicketId = ticketId,
+            UserId = actorUserId,
+            FieldName = fieldName,
+            OldValue = oldValue,
+            NewValue = newValue,
+            Action = action,
+            OccurredAt = now,
+            Comment = comment,
+            CreatedAt = now,
+            UpdatedAt = now,
+            CreatedById = actorUserId,
+            UpdatedById = actorUserId,
+        };
+    }
 }
 
 public enum TicketHistoryAction
