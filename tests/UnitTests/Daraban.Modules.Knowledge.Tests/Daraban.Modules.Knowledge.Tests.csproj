@@ -7,5 +7,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Modules\Knowledge\Daraban.Modules.Knowledge.Services\Daraban.Modules.Knowledge.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Knowledge\Daraban.Modules.Knowledge.Data\Daraban.Modules.Knowledge.Data.csproj" />
   </ItemGroup>
 </Project>

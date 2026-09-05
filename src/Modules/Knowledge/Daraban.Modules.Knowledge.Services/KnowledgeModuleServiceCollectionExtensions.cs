@@ -1,4 +1,6 @@
 using Daraban.Modules.Knowledge.Data;
+using Daraban.Modules.Knowledge.Data.Repositories;
+using Daraban.Modules.Knowledge.Services.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,12 +15,25 @@ public static class KnowledgeModuleServiceCollectionExtensions
     public static IServiceCollection AddKnowledgeModule(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<KnowledgeDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Postgres")));
+            options.UseNpgsql(
+                configuration.GetConnectionString("Postgres"),
+                // Without this, every module's migrations would share one public.__EFMigrationsHistory
+                // table and step on each other. Keeping the history inside the module's own schema is
+                // what makes "each module owns its own migrations" actually true.
+                npgsql => npgsql.MigrationsHistoryTable("__EFMigrationsHistory", "knowledge")));
 
         services.AddValidatorsFromAssembly(typeof(KnowledgeModuleServiceCollectionExtensions).Assembly);
 
-        // TODO: register this module's I<Resource>Service / I<Resource>Repository pairs here
-        // as they're built out (see Identity/Assets for the concrete pattern).
+        // ---- Repositories (Task 6.4) ----
+        services.AddScoped<IKbCategoryRepository, KbCategoryRepository>();
+        services.AddScoped<IKbArticleRepository, KbArticleRepository>();
+        services.AddScoped<IKbFeedbackRepository, KbFeedbackRepository>();
+        services.AddScoped<IKbTicketLinkRepository, KbTicketLinkRepository>();
+
+        // ---- Services (Task 6.4) ----
+        services.AddScoped<IKbCategoryService, KbCategoryService>();
+        services.AddScoped<IKbArticleService, KbArticleService>();
+        services.AddScoped<IKbTicketLinkService, KbTicketLinkService>();
 
         return services;
     }
