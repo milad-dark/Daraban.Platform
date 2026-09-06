@@ -106,13 +106,18 @@ public class InventoryService(IInventoryRepository repo, IEventPublisher eventPu
     public async Task<Result<SubmissionPagedResult>> ListAsync(
         Guid agentId, int page, int pageSize, CancellationToken ct = default)
     {
-        var skip = (page - 1) * pageSize;
-        var items = await repo.ListAsync(agentId, skip, pageSize, ct);
+        // Clamp before translating: page 0 or a negative page used to produce Skip(-pageSize),
+        // which Postgres rejects outright -- a 500 from a bad query-string parameter.
+        var normalizedPage = page < 1 ? 1 : page;
+        var normalizedPageSize = pageSize switch { < 1 => 20, > 200 => 200, _ => pageSize };
+
+        var skip = (normalizedPage - 1) * normalizedPageSize;
+        var items = await repo.ListAsync(agentId, skip, normalizedPageSize, ct);
         var total = await repo.GetCountAsync(agentId, ct);
 
         return Result.Success(new SubmissionPagedResult(
             items.Select(MapToDto).ToList(),
-            total, page, pageSize));
+            total, normalizedPage, normalizedPageSize));
     }
 
     public async Task MarkProcessingAsync(long submissionId, CancellationToken ct = default)

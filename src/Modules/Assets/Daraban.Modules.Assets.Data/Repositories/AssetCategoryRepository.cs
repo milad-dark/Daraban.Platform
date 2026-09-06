@@ -28,4 +28,12 @@ public class AssetCategoryRepository : IAssetCategoryRepository
 
     public Task SaveChangesAsync(CancellationToken ct = default)
         => _db.SaveChangesAsync(ct);
+
+    public Task<bool> HasChildrenAsync(Guid id, CancellationToken ct = default)
+        // The query filter on DeletedAt already hides soft-deleted children, so a deleted child
+        // does not block deleting its parent.
+        => _db.AssetCategories.AnyAsync(c => c.ParentId == id, ct);
+
+    public Task<bool> HasAssetTypesAsync(Guid id, CancellationToken ct = default)
+        => _db.AssetTypes.AnyAsync(t => t.CategoryId == id, ct);
 }

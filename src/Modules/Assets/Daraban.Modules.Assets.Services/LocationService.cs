@@ -8,6 +8,8 @@ namespace Daraban.Modules.Assets.Services;
 
 public class LocationService : ILocationService
 {
+    private const int MaxTreeDepth = 32;
+
     private readonly ILocationRepository _repository;
 
     public LocationService(ILocationRepository repository) => _repository = repository;
@@ -24,7 +26,7 @@ public class LocationService : ILocationService
     {
         var location = await _repository.GetByIdAsync(id, ct);
         if (location is null)
-            return Result.Failure<LocationDto>(new Error("ASSETS.LOCATION_NOT_FOUND", "Location not found.", ErrorType.NotFound));
+            return Result.Failure<LocationDto>(NotFound());
 
         return Result.Success(new LocationDto(
             location.Id, location.ParentId, location.Name, location.City, location.Country));
@@ -36,7 +38,7 @@ public class LocationService : ILocationService
         {
             var parent = await _repository.GetByIdAsync(request.ParentId.Value, ct);
             if (parent is null)
-                return Result.Failure<LocationDto>(new Error("ASSETS.LOCATION_NOT_FOUND", "Parent location not found.", ErrorType.NotFound));
+                return Result.Failure<LocationDto>(ParentNotFound());
         }
 
         var now = DateTimeOffset.UtcNow;
@@ -64,13 +66,23 @@ public class LocationService : ILocationService
     {
         var location = await _repository.GetByIdAsync(id, ct);
         if (location is null)
-            return Result.Failure<LocationDto>(new Error("ASSETS.LOCATION_NOT_FOUND", "Location not found.", ErrorType.NotFound));
+            return Result.Failure<LocationDto>(NotFound());
 
-        if (request.ParentId is not null && request.ParentId != id)
+        if (request.ParentId != location.ParentId && request.ParentId is not null)
         {
+            // A building cannot be its own room.
+            if (request.ParentId.Value == id)
+                return Result.Failure<LocationDto>(Cycle());
+
             var parent = await _repository.GetByIdAsync(request.ParentId.Value, ct);
             if (parent is null)
-                return Result.Failure<LocationDto>(new Error("ASSETS.LOCATION_NOT_FOUND", "Parent location not found.", ErrorType.NotFound));
+                return Result.Failure<LocationDto>(ParentNotFound());
+
+            // Deeper cycles (Building -> Floor -> Room, then move Building under Room) are caught
+            // by walking the full tree in memory -- the location tree is small by nature.
+            var all = await _repository.GetAllAsync(ct);
+            if (WouldCreateCycle(all, id, request.ParentId.Value))
+                return Result.Failure<LocationDto>(Cycle());
         }
 
         location.ParentId = request.ParentId;
@@ -91,12 +103,61 @@ public class LocationService : ILocationService
     {
         var location = await _repository.GetByIdAsync(id, ct);
         if (location is null)
-            return Result.Failure(new Error("ASSETS.LOCATION_NOT_FOUND", "Location not found.", ErrorType.NotFound));
+            return Result.Failure(NotFound());
 
-        location.DeletedAt = DateTimeOffset.UtcNow;
-        location.UpdatedAt = DateTimeOffset.UtcNow;
+        // Deleting a parent location strands its children on a row hidden by the query filter.
+        if (await _repository.HasChildrenAsync(id, ct))
+            return Result.Failure(new Error(
+                "ASSETS.LOCATION_HAS_CHILDREN",
+                "Cannot delete a location that still has child locations.", ErrorType.BusinessRule));
+
+        // Assets filed here keep their LocationId; deleting the location would orphan them.
+        if (await _repository.HasAssetsAsync(id, ct))
+            return Result.Failure(new Error(
+                "ASSETS.LOCATION_HAS_ASSETS",
+                "Cannot delete a location that still has assets placed at it.", ErrorType.BusinessRule));
+
+        var now = DateTimeOffset.UtcNow;
+        location.DeletedAt = now;
+        location.UpdatedAt = now;
         await _repository.SaveChangesAsync(ct);
 
         return Result.Success();
     }
+
+    // ---- helpers ---------------------------------------------------------------------------
+
+    private static bool WouldCreateCycle(IReadOnlyList<Location> all, Guid movedId, Guid newParentId)
+    {
+        var byId = all.ToDictionary(l => l.Id);
+        var seen = new HashSet<Guid>();
+        var currentId = newParentId;
+
+        for (var depth = 0; depth < MaxTreeDepth && byId.TryGetValue(currentId, out var current); depth++)
+        {
+            if (current.Id == movedId)
+                return true;
+
+            // Guard against a pre-existing cycle in the stored data: stop instead of looping.
+            if (!seen.Add(current.Id))
+                return true;
+
+            if (current.ParentId is null)
+                return false;
+
+            currentId = current.ParentId.Value;
+        }
+
+        return false;
+    }
+
+    private static Error NotFound()
+        => new("ASSETS.LOCATION_NOT_FOUND", "Location not found.", ErrorType.NotFound);
+
+    private static Error ParentNotFound()
+        => new("ASSETS.LOCATION_NOT_FOUND", "Parent location not found.", ErrorType.NotFound);
+
+    private static Error Cycle()
+        => new("ASSETS.LOCATION_CYCLE",
+            "Cannot move a location beneath itself or one of its own descendants.", ErrorType.BusinessRule);
 }

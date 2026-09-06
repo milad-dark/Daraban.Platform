@@ -129,11 +129,11 @@ public class AssetReferenceDataServiceTests
 
         private AssetCategoryService CreateSut() => new(_repo.Object);
 
-        private static AssetCategory Category(Guid? id = null, Guid? parentId = null) => new()
+        private static AssetCategory Category(Guid? id = null, Guid? parentId = null, string? name = null) => new()
         {
             Id = id ?? Guid.CreateVersion7(),
             ParentId = parentId,
-            Name = "Hardware",
+            Name = name ?? "Hardware",
         };
 
         [Fact]
@@ -165,22 +165,109 @@ public class AssetReferenceDataServiceTests
         }
 
         [Fact]
-        public async Task UpdateAsync_Skips_The_Parent_Lookup_When_Reparenting_To_Itself()
+        public async Task UpdateAsync_Rejects_Making_A_Category_Its_Own_Parent()
         {
             var category = Category();
 
             _repo.Setup(r => r.GetByIdAsync(category.Id, It.IsAny<CancellationToken>())).ReturnsAsync(category);
-            _repo.Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
             var result = await CreateSut().UpdateAsync(category.Id, new CreateAssetCategoryRequest(category.Id, "Hardware", null));
 
-            // KNOWN GAP, pinned deliberately: the `request.ParentId != id` guard skips validation
-            // for self-parenting rather than rejecting it, so this succeeds and writes a
-            // self-referencing row. Contrast KbCategoryService, which returns
-            // KNOWLEDGE.CATEGORY_CYCLE. If AssetCategoryService is hardened later, this test
-            // should be inverted.
+            // A self-referencing row is a one-node cycle: subtree walks never terminate on it.
+            Assert.False(result.IsSuccess);
+            Assert.Equal("ASSETS.CATEGORY_CYCLE", result.Error!.Code);
+            Assert.Equal(ErrorType.BusinessRule, result.Error.Type);
+            Assert.Null(category.ParentId);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_Rejects_Moving_A_Category_Under_Its_Own_Descendant()
+        {
+            var parent = Category();
+            var child = Category(id: Guid.CreateVersion7(), parentId: parent.Id);
+
+            var tree = new List<AssetCategory> { parent, child };
+
+            _repo.Setup(r => r.GetByIdAsync(parent.Id, It.IsAny<CancellationToken>())).ReturnsAsync(parent);
+            _repo.Setup(r => r.GetByIdAsync(child.Id, It.IsAny<CancellationToken>())).ReturnsAsync(child);
+            _repo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(tree);
+
+            // Move the PARENT under its own CHILD.
+            var result = await CreateSut().UpdateAsync(parent.Id, new CreateAssetCategoryRequest(child.Id, "Hardware", null));
+
+            Assert.False(result.IsSuccess);
+            Assert.Equal("ASSETS.CATEGORY_CYCLE", result.Error!.Code);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_Allows_A_Legitimate_Reparent()
+        {
+            var category = Category();
+            var newParent = Category(id: Guid.CreateVersion7());
+            var tree = new List<AssetCategory> { category, newParent };
+
+            _repo.Setup(r => r.GetByIdAsync(category.Id, It.IsAny<CancellationToken>())).ReturnsAsync(category);
+            _repo.Setup(r => r.GetByIdAsync(newParent.Id, It.IsAny<CancellationToken>())).ReturnsAsync(newParent);
+            _repo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(tree);
+            _repo.Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+            var result = await CreateSut().UpdateAsync(category.Id, new CreateAssetCategoryRequest(newParent.Id, "Hardware", null));
+
             Assert.True(result.IsSuccess);
-            Assert.Equal(category.Id, category.ParentId);
+            Assert.Equal(newParent.Id, category.ParentId);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_Survives_A_PreExisting_Cycle_In_Stored_Data()
+        {
+            // Two categories pointing at each other -- reachable only by direct SQL. A third
+            // category under the corrupted pair is then re-parented somewhere legitimate, and
+            // the ancestor walk must terminate on the corrupted chain, not hang on it.
+            var a = Category(name: "A");
+            var b = Category(id: Guid.CreateVersion7(), parentId: a.Id, name: "B");
+            a.ParentId = b.Id; // the corruption: A's parent is B, B's parent is A
+
+            var orphan = Category(id: Guid.CreateVersion7(), parentId: b.Id, name: "C");
+            var freshRoot = Category(id: Guid.CreateVersion7(), name: "Fresh root");
+            var tree = new List<AssetCategory> { a, b, orphan, freshRoot };
+
+            _repo.Setup(r => r.GetByIdAsync(orphan.Id, It.IsAny<CancellationToken>())).ReturnsAsync(orphan);
+            _repo.Setup(r => r.GetByIdAsync(freshRoot.Id, It.IsAny<CancellationToken>())).ReturnsAsync(freshRoot);
+            _repo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(tree);
+            _repo.Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+            // Re-parenting C under a clean root is a legal move; the walk up from the old chain
+            // never even starts. But the walk up from Fresh root terminates at a root, and moving
+            // A itself (whose chain is corrupted) must be rejected rather than looped forever:
+            var result = await CreateSut().UpdateAsync(
+                orphan.Id, new CreateAssetCategoryRequest(freshRoot.Id, "C", null));
+
+            Assert.True(result.IsSuccess);
+            Assert.Equal(freshRoot.Id, orphan.ParentId);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_Terminates_When_The_Moved_Category_Sits_On_A_Corrupted_Chain()
+        {
+            var a = Category(name: "A");
+            var b = Category(id: Guid.CreateVersion7(), parentId: a.Id, name: "B");
+            a.ParentId = b.Id; // corrupted A <-> B cycle
+
+            var freshRoot = Category(id: Guid.CreateVersion7(), name: "Fresh root");
+            var tree = new List<AssetCategory> { a, b, freshRoot };
+
+            _repo.Setup(r => r.GetByIdAsync(a.Id, It.IsAny<CancellationToken>())).ReturnsAsync(a);
+            _repo.Setup(r => r.GetByIdAsync(freshRoot.Id, It.IsAny<CancellationToken>())).ReturnsAsync(freshRoot);
+            _repo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(tree);
+            _repo.Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+            // Move A under a clean root: walking A's OWN ancestry to sanity-check is not needed
+            // (the walk goes up from the NEW parent), but the new parent's chain is clean, so
+            // this succeeds -- the point is that nothing above threw or hung.
+            var result = await CreateSut().UpdateAsync(
+                a.Id, new CreateAssetCategoryRequest(freshRoot.Id, "A", null));
+
+            Assert.True(result.IsSuccess);
         }
 
         [Fact]
@@ -199,19 +286,48 @@ public class AssetReferenceDataServiceTests
         }
 
         [Fact]
-        public async Task DeleteAsync_SoftDeletes_Without_Checking_For_Children()
+        public async Task DeleteAsync_Refuses_While_Children_Exist()
         {
             var category = Category();
 
             _repo.Setup(r => r.GetByIdAsync(category.Id, It.IsAny<CancellationToken>())).ReturnsAsync(category);
+            _repo.Setup(r => r.HasChildrenAsync(category.Id, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+            var result = await CreateSut().DeleteAsync(category.Id);
+
+            // Soft-deleting a parent strands the children on a row the query filter hides.
+            Assert.False(result.IsSuccess);
+            Assert.Equal("ASSETS.CATEGORY_HAS_CHILDREN", result.Error!.Code);
+            Assert.Null(category.DeletedAt);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_Refuses_While_Asset_Types_Are_Filed_Under_It()
+        {
+            var category = Category();
+
+            _repo.Setup(r => r.GetByIdAsync(category.Id, It.IsAny<CancellationToken>())).ReturnsAsync(category);
+            _repo.Setup(r => r.HasChildrenAsync(category.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+            _repo.Setup(r => r.HasAssetTypesAsync(category.Id, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+            var result = await CreateSut().DeleteAsync(category.Id);
+
+            Assert.False(result.IsSuccess);
+            Assert.Equal("ASSETS.CATEGORY_HAS_TYPES", result.Error!.Code);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_SoftDeletes_An_Unreferenced_Category()
+        {
+            var category = Category();
+
+            _repo.Setup(r => r.GetByIdAsync(category.Id, It.IsAny<CancellationToken>())).ReturnsAsync(category);
+            _repo.Setup(r => r.HasChildrenAsync(category.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+            _repo.Setup(r => r.HasAssetTypesAsync(category.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
             _repo.Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
             var result = await CreateSut().DeleteAsync(category.Id);
 
-            // KNOWN GAP, pinned deliberately: unlike KbCategoryService, this does not refuse when
-            // child categories or asset types still reference the row. The FK is Restrict at the
-            // database level, but this is a soft delete, so the children silently keep pointing at
-            // a deleted parent.
             Assert.True(result.IsSuccess);
             Assert.NotNull(category.DeletedAt);
         }
@@ -225,9 +341,10 @@ public class AssetReferenceDataServiceTests
 
         private LocationService CreateSut() => new(_repo.Object);
 
-        private static Location Building(Guid? id = null) => new()
+        private static Location Building(Guid? id = null, Guid? parentId = null) => new()
         {
             Id = id ?? Guid.CreateVersion7(),
+            ParentId = parentId,
             Name = "HQ",
             City = "Stockholm",
             Country = "SE",
@@ -273,11 +390,97 @@ public class AssetReferenceDataServiceTests
         }
 
         [Fact]
-        public async Task DeleteAsync_SoftDeletes()
+        public async Task UpdateAsync_Rejects_Making_A_Location_Its_Own_Parent()
         {
             var location = Building();
 
             _repo.Setup(r => r.GetByIdAsync(location.Id, It.IsAny<CancellationToken>())).ReturnsAsync(location);
+
+            var result = await CreateSut().UpdateAsync(
+                location.Id, new CreateLocationRequest(location.Id, "HQ", null, null, null, null));
+
+            // A building cannot be its own room.
+            Assert.False(result.IsSuccess);
+            Assert.Equal("ASSETS.LOCATION_CYCLE", result.Error!.Code);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_Rejects_Moving_A_Location_Under_Its_Own_Descendant()
+        {
+            var building = Building();
+            var floor = Building(id: Guid.CreateVersion7(), parentId: building.Id);
+            var tree = new List<Location> { building, floor };
+
+            _repo.Setup(r => r.GetByIdAsync(building.Id, It.IsAny<CancellationToken>())).ReturnsAsync(building);
+            _repo.Setup(r => r.GetByIdAsync(floor.Id, It.IsAny<CancellationToken>())).ReturnsAsync(floor);
+            _repo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(tree);
+
+            // Move the BUILDING under its own FLOOR.
+            var result = await CreateSut().UpdateAsync(
+                building.Id, new CreateLocationRequest(floor.Id, "HQ", null, null, null, null));
+
+            Assert.False(result.IsSuccess);
+            Assert.Equal("ASSETS.LOCATION_CYCLE", result.Error!.Code);
+        }
+
+        [Fact]
+        public async Task UpdateAsync_Allows_A_Legitimate_Reparent()
+        {
+            var room = Building();
+            var newBuilding = Building(id: Guid.CreateVersion7());
+            var tree = new List<Location> { room, newBuilding };
+
+            _repo.Setup(r => r.GetByIdAsync(room.Id, It.IsAny<CancellationToken>())).ReturnsAsync(room);
+            _repo.Setup(r => r.GetByIdAsync(newBuilding.Id, It.IsAny<CancellationToken>())).ReturnsAsync(newBuilding);
+            _repo.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(tree);
+            _repo.Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+            var result = await CreateSut().UpdateAsync(
+                room.Id, new CreateLocationRequest(newBuilding.Id, "Room 101", null, null, "Stockholm", "SE"));
+
+            Assert.True(result.IsSuccess);
+            Assert.Equal(newBuilding.Id, room.ParentId);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_Refuses_While_Children_Exist()
+        {
+            var location = Building();
+
+            _repo.Setup(r => r.GetByIdAsync(location.Id, It.IsAny<CancellationToken>())).ReturnsAsync(location);
+            _repo.Setup(r => r.HasChildrenAsync(location.Id, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+            var result = await CreateSut().DeleteAsync(location.Id);
+
+            Assert.False(result.IsSuccess);
+            Assert.Equal("ASSETS.LOCATION_HAS_CHILDREN", result.Error!.Code);
+            Assert.Null(location.DeletedAt);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_Refuses_While_Assets_Are_Placed_There()
+        {
+            var location = Building();
+
+            _repo.Setup(r => r.GetByIdAsync(location.Id, It.IsAny<CancellationToken>())).ReturnsAsync(location);
+            _repo.Setup(r => r.HasChildrenAsync(location.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+            _repo.Setup(r => r.HasAssetsAsync(location.Id, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+            var result = await CreateSut().DeleteAsync(location.Id);
+
+            // Assets filed here keep their LocationId; deleting would orphan them.
+            Assert.False(result.IsSuccess);
+            Assert.Equal("ASSETS.LOCATION_HAS_ASSETS", result.Error!.Code);
+        }
+
+        [Fact]
+        public async Task DeleteAsync_SoftDeletes_An_Empty_Location()
+        {
+            var location = Building();
+
+            _repo.Setup(r => r.GetByIdAsync(location.Id, It.IsAny<CancellationToken>())).ReturnsAsync(location);
+            _repo.Setup(r => r.HasChildrenAsync(location.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+            _repo.Setup(r => r.HasAssetsAsync(location.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
             _repo.Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
             var result = await CreateSut().DeleteAsync(location.Id);

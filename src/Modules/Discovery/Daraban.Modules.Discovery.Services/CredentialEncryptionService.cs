@@ -67,7 +67,18 @@ public class CredentialEncryptionService : ICredentialEncryptionService
         if (string.IsNullOrEmpty(cipherText))
             return cipherText;
 
-        var data = Convert.FromBase64String(cipherText);
+        // Corrupted or non-cipher input should surface as the caller-expects CryptographicException,
+        // not as a raw FormatException leaking out of Convert.FromBase64String.
+        byte[] data;
+        try
+        {
+            data = Convert.FromBase64String(cipherText);
+        }
+        catch (FormatException ex)
+        {
+            throw new CryptographicException("Invalid cipher text format.", ex);
+        }
+
         if (data.Length < NonceSize + TagSize)
             throw new CryptographicException("Invalid cipher text format.");
 

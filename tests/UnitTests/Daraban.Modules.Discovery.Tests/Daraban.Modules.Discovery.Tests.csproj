@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Moq" />
+    <!-- CredentialEncryptionService takes IConfiguration; the test builds one in memory. -->
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Modules\Discovery\Daraban.Modules.Discovery.Services\Daraban.Modules.Discovery.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Discovery\Daraban.Modules.Discovery.Data\Daraban.Modules.Discovery.Data.csproj" />
+  </ItemGroup>
+</Project>

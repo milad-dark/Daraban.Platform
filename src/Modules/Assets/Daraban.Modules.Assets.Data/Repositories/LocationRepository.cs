@@ -27,4 +27,12 @@ public class LocationRepository : ILocationRepository
 
     public Task SaveChangesAsync(CancellationToken ct = default)
         => _db.SaveChangesAsync(ct);
+
+    public Task<bool> HasChildrenAsync(Guid id, CancellationToken ct = default)
+        // The query filter on DeletedAt already hides soft-deleted children.
+        => _db.Locations.AnyAsync(l => l.ParentId == id, ct);
+
+    public Task<bool> HasAssetsAsync(Guid id, CancellationToken ct = default)
+        // Assets has a soft-delete filter on DeletedAt too, so retired assets don't block.
+        => _db.Assets.AnyAsync(a => a.LocationId == id, ct);
 }

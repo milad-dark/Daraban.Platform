@@ -138,8 +138,10 @@ public class SoftwareInstallationService : ISoftwareInstallationService
             await _licenseRepository.UpdateAsync(license, ct);
         }
 
+        // Both repositories share one scoped DbContext, so one SaveChanges commits the
+        // installation row and the seat-counter together. Saving through the license repository
+        // when no license was touched would issue a pointless second flush.
         await _installationRepository.SaveChangesAsync(ct);
-        await _licenseRepository.SaveChangesAsync(ct);
 
         return Result.Success(MapToDto(installation));
     }
@@ -172,8 +174,8 @@ public class SoftwareInstallationService : ISoftwareInstallationService
             }
         }
 
+        // One shared DbContext: one SaveChanges flushes the deactivation and the seat release.
         await _installationRepository.SaveChangesAsync(ct);
-        await _licenseRepository.SaveChangesAsync(ct);
 
         return Result.Success();
     }
