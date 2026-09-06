@@ -10,7 +10,7 @@ public class SoftwareDbContext : DbContext
     public SoftwareDbContext(DbContextOptions<SoftwareDbContext> options) : base(options) { }
 
     // Software entities
-    public DbSet<Software> Softwares => Set<Software>();
+    public DbSet<SoftwareProduct> Softwares => Set<SoftwareProduct>();
     public DbSet<SoftwareLicense> Licenses => Set<SoftwareLicense>();
     public DbSet<SoftwareInstallation> Installations => Set<SoftwareInstallation>();
 

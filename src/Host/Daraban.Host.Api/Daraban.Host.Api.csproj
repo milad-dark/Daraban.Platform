@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\Modules\ServiceDesk\Daraban.Modules.ServiceDesk.Api\Daraban.Modules.ServiceDesk.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Financial\Daraban.Modules.Financial.Api\Daraban.Modules.Financial.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Knowledge\Daraban.Modules.Knowledge.Api\Daraban.Modules.Knowledge.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Software\Daraban.Modules.Software.Api\Daraban.Modules.Software.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Automation\Daraban.Modules.Automation.Api\Daraban.Modules.Automation.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Notifications\Daraban.Modules.Notifications.Api\Daraban.Modules.Notifications.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Reporting\Daraban.Modules.Reporting.Api\Daraban.Modules.Reporting.Api.csproj" />
@@ -23,6 +24,7 @@
     <ProjectReference Include="..\..\Modules\ServiceDesk\Daraban.Modules.ServiceDesk.Data\Daraban.Modules.ServiceDesk.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Financial\Daraban.Modules.Financial.Data\Daraban.Modules.Financial.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Knowledge\Daraban.Modules.Knowledge.Data\Daraban.Modules.Knowledge.Data.csproj" />
+    <ProjectReference Include="..\..\Modules\Software\Daraban.Modules.Software.Data\Daraban.Modules.Software.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Automation\Daraban.Modules.Automation.Data\Daraban.Modules.Automation.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Notifications\Daraban.Modules.Notifications.Data\Daraban.Modules.Notifications.Data.csproj" />
     <ProjectReference Include="..\..\Modules\Reporting\Daraban.Modules.Reporting.Data\Daraban.Modules.Reporting.Data.csproj" />

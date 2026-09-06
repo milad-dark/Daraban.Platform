@@ -35,7 +35,7 @@ public class SupplierService : ISupplierService
     {
         var supplier = await _supplierRepository.GetByIdWithDetailsAsync(id, ct);
         if (supplier is null)
-            return Result.Failure<SupplierDto>(new Error("SUPPLIER.NOT_FOUND", "Supplier not found.", ErrorType.NotFound));
+            return Result.Failure<SupplierDto>(SupplierNotFound());
 
         return Result<SupplierDto>.Success(MapToDto(supplier));
     }
@@ -49,7 +49,7 @@ public class SupplierService : ISupplierService
 
         var supplier = new Supplier
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             EntityId = request.EntityNodeId,
             Name = request.Name,
             TradingName = request.TradingName,
@@ -89,7 +89,7 @@ public class SupplierService : ISupplierService
     {
         var supplier = await _supplierRepository.GetByIdAsync(id, ct);
         if (supplier is null)
-            return Result.Failure<SupplierDto>(new Error("SUPPLIER.NOT_FOUND", "Supplier not found.", ErrorType.NotFound));
+            return Result.Failure<SupplierDto>(SupplierNotFound());
 
         // Validate unique name (excluding current supplier)
         var nameExists = await _supplierRepository.NameExistsAsync(request.Name, supplier.EntityId, id, ct);
@@ -131,12 +131,15 @@ public class SupplierService : ISupplierService
     {
         var supplier = await _supplierRepository.GetByIdAsync(id, ct);
         if (supplier is null)
-            return Result.Failure(new Error("SUPPLIER.NOT_FOUND", "Supplier not found.", ErrorType.NotFound));
+            return Result.Failure(SupplierNotFound());
 
-        // Soft delete
+        // Soft delete AND deactivate: picker queries filter on IsActive, so a deleted-but-active
+        // row would keep appearing in dropdowns while being unopenable in detail views.
+        var now = DateTimeOffset.UtcNow;
         supplier.IsDeleted = true;
-        supplier.DeletedAt = DateTimeOffset.UtcNow;
-        supplier.UpdatedAt = DateTimeOffset.UtcNow;
+        supplier.DeletedAt = now;
+        supplier.IsActive = false;
+        supplier.UpdatedAt = now;
         supplier.UpdatedById = actorUserId;
 
         await _supplierRepository.UpdateAsync(supplier, ct);
@@ -181,4 +184,7 @@ public class SupplierService : ISupplierService
         supplier.Phone,
         supplier.Type,
         supplier.IsActive);
+
+    private static Error SupplierNotFound()
+        => new("SUPPLIER.NOT_FOUND", "Supplier not found.", ErrorType.NotFound);
 }

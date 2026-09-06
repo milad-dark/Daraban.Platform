@@ -2,13 +2,16 @@ using Daraban.Modules.Software.Services.Dtos;
 using Daraban.Modules.Software.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
+using Daraban.Platform.Hosting.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Daraban.Modules.Software.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/software-installations")]
+[Authorize]
 public class SoftwareInstallationsController : ControllerBase
 {
     private readonly ISoftwareInstallationService _installationService;
@@ -21,8 +24,8 @@ public class SoftwareInstallationsController : ControllerBase
     }
 
     [HttpGet]
+    [RequirePermission("software.read")]
     public async Task<IActionResult> GetPaged(
-        [FromQuery] Guid entityNodeId,
         [FromQuery] Guid? softwareId = null,
         [FromQuery] Guid? licenseId = null,
         [FromQuery] Guid? assetId = null,
@@ -31,7 +34,9 @@ public class SoftwareInstallationsController : ControllerBase
         [FromQuery] int pageSize = 20,
         CancellationToken ct = default)
     {
-        var result = await _installationService.GetPagedAsync(entityNodeId, softwareId, licenseId, assetId, isActive, page, pageSize, ct);
+        // Tenant from the JWT, never from the query string.
+        var result = await _installationService.GetPagedAsync(
+            _currentUser.ActiveEntityId, softwareId, licenseId, assetId, isActive, page, pageSize, ct);
         if (!result.IsSuccess)
             return ProblemFrom(result.Error!);
 
@@ -39,6 +44,7 @@ public class SoftwareInstallationsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [RequirePermission("software.read")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var result = await _installationService.GetByIdAsync(id, ct);
@@ -49,6 +55,7 @@ public class SoftwareInstallationsController : ControllerBase
     }
 
     [HttpGet("asset/{assetId:guid}")]
+    [RequirePermission("software.read")]
     public async Task<IActionResult> GetByAssetId(Guid assetId, CancellationToken ct)
     {
         var result = await _installationService.GetByAssetIdAsync(assetId, ct);
@@ -59,6 +66,7 @@ public class SoftwareInstallationsController : ControllerBase
     }
 
     [HttpGet("software/{softwareId:guid}")]
+    [RequirePermission("software.read")]
     public async Task<IActionResult> GetBySoftwareId(Guid softwareId, CancellationToken ct)
     {
         var result = await _installationService.GetBySoftwareIdAsync(softwareId, ct);
@@ -69,6 +77,7 @@ public class SoftwareInstallationsController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("software.write")]
     public async Task<IActionResult> Create([FromBody] CreateSoftwareInstallationRequest request, CancellationToken ct)
     {
         var result = await _installationService.CreateAsync(request, _currentUser.UserId, ct);
@@ -79,6 +88,7 @@ public class SoftwareInstallationsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/uninstall")]
+    [RequirePermission("software.write")]
     public async Task<IActionResult> Uninstall(Guid id, CancellationToken ct)
     {
         var result = await _installationService.UninstallAsync(id, _currentUser.UserId, ct);
@@ -89,6 +99,7 @@ public class SoftwareInstallationsController : ControllerBase
     }
 
     [HttpGet("asset/{assetId:guid}/summary")]
+    [RequirePermission("software.read")]
     public async Task<IActionResult> GetAssetSummary(Guid assetId, CancellationToken ct)
     {
         var result = await _installationService.GetAssetSummaryAsync(assetId, ct);

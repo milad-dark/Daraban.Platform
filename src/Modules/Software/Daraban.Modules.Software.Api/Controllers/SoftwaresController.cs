@@ -3,13 +3,16 @@ using Daraban.Modules.Software.Services.Dtos;
 using Daraban.Modules.Software.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
+using Daraban.Platform.Hosting.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Daraban.Modules.Software.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/softwares")]
+[Authorize]
 public class SoftwaresController : ControllerBase
 {
     private readonly ISoftwareService _softwareService;
@@ -22,8 +25,8 @@ public class SoftwaresController : ControllerBase
     }
 
     [HttpGet]
+    [RequirePermission("software.read")]
     public async Task<IActionResult> GetPaged(
-        [FromQuery] Guid entityNodeId,
         [FromQuery] string? search = null,
         [FromQuery] SoftwareCategory? category = null,
         [FromQuery] bool? isActive = null,
@@ -31,7 +34,11 @@ public class SoftwaresController : ControllerBase
         [FromQuery] int pageSize = 20,
         CancellationToken ct = default)
     {
-        var result = await _softwareService.GetPagedAsync(entityNodeId, search, category, isActive, page, pageSize, ct);
+        // The tenant comes from the caller's validated JWT, never from the query string -- the
+        // previous signature accepted entityNodeId from the client, so passing another entity's
+        // id read that tenant's catalog (horizontal privilege escalation).
+        var result = await _softwareService.GetPagedAsync(
+            _currentUser.ActiveEntityId, search, category, isActive, page, pageSize, ct);
         if (!result.IsSuccess)
             return ProblemFrom(result.Error!);
 
@@ -39,6 +46,7 @@ public class SoftwaresController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [RequirePermission("software.read")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var result = await _softwareService.GetByIdAsync(id, ct);
@@ -49,9 +57,13 @@ public class SoftwaresController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("software.write")]
     public async Task<IActionResult> Create([FromBody] CreateSoftwareRequest request, CancellationToken ct)
     {
-        var result = await _softwareService.CreateAsync(request, _currentUser.UserId, ct);
+        // Stamp the tenant server-side: a client-supplied EntityNodeId would let any caller file
+        // catalog entries into another tenant.
+        var result = await _softwareService.CreateAsync(
+            request with { EntityNodeId = _currentUser.ActiveEntityId }, _currentUser.UserId, ct);
         if (!result.IsSuccess)
             return ProblemFrom(result.Error!);
 
@@ -59,6 +71,7 @@ public class SoftwaresController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [RequirePermission("software.write")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSoftwareRequest request, CancellationToken ct)
     {
         var result = await _softwareService.UpdateAsync(id, request, _currentUser.UserId, ct);
@@ -69,6 +82,7 @@ public class SoftwaresController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [RequirePermission("software.delete")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var result = await _softwareService.DeleteAsync(id, _currentUser.UserId, ct);

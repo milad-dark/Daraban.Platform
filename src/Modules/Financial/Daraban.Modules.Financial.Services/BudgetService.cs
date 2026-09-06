@@ -23,11 +23,13 @@ public class BudgetService : IBudgetService
         int pageSize,
         CancellationToken ct = default)
     {
+        var (normalizedPage, normalizedPageSize) = NormalizePaging(page, pageSize);
+
         var (items, totalCount) = await _budgetRepository.GetPagedAsync(
-            entityNodeId, search, isActive, page, pageSize, ct);
+            entityNodeId, search, isActive, normalizedPage, normalizedPageSize, ct);
 
         var dtos = items.Select(MapToListDto).ToList();
-        return Result<BudgetPagedResult>.Success(new BudgetPagedResult(dtos, totalCount, page, pageSize));
+        return Result.Success(new BudgetPagedResult(dtos, totalCount, normalizedPage, normalizedPageSize));
     }
 
     public async Task<Result<BudgetDto>> GetByIdAsync(Guid id, CancellationToken ct = default)
@@ -44,11 +46,20 @@ public class BudgetService : IBudgetService
         // Validate unique name
         var nameExists = await _budgetRepository.NameExistsAsync(request.Name, request.EntityNodeId, null, ct);
         if (nameExists)
-            return Result.Failure<BudgetDto>(new Error("BUDGET.NAME_EXISTS", "A budget with this name already exists.", ErrorType.Conflict));
+            return Result.Failure<BudgetDto>(BudgetNameExists(request.Name));
+
+        // A budget that ends before it starts is unusable and shows negative remaining from day one.
+        if (request.EndDate < request.StartDate)
+            return Result.Failure<BudgetDto>(new Error(
+                "BUDGET.INVALID_RANGE", "Budget end date must be on or after its start date.", ErrorType.Validation));
+
+        if (request.Amount < 0)
+            return Result.Failure<BudgetDto>(new Error(
+                "BUDGET.NEGATIVE_AMOUNT", "Budget amount cannot be negative.", ErrorType.Validation));
 
         var budget = new Budget
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             EntityId = request.EntityNodeId,
             Name = request.Name,
             Reference = request.Reference,
@@ -68,19 +79,35 @@ public class BudgetService : IBudgetService
         await _budgetRepository.AddAsync(budget, ct);
         await _budgetRepository.SaveChangesAsync(ct);
 
-        return Result<BudgetDto>.Success(MapToDto(budget));
+        return Result.Success(MapToDto(budget));
     }
 
     public async Task<Result<BudgetDto>> UpdateAsync(Guid id, UpdateBudgetRequest request, Guid actorUserId, CancellationToken ct = default)
     {
         var budget = await _budgetRepository.GetByIdAsync(id, ct);
         if (budget is null)
-            return Result.Failure<BudgetDto>(new Error("BUDGET.NOT_FOUND", "Budget not found.", ErrorType.NotFound));
+            return Result.Failure<BudgetDto>(BudgetNotFound());
 
         // Validate unique name (excluding current budget)
         var nameExists = await _budgetRepository.NameExistsAsync(request.Name, budget.EntityId, id, ct);
         if (nameExists)
-            return Result.Failure<BudgetDto>(new Error("BUDGET.NAME_EXISTS", "A budget with this name already exists.", ErrorType.Conflict));
+            return Result.Failure<BudgetDto>(BudgetNameExists(request.Name));
+
+        if (request.EndDate < request.StartDate)
+            return Result.Failure<BudgetDto>(new Error(
+                "BUDGET.INVALID_RANGE", "Budget end date must be on or after its start date.", ErrorType.Validation));
+
+        if (request.Amount < 0)
+            return Result.Failure<BudgetDto>(new Error(
+                "BUDGET.NEGATIVE_AMOUNT", "Budget amount cannot be negative.", ErrorType.Validation));
+
+        // A budget that has already been spent against must never have its ceiling dropped below
+        // the amount actually spent -- that would retroactively make the overspend invisible.
+        if (request.Amount < budget.Spent)
+            return Result.Failure<BudgetDto>(new Error(
+                "BUDGET.AMOUNT_BELOW_SPENT",
+                $"Budget amount cannot be reduced below the {budget.Spent} already spent.",
+                ErrorType.BusinessRule));
 
         budget.Name = request.Name;
         budget.Reference = request.Reference;
@@ -97,19 +124,33 @@ public class BudgetService : IBudgetService
         await _budgetRepository.UpdateAsync(budget, ct);
         await _budgetRepository.SaveChangesAsync(ct);
 
-        return Result<BudgetDto>.Success(MapToDto(budget));
+        return Result.Success(MapToDto(budget));
     }
 
     public async Task<Result> DeleteAsync(Guid id, Guid actorUserId, CancellationToken ct = default)
     {
-        var budget = await _budgetRepository.GetByIdAsync(id, ct);
+        var budget = await _budgetRepository.GetByIdWithDetailsAsync(id, ct);
         if (budget is null)
-            return Result.Failure(new Error("BUDGET.NOT_FOUND", "Budget not found.", ErrorType.NotFound));
+            return Result.Failure(BudgetNotFound());
 
-        // Soft delete
+        // A budget with children, purchases, or infocom entries has live bookkeeping attached.
+        // Orphaning it via a bare soft delete would leave those records pointing at nothing.
+        if (budget.ChildBudgets.Count > 0)
+            return Result.Failure(new Error(
+                "BUDGET.HAS_CHILDREN", "Cannot delete a budget that has child budgets.", ErrorType.BusinessRule));
+
+        if (budget.Purchases.Count > 0)
+            return Result.Failure(new Error(
+                "BUDGET.HAS_PURCHASES", "Cannot delete a budget that has purchases attached.", ErrorType.BusinessRule));
+
+        if (budget.InfocomEntries.Count > 0)
+            return Result.Failure(new Error(
+                "BUDGET.HAS_INFOCOMS", "Cannot delete a budget that has infocom entries attached.", ErrorType.BusinessRule));
+
+        var now = DateTimeOffset.UtcNow;
         budget.IsDeleted = true;
-        budget.DeletedAt = DateTimeOffset.UtcNow;
-        budget.UpdatedAt = DateTimeOffset.UtcNow;
+        budget.DeletedAt = now;
+        budget.UpdatedAt = now;
         budget.UpdatedById = actorUserId;
 
         await _budgetRepository.UpdateAsync(budget, ct);
@@ -120,16 +161,16 @@ public class BudgetService : IBudgetService
 
     public async Task<Result<BudgetSummaryDto>> GetSummaryAsync(Guid entityNodeId, CancellationToken ct = default)
     {
-        var (items, totalCount) = await _budgetRepository.GetPagedAsync(
-            entityNodeId, null, null, 1, 1000, ct);
+        var (items, _) = await _budgetRepository.GetPagedAsync(
+            entityNodeId, null, null, 1, int.MaxValue, ct);
 
         var totalBudget = items.Sum(b => b.Amount);
         var totalSpent = items.Sum(b => b.Spent);
         var totalRemaining = totalBudget - totalSpent;
         var activeCount = items.Count(b => b.IsActive);
 
-        return Result<BudgetSummaryDto>.Success(new BudgetSummaryDto(
-            totalBudget, totalSpent, totalRemaining, activeCount, totalCount));
+        return Result.Success(new BudgetSummaryDto(
+            totalBudget, totalSpent, totalRemaining, activeCount, items.Count));
     }
 
     private static BudgetDto MapToDto(Budget budget) => new(
@@ -161,4 +202,12 @@ public class BudgetService : IBudgetService
         budget.StartDate,
         budget.EndDate,
         budget.IsActive);
+
+    private static Error BudgetNotFound() => new("BUDGET.NOT_FOUND", "Budget not found.", ErrorType.NotFound);
+
+    private static Error BudgetNameExists(string name)
+        => new("BUDGET.NAME_EXISTS", $"A budget named '{name}' already exists.", ErrorType.Conflict);
+
+    private static (int Page, int PageSize) NormalizePaging(int page, int pageSize)
+        => (page < 1 ? 1 : page, pageSize switch { < 1 => 20, > 200 => 200, _ => pageSize });
 }

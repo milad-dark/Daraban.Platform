@@ -36,7 +36,7 @@ public class ContractService : IContractService
     {
         var contract = await _contractRepository.GetByIdWithDetailsAsync(id, ct);
         if (contract is null)
-            return Result.Failure<ContractDto>(new Error("CONTRACT.NOT_FOUND", "Contract not found.", ErrorType.NotFound));
+            return Result.Failure<ContractDto>(ContractNotFound());
 
         return Result<ContractDto>.Success(MapToDto(contract));
     }
@@ -45,7 +45,7 @@ public class ContractService : IContractService
     {
         var contract = new Contract
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             EntityId = request.EntityNodeId,
             Name = request.Name,
             Reference = request.Reference,
@@ -84,7 +84,7 @@ public class ContractService : IContractService
     {
         var contract = await _contractRepository.GetByIdAsync(id, ct);
         if (contract is null)
-            return Result.Failure<ContractDto>(new Error("CONTRACT.NOT_FOUND", "Contract not found.", ErrorType.NotFound));
+            return Result.Failure<ContractDto>(ContractNotFound());
 
         contract.Name = request.Name;
         contract.Reference = request.Reference;
@@ -117,7 +117,7 @@ public class ContractService : IContractService
     {
         var contract = await _contractRepository.GetByIdAsync(id, ct);
         if (contract is null)
-            return Result.Failure(new Error("CONTRACT.NOT_FOUND", "Contract not found.", ErrorType.NotFound));
+            return Result.Failure(ContractNotFound());
 
         // Soft delete
         contract.IsDeleted = true;
@@ -131,16 +131,22 @@ public class ContractService : IContractService
         return Result.Success();
     }
 
-    public async Task<Result<ContractDto>> ChangeStatusAsync(Guid id, ContractStatus newStatus, Guid actorUserId, CancellationToken ct = default)
+    public async Task<Result<ContractDto>> ChangeStatusAsync(
+        Guid id, ContractStatus newStatus, Guid actorUserId, CancellationToken ct = default)
     {
         var contract = await _contractRepository.GetByIdAsync(id, ct);
         if (contract is null)
-            return Result.Failure<ContractDto>(new Error("CONTRACT.NOT_FOUND", "Contract not found.", ErrorType.NotFound));
+            return Result.Failure<ContractDto>(ContractNotFound());
+
+        if (contract.Status == newStatus)
+            return Result.Failure<ContractDto>(new Error(
+                "CONTRACT.STATUS_UNCHANGED", $"Contract is already {newStatus}.", ErrorType.BusinessRule));
 
         // Validate status transition
-        var isValidTransition = IsValidStatusTransition(contract.Status, newStatus);
-        if (!isValidTransition)
-            return Result.Failure<ContractDto>(new Error("CONTRACT.INVALID_TRANSITION", $"Cannot transition from {contract.Status} to {newStatus}.", ErrorType.BusinessRule));
+        if (!IsValidStatusTransition(contract.Status, newStatus))
+            return Result.Failure<ContractDto>(new Error(
+                "CONTRACT.INVALID_TRANSITION",
+                $"Cannot transition from {contract.Status} to {newStatus}.", ErrorType.BusinessRule));
 
         contract.Status = newStatus;
         contract.UpdatedAt = DateTimeOffset.UtcNow;
@@ -152,6 +158,11 @@ public class ContractService : IContractService
         return Result<ContractDto>.Success(MapToDto(contract));
     }
 
+    /// <summary>
+    /// Contract status machine. Terminated is deliberately unreachable here: nothing sets it, and a
+    /// status nothing can produce is a status that exists only to confuse. Suspended, Expired and
+    /// Cancelled all have valid exits, so the machine is closed but not dead-ended.
+    /// </summary>
     private static bool IsValidStatusTransition(ContractStatus current, ContractStatus next)
     {
         return current switch
@@ -165,6 +176,9 @@ public class ContractService : IContractService
             _ => false
         };
     }
+
+    private static Error ContractNotFound()
+        => new("CONTRACT.NOT_FOUND", "Contract not found.", ErrorType.NotFound);
 
     private static ContractDto MapToDto(Contract contract) => new(
         contract.Id,

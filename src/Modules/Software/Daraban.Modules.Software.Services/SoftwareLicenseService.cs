@@ -10,13 +10,16 @@ public class SoftwareLicenseService : ISoftwareLicenseService
 {
     private readonly ISoftwareLicenseRepository _licenseRepository;
     private readonly ISoftwareInstallationRepository _installationRepository;
+    private readonly ISoftwareRepository _softwareRepository;
 
     public SoftwareLicenseService(
         ISoftwareLicenseRepository licenseRepository,
-        ISoftwareInstallationRepository installationRepository)
+        ISoftwareInstallationRepository installationRepository,
+        ISoftwareRepository softwareRepository)
     {
         _licenseRepository = licenseRepository;
         _installationRepository = installationRepository;
+        _softwareRepository = softwareRepository;
     }
 
     public async Task<Result<SoftwareLicensePagedResult>> GetPagedAsync(
@@ -28,34 +31,54 @@ public class SoftwareLicenseService : ISoftwareLicenseService
         int pageSize,
         CancellationToken ct = default)
     {
+        var (normalizedPage, normalizedPageSize) = NormalizePaging(page, pageSize);
+
         var (items, totalCount) = await _licenseRepository.GetPagedAsync(
-            entityNodeId, softwareId, type, isActive, page, pageSize, ct);
+            entityNodeId, softwareId, type, isActive, normalizedPage, normalizedPageSize, ct);
 
         var dtos = items.Select(MapToListDto).ToList();
-        return Result<SoftwareLicensePagedResult>.Success(new SoftwareLicensePagedResult(dtos, totalCount, page, pageSize));
+        return Result.Success(new SoftwareLicensePagedResult(dtos, totalCount, normalizedPage, normalizedPageSize));
     }
 
     public async Task<Result<SoftwareLicenseDto>> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         var license = await _licenseRepository.GetByIdWithDetailsAsync(id, ct);
         if (license is null)
-            return Result.Failure<SoftwareLicenseDto>(new Error("LICENSE.NOT_FOUND", "Software license not found.", ErrorType.NotFound));
+            return Result.Failure<SoftwareLicenseDto>(LicenseNotFound());
 
-        return Result<SoftwareLicenseDto>.Success(MapToDto(license));
+        return Result.Success(MapToDto(license));
     }
 
     public async Task<Result<IReadOnlyList<SoftwareLicenseDto>>> GetBySoftwareIdAsync(Guid softwareId, CancellationToken ct = default)
     {
         var licenses = await _licenseRepository.GetBySoftwareIdAsync(softwareId, ct);
         var dtos = licenses.Select(MapToDto).ToList();
-        return Result<IReadOnlyList<SoftwareLicenseDto>>.Success(dtos);
+        return Result.Success<IReadOnlyList<SoftwareLicenseDto>>(dtos);
     }
 
     public async Task<Result<SoftwareLicenseDto>> CreateAsync(CreateSoftwareLicenseRequest request, Guid actorUserId, CancellationToken ct = default)
     {
+        // A license without a product is an orphan the catalog can never display.
+        var software = await _softwareRepository.GetByIdAsync(request.SoftwareId, ct);
+        if (software is null)
+            return Result.Failure<SoftwareLicenseDto>(new Error(
+                "SOFTWARE.NOT_FOUND", "Software not found.", ErrorType.NotFound));
+
+        // The license must live in the same tenant as its product -- otherwise an install in
+        // entity A can consume a seat from a license owned by entity B.
+        if (software.EntityId != request.EntityNodeId)
+            return Result.Failure<SoftwareLicenseDto>(new Error(
+                "LICENSE.CROSS_ENTITY",
+                "License must belong to the same entity as its software.", ErrorType.Forbidden));
+
+        if (request.Quantity < 1)
+            return Result.Failure<SoftwareLicenseDto>(new Error(
+                "LICENSE.INVALID_QUANTITY", "License quantity must be at least 1.", ErrorType.Validation));
+
+        var now = DateTimeOffset.UtcNow;
         var license = new SoftwareLicense
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             EntityId = request.EntityNodeId,
             SoftwareId = request.SoftwareId,
             Name = request.Name,
@@ -73,21 +96,34 @@ public class SoftwareLicenseService : ISoftwareLicenseService
             IsActive = true,
             CreatedById = actorUserId,
             UpdatedById = actorUserId,
-            CreatedAt = DateTimeOffset.UtcNow,
-            UpdatedAt = DateTimeOffset.UtcNow
+            CreatedAt = now,
+            UpdatedAt = now
         };
 
         await _licenseRepository.AddAsync(license, ct);
         await _licenseRepository.SaveChangesAsync(ct);
 
-        return Result<SoftwareLicenseDto>.Success(MapToDto(license));
+        return Result.Success(MapToDto(license));
     }
 
     public async Task<Result<SoftwareLicenseDto>> UpdateAsync(Guid id, UpdateSoftwareLicenseRequest request, Guid actorUserId, CancellationToken ct = default)
     {
         var license = await _licenseRepository.GetByIdAsync(id, ct);
         if (license is null)
-            return Result.Failure<SoftwareLicenseDto>(new Error("LICENSE.NOT_FOUND", "Software license not found.", ErrorType.NotFound));
+            return Result.Failure<SoftwareLicenseDto>(LicenseNotFound());
+
+        if (request.Quantity < 1)
+            return Result.Failure<SoftwareLicenseDto>(new Error(
+                "LICENSE.INVALID_QUANTITY", "License quantity must be at least 1.", ErrorType.Validation));
+
+        // The seat count cannot drop below seats already consumed -- that would flip a compliant
+        // fleet non-compliant retroactively with no record of the change.
+        var activeCount = await _installationRepository.GetActiveCountByLicenseIdAsync(id, ct);
+        if (request.Quantity < activeCount)
+            return Result.Failure<SoftwareLicenseDto>(new Error(
+                "LICENSE.QUANTITY_BELOW_USAGE",
+                $"License quantity cannot be reduced below the {activeCount} seat(s) currently in use.",
+                ErrorType.BusinessRule));
 
         license.Name = request.Name;
         license.LicenseKey = request.LicenseKey;
@@ -108,7 +144,7 @@ public class SoftwareLicenseService : ISoftwareLicenseService
         await _licenseRepository.UpdateAsync(license, ct);
         await _licenseRepository.SaveChangesAsync(ct);
 
-        return Result<SoftwareLicenseDto>.Success(MapToDto(license));
+        return Result.Success(MapToDto(license));
     }
 
     public async Task<Result> DeleteAsync(Guid id, Guid actorUserId, CancellationToken ct = default)
@@ -191,4 +227,10 @@ public class SoftwareLicenseService : ISoftwareLicenseService
         license.IsCompliant,
         license.ExpirationDate,
         license.IsActive);
+
+    private static Error LicenseNotFound()
+        => new("LICENSE.NOT_FOUND", "Software license not found.", ErrorType.NotFound);
+
+    private static (int Page, int PageSize) NormalizePaging(int page, int pageSize)
+        => (page < 1 ? 1 : page, pageSize switch { < 1 => 20, > 200 => 200, _ => pageSize });
 }

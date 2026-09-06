@@ -3,10 +3,13 @@ using Daraban.Platform.Common;
 namespace Daraban.Modules.Software.Data.Entities;
 
 /// <summary>
-/// Software entity — represents a software product in the catalog.
+/// Software product entity — represents a software product in the catalog.
+/// Named SoftwareProduct (not Software) because a class called Software collides with the
+/// enclosing Daraban.Modules.Software namespace: inside any namespace under it, the bare name
+/// "Software" resolves to the namespace, and the whole module fails to compile (CS0118).
 /// Tracks software details, versions, and license information.
 /// </summary>
-public class Software : TenantScopedEntity
+public class SoftwareProduct : TenantScopedEntity
 {
     /// <summary>Software name.</summary>
     public string Name { get; set; } = string.Empty;

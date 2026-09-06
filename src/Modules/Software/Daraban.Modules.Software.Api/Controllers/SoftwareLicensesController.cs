@@ -3,13 +3,16 @@ using Daraban.Modules.Software.Services.Dtos;
 using Daraban.Modules.Software.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
+using Daraban.Platform.Hosting.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Daraban.Modules.Software.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/software-licenses")]
+[Authorize]
 public class SoftwareLicensesController : ControllerBase
 {
     private readonly ISoftwareLicenseService _licenseService;
@@ -22,8 +25,8 @@ public class SoftwareLicensesController : ControllerBase
     }
 
     [HttpGet]
+    [RequirePermission("software.read")]
     public async Task<IActionResult> GetPaged(
-        [FromQuery] Guid entityNodeId,
         [FromQuery] Guid? softwareId = null,
         [FromQuery] LicenseType? type = null,
         [FromQuery] bool? isActive = null,
@@ -31,7 +34,9 @@ public class SoftwareLicensesController : ControllerBase
         [FromQuery] int pageSize = 20,
         CancellationToken ct = default)
     {
-        var result = await _licenseService.GetPagedAsync(entityNodeId, softwareId, type, isActive, page, pageSize, ct);
+        // Tenant from the JWT, never from the query string.
+        var result = await _licenseService.GetPagedAsync(
+            _currentUser.ActiveEntityId, softwareId, type, isActive, page, pageSize, ct);
         if (!result.IsSuccess)
             return ProblemFrom(result.Error!);
 
@@ -39,6 +44,7 @@ public class SoftwareLicensesController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [RequirePermission("software.read")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var result = await _licenseService.GetByIdAsync(id, ct);
@@ -49,6 +55,7 @@ public class SoftwareLicensesController : ControllerBase
     }
 
     [HttpGet("software/{softwareId:guid}")]
+    [RequirePermission("software.read")]
     public async Task<IActionResult> GetBySoftwareId(Guid softwareId, CancellationToken ct)
     {
         var result = await _licenseService.GetBySoftwareIdAsync(softwareId, ct);
@@ -59,9 +66,11 @@ public class SoftwareLicensesController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("software.write")]
     public async Task<IActionResult> Create([FromBody] CreateSoftwareLicenseRequest request, CancellationToken ct)
     {
-        var result = await _licenseService.CreateAsync(request, _currentUser.UserId, ct);
+        var result = await _licenseService.CreateAsync(
+            request with { EntityNodeId = _currentUser.ActiveEntityId }, _currentUser.UserId, ct);
         if (!result.IsSuccess)
             return ProblemFrom(result.Error!);
 
@@ -69,6 +78,7 @@ public class SoftwareLicensesController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [RequirePermission("software.write")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSoftwareLicenseRequest request, CancellationToken ct)
     {
         var result = await _licenseService.UpdateAsync(id, request, _currentUser.UserId, ct);
@@ -79,6 +89,7 @@ public class SoftwareLicensesController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [RequirePermission("software.delete")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var result = await _licenseService.DeleteAsync(id, _currentUser.UserId, ct);
@@ -89,6 +100,7 @@ public class SoftwareLicensesController : ControllerBase
     }
 
     [HttpGet("{id:guid}/compliance")]
+    [RequirePermission("software.read")]
     public async Task<IActionResult> CheckCompliance(Guid id, CancellationToken ct)
     {
         var result = await _licenseService.CheckComplianceAsync(id, ct);

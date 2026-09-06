@@ -24,11 +24,13 @@ public class SoftwareService : ISoftwareService
         int pageSize,
         CancellationToken ct = default)
     {
+        var (normalizedPage, normalizedPageSize) = NormalizePaging(page, pageSize);
+
         var (items, totalCount) = await _softwareRepository.GetPagedAsync(
-            entityNodeId, search, category, isActive, page, pageSize, ct);
+            entityNodeId, search, category, isActive, normalizedPage, normalizedPageSize, ct);
 
         var dtos = items.Select(MapToListDto).ToList();
-        return Result<SoftwarePagedResult>.Success(new SoftwarePagedResult(dtos, totalCount, page, pageSize));
+        return Result<SoftwarePagedResult>.Success(new SoftwarePagedResult(dtos, totalCount, normalizedPage, normalizedPageSize));
     }
 
     public async Task<Result<SoftwareDto>> GetByIdAsync(Guid id, CancellationToken ct = default)
@@ -47,9 +49,9 @@ public class SoftwareService : ISoftwareService
         if (nameExists)
             return Result.Failure<SoftwareDto>(new Error("SOFTWARE.NAME_EXISTS", "Software with this name already exists.", ErrorType.Conflict));
 
-        var software = new Software
+        var software = new SoftwareProduct
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             EntityId = request.EntityNodeId,
             Name = request.Name,
             Version = request.Version,
@@ -125,7 +127,7 @@ public class SoftwareService : ISoftwareService
         return Result.Success();
     }
 
-    private static SoftwareDto MapToDto(Software software) => new(
+    private static SoftwareDto MapToDto(SoftwareProduct software) => new(
         software.Id,
         software.EntityId,
         software.Name,
@@ -143,11 +145,14 @@ public class SoftwareService : ISoftwareService
         software.CreatedAt,
         software.UpdatedAt);
 
-    private static SoftwareListDto MapToListDto(Software software) => new(
+    private static SoftwareListDto MapToListDto(SoftwareProduct software) => new(
         software.Id,
         software.Name,
         software.Version,
         software.Editor,
         software.Category,
         software.IsActive);
+
+    private static (int Page, int PageSize) NormalizePaging(int page, int pageSize)
+        => (page < 1 ? 1 : page, pageSize switch { < 1 => 20, > 200 => 200, _ => pageSize });
 }

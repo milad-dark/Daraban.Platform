@@ -24,10 +24,20 @@ public sealed class RefreshTokenService : IRefreshTokenService
         _options = options.Value;
     }
 
-    public async Task<string> IssueAsync(Guid userId, string? issuedFromIp, string? issuedFromUserAgent, CancellationToken ct = default)
-        => await IssueInternalAsync(userId, Guid.NewGuid(), issuedFromIp, issuedFromUserAgent, ct);
+    public async Task<string> IssueAsync(
+        Guid userId, string? issuedFromIp, string? issuedFromUserAgent, CancellationToken ct = default)
+    {
+        // A fresh login starts a new family, so the absolute-lifetime clock starts now.
+        var now = DateTimeOffset.UtcNow;
+        var (raw, _) = await IssueInternalAsync(
+            userId, Guid.CreateVersion7(), familyIssuedAt: now, issuedFromIp, issuedFromUserAgent, ct);
 
-    public async Task<(Guid UserId, string NewToken)?> ValidateAndRotateAsync(string presentedToken, CancellationToken ct = default)
+        await _repository.SaveChangesAsync(ct);
+        return raw;
+    }
+
+    public async Task<(Guid UserId, string NewToken)?> ValidateAndRotateAsync(
+        string presentedToken, CancellationToken ct = default)
     {
         var hash = Hash(presentedToken);
         var existing = await _repository.GetByTokenHashAsync(hash, ct);
@@ -42,14 +52,37 @@ public sealed class RefreshTokenService : IRefreshTokenService
             return null;
         }
 
+        var now = DateTimeOffset.UtcNow;
+
         if (!existing.IsActive) return null; // naturally expired
 
-        existing.RevokedAt = DateTimeOffset.UtcNow;
-        var newToken = await IssueInternalAsync(existing.UserId, existing.FamilyId, existing.IssuedFromIp, existing.IssuedFromUserAgent, ct);
-        existing.ReplacedById = null; // set below once the new row's Id is known
-        var newHash = Hash(newToken);
-        var newRow = await _repository.GetByTokenHashAsync(newHash, ct);
-        existing.ReplacedById = newRow?.Id;
+        // Absolute session cap. Sliding expiry alone let a client that kept refreshing inside the
+        // window stay authenticated indefinitely -- RefreshTokenAbsoluteLifetimeDays existed in
+        // JwtOptions but nothing ever read it. Revoking the family (not just this row) means the
+        // whole session ends rather than leaving sibling tokens usable.
+        if (existing.HasExceededAbsoluteLifetime(_options.RefreshTokenAbsoluteLifetimeDays, now))
+        {
+            await _repository.RevokeFamilyAsync(existing.FamilyId, ct);
+            await _repository.SaveChangesAsync(ct);
+            return null;
+        }
+
+        var (newToken, newRow) = await IssueInternalAsync(
+            existing.UserId,
+            existing.FamilyId,
+            // Carried forward, never reset -- otherwise every rotation would restart the absolute
+            // clock and the cap could never be reached.
+            existing.FamilyIssuedAt,
+            existing.IssuedFromIp,
+            existing.IssuedFromUserAgent,
+            ct);
+
+        existing.RevokedAt = now;
+
+        // The replacement row is already tracked, so its Id is known without a round trip. The
+        // previous implementation re-queried by hash before SaveChangesAsync had run, so
+        // ReplacedById was almost always left null and the rotation chain was unwalkable.
+        existing.ReplacedById = newRow.Id;
 
         await _repository.SaveChangesAsync(ct);
         return (existing.UserId, newToken);
@@ -61,33 +94,59 @@ public sealed class RefreshTokenService : IRefreshTokenService
         var existing = await _repository.GetByTokenHashAsync(hash, ct);
         if (existing is null || existing.RevokedAt is not null) return;
 
-        existing.RevokedAt = DateTimeOffset.UtcNow;
+        // Logout ends the session, not just this one token. Revoking a single row left every
+        // sibling in the family active, so a token captured earlier in the chain still worked
+        // after the user had explicitly logged out.
+        await _repository.RevokeFamilyAsync(existing.FamilyId, ct);
         await _repository.SaveChangesAsync(ct);
     }
 
-    private async Task<string> IssueInternalAsync(Guid userId, Guid familyId, string? ip, string? userAgent, CancellationToken ct)
+    /// <summary>
+    /// Creates and tracks a token row. Deliberately does NOT save -- the caller decides the
+    /// transaction boundary, so a rotation writes the new row and revokes the old one atomically
+    /// instead of committing the new token and then failing to revoke its predecessor.
+    /// </summary>
+    private async Task<(string Raw, RefreshToken Row)> IssueInternalAsync(
+        Guid userId,
+        Guid familyId,
+        DateTimeOffset familyIssuedAt,
+        string? ip,
+        string? userAgent,
+        CancellationToken ct)
     {
         var raw = GenerateRawToken();
         var now = DateTimeOffset.UtcNow;
 
-        await _repository.AddAsync(new RefreshToken
+        var slidingExpiry = now.AddDays(_options.RefreshTokenLifetimeDays);
+        var absoluteExpiry = familyIssuedAt.AddDays(_options.RefreshTokenAbsoluteLifetimeDays);
+
+        var row = new RefreshToken
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             UserId = userId,
             FamilyId = familyId,
+            FamilyIssuedAt = familyIssuedAt,
             TokenHash = Hash(raw),
             IssuedAt = now,
-            ExpiresAt = now.AddDays(_options.RefreshTokenLifetimeDays),
+            // Never past the absolute cap: a token issued 89 days into a 90-day session expires
+            // in 1 day, not 14.
+            ExpiresAt = slidingExpiry < absoluteExpiry ? slidingExpiry : absoluteExpiry,
             IssuedFromIp = ip,
             IssuedFromUserAgent = userAgent,
-        }, ct);
-        await _repository.SaveChangesAsync(ct);
+        };
 
-        return raw;
+        await _repository.AddAsync(row, ct);
+        return (raw, row);
     }
 
-    private static string GenerateRawToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)); // 256 bits
+    // 256 bits of CSPRNG entropy. Base64Url so the value is safe in a cookie, a header, or a URL
+    // without escaping -- plain Base64 can contain '+' and '/', which get mangled in transit.
+    private static string GenerateRawToken()
+        => Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
 
     private static string Hash(string token)
-        => Convert.ToBase64String(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(token)));
+        => Base64UrlEncode(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(token)));
+
+    private static string Base64UrlEncode(byte[] bytes)
+        => Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
 }

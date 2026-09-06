@@ -1,5 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <!-- AgentService.HashSecret is internal so no caller outside this assembly can accidentally
+         treat it as a general-purpose password hasher (it is a plain SHA-256, correct only for
+         high-entropy machine secrets). The test project needs it to build valid credential
+         fixtures, so it is granted access explicitly rather than the method being made public. -->
+    <InternalsVisibleTo Include="Daraban.Modules.Identity.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />

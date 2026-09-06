@@ -50,7 +50,7 @@ public class PurchaseService : IPurchaseService
 
         var purchase = new Purchase
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             EntityId = request.EntityNodeId,
             OrderNumber = request.OrderNumber,
             Name = request.Name,
@@ -148,12 +148,23 @@ public class PurchaseService : IPurchaseService
         purchase.UpdatedById = actorUserId;
 
         // Set timestamps based on status
-        if (newStatus == PurchaseStatus.Approved)
-            purchase.ApprovedDate = DateTimeOffset.UtcNow;
-        else if (newStatus == PurchaseStatus.Ordered)
-            purchase.OrderedDate = DateTimeOffset.UtcNow;
-        else if (newStatus == PurchaseStatus.Received)
-            purchase.ReceivedDate = DateTimeOffset.UtcNow;
+        switch (newStatus)
+        {
+            case PurchaseStatus.Approved:
+                purchase.ApprovedDate = DateTimeOffset.UtcNow;
+                // Who approved it is the whole point of an approval ledger -- without this, an
+                // approved purchase records when it was approved but never by whom.
+                purchase.ApprovedById = actorUserId;
+                break;
+
+            case PurchaseStatus.Ordered:
+                purchase.OrderedDate = DateTimeOffset.UtcNow;
+                break;
+
+            case PurchaseStatus.Received:
+                purchase.ReceivedDate = DateTimeOffset.UtcNow;
+                break;
+        }
 
         await _purchaseRepository.UpdateAsync(purchase, ct);
         await _purchaseRepository.SaveChangesAsync(ct);
@@ -172,7 +183,7 @@ public class PurchaseService : IPurchaseService
 
         var item = new PurchaseItem
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             PurchaseId = purchaseId,
             Description = request.Description,
             ItemReference = request.ItemReference,

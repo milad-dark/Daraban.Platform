@@ -6,7 +6,7 @@
     <PackageReference Include="Moq" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Modules\Financial\Daraban.Modules.Financial.Services\Daraban.Modules.Financial.Services.csproj" />
-    <ProjectReference Include="..\..\..\src\Modules\Financial\Daraban.Modules.Financial.Data\Daraban.Modules.Financial.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Software\Daraban.Modules.Software.Services\Daraban.Modules.Software.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Software\Daraban.Modules.Software.Data\Daraban.Modules.Software.Data.csproj" />
   </ItemGroup>
 </Project>

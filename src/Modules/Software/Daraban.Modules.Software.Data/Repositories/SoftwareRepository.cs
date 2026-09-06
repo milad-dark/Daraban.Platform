@@ -12,12 +12,12 @@ public class SoftwareRepository : ISoftwareRepository
         _context = context;
     }
 
-    public async Task<Software?> GetByIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<SoftwareProduct?> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
         return await _context.Softwares.FindAsync(new object[] { id }, ct);
     }
 
-    public async Task<Software?> GetByIdWithDetailsAsync(Guid id, CancellationToken ct = default)
+    public async Task<SoftwareProduct?> GetByIdWithDetailsAsync(Guid id, CancellationToken ct = default)
     {
         return await _context.Softwares
             .Include(s => s.Licenses)
@@ -25,7 +25,7 @@ public class SoftwareRepository : ISoftwareRepository
             .FirstOrDefaultAsync(s => s.Id == id, ct);
     }
 
-    public async Task<(IReadOnlyList<Software> Items, int TotalCount)> GetPagedAsync(
+    public async Task<(IReadOnlyList<SoftwareProduct> Items, int TotalCount)> GetPagedAsync(
         Guid entityNodeId,
         string? search,
         SoftwareCategory? category,
@@ -57,12 +57,12 @@ public class SoftwareRepository : ISoftwareRepository
         return (items, totalCount);
     }
 
-    public async Task AddAsync(Software software, CancellationToken ct = default)
+    public async Task AddAsync(SoftwareProduct software, CancellationToken ct = default)
     {
         await _context.Softwares.AddAsync(software, ct);
     }
 
-    public async Task UpdateAsync(Software software, CancellationToken ct = default)
+    public async Task UpdateAsync(SoftwareProduct software, CancellationToken ct = default)
     {
         _context.Softwares.Update(software);
     }

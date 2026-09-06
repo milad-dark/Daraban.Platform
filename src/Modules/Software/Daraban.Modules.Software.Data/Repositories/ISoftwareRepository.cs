@@ -4,9 +4,9 @@ namespace Daraban.Modules.Software.Data.Repositories;
 
 public interface ISoftwareRepository
 {
-    Task<Software?> GetByIdAsync(Guid id, CancellationToken ct = default);
-    Task<Software?> GetByIdWithDetailsAsync(Guid id, CancellationToken ct = default);
-    Task<(IReadOnlyList<Software> Items, int TotalCount)> GetPagedAsync(
+    Task<SoftwareProduct?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<SoftwareProduct?> GetByIdWithDetailsAsync(Guid id, CancellationToken ct = default);
+    Task<(IReadOnlyList<SoftwareProduct> Items, int TotalCount)> GetPagedAsync(
         Guid entityNodeId,
         string? search,
         SoftwareCategory? category,
@@ -14,8 +14,8 @@ public interface ISoftwareRepository
         int page,
         int pageSize,
         CancellationToken ct = default);
-    Task AddAsync(Software software, CancellationToken ct = default);
-    Task UpdateAsync(Software software, CancellationToken ct = default);
+    Task AddAsync(SoftwareProduct software, CancellationToken ct = default);
+    Task UpdateAsync(SoftwareProduct software, CancellationToken ct = default);
     Task<bool> ExistsAsync(Guid id, CancellationToken ct = default);
     Task<bool> NameExistsAsync(string name, Guid entityNodeId, Guid? excludeId = null, CancellationToken ct = default);
     Task SaveChangesAsync(CancellationToken ct = default);

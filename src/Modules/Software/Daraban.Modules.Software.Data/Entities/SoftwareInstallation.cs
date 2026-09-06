@@ -8,12 +8,13 @@ namespace Daraban.Modules.Software.Data.Entities;
 /// </summary>
 public class SoftwareInstallation
 {
-    /// <summary>Installation ID.</summary>
-    public Guid Id { get; set; } = Guid.NewGuid();
+    /// <summary>Installation ID. Assigned by the service as UUIDv7; the initializer only
+    /// covers rows materialized outside the service path.</summary>
+    public Guid Id { get; set; } = Guid.CreateVersion7();
 
     /// <summary>Associated software.</summary>
     public Guid SoftwareId { get; set; }
-    public Software Software { get; set; } = null!;
+    public SoftwareProduct Software { get; set; } = null!;
 
     /// <summary>Associated license (optional).</summary>
     public Guid? LicenseId { get; set; }

@@ -6,6 +6,7 @@ using Daraban.Modules.Identity.Services;
 using Daraban.Modules.Identity.Services.Auth;
 using Daraban.Modules.Inventory.Services;
 using Daraban.Modules.Knowledge.Services;
+using Daraban.Modules.Software.Services;
 using Daraban.Modules.Notifications.Services;
 using Daraban.Modules.Discovery.Services;
 using Daraban.Modules.Reporting.Services;
@@ -58,6 +59,7 @@ builder.Services
     .AddServiceDeskModule(builder.Configuration)
     .AddFinancialModule(builder.Configuration)
     .AddKnowledgeModule(builder.Configuration)
+    .AddSoftwareModule(builder.Configuration)
     .AddAutomationModule(builder.Configuration)
     .AddNotificationsModule(builder.Configuration)
     .AddReportingModule(builder.Configuration)
@@ -74,6 +76,7 @@ mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Inventory.Api.AssemblyMarke
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.ServiceDesk.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Financial.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Knowledge.Api.AssemblyMarker).Assembly);
+mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Software.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Automation.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Notifications.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Reporting.Api.AssemblyMarker).Assembly);

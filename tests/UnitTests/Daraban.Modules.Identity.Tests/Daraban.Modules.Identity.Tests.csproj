@@ -4,8 +4,14 @@
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="Moq" />
+    <!-- PermissionResolver runs real LINQ against a DbContext and a real IDistributedCache; both
+         are exercised in-memory rather than mocked, because the RBAC algorithm is the thing under
+         test, not the choreography of calls to a mock. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Modules\Identity\Daraban.Modules.Identity.Services\Daraban.Modules.Identity.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Identity\Daraban.Modules.Identity.Data\Daraban.Modules.Identity.Data.csproj" />
   </ItemGroup>
 </Project>

@@ -35,27 +35,35 @@ public sealed class AuthService : IAuthService
 
     public async Task<Result<AuthUserResponse>> RegisterAsync(RegisterRequest request, CancellationToken ct = default)
     {
+        // Trim once, up front, and use the trimmed values for BOTH the uniqueness checks and the
+        // stored row. Checking the raw input while storing the trimmed value meant " bob" and "bob"
+        // could each pass their own check and then collide on the unique index.
+        var username = request.Username.Trim();
+        var email = request.Email.Trim();
+        var displayName = request.DisplayName.Trim();
+
         // Username/email-taken IS disclosed here -- standard registration UX, and a
         // documented trade-off (see Task 2.3 write-up): fully enumeration-resistant
         // registration needs the response to look identical either way, which in turn
         // needs real email delivery ("you already have an account" sent to the address
         // instead of shown in the API response) -- not possible yet, Notifications module
         // doesn't exist. Revisit once it does if this trade-off matters for your threat model.
-        if (await _users.ExistsByUsernameAsync(request.Username, ct))
+        if (await _users.ExistsByUsernameAsync(username, ct))
             return Result.Failure<AuthUserResponse>(new Error("IDENTITY.USERNAME_TAKEN", "That username is already in use.", ErrorType.Conflict));
-        if (await _users.ExistsByEmailAsync(request.Email, ct))
+        if (await _users.ExistsByEmailAsync(email, ct))
             return Result.Failure<AuthUserResponse>(new Error("IDENTITY.EMAIL_TAKEN", "That email is already registered.", ErrorType.Conflict));
 
+        var now = DateTimeOffset.UtcNow;
         var user = new User
         {
             Id = Guid.CreateVersion7(),
-            Username = request.Username.Trim(),
-            Email = request.Email.Trim(),
-            DisplayName = request.DisplayName.Trim(),
+            Username = username,
+            Email = email,
+            DisplayName = displayName,
             IsActive = true,
             EmailConfirmed = false, // TODO: wire to a real confirmation email once Notifications exists
-            CreatedAt = DateTimeOffset.UtcNow,
-            UpdatedAt = DateTimeOffset.UtcNow,
+            CreatedAt = now,
+            UpdatedAt = now,
         };
         // PasswordHasher<T> = PBKDF2-HMAC-SHA256, 100k+ iterations, random per-user salt,
         // via Microsoft.Extensions.Identity.Core -- never store/compare plaintext.
@@ -64,7 +72,7 @@ public sealed class AuthService : IAuthService
         await _users.AddAsync(user, ct);
         await _users.SaveChangesAsync(ct);
 
-        return Result.Success(new AuthUserResponse(user.Id, user.Username, user.Email, user.DisplayName, user.DefaultEntityId ?? Guid.Empty));
+        return Result.Success(ToUserResponse(user));
     }
 
     public async Task<Result<AuthResult>> LoginAsync(LoginRequest request, string? ip, string? userAgent, CancellationToken ct = default)
@@ -83,8 +91,19 @@ public sealed class AuthService : IAuthService
             return genericFailure;
         }
 
-        if (user.LockoutEndAt is { } lockoutEnd && lockoutEnd > DateTimeOffset.UtcNow)
+        var now = DateTimeOffset.UtcNow;
+
+        if (user.LockoutEndAt is { } lockoutEnd && lockoutEnd > now)
             return Result.Failure<AuthResult>(new Error("IDENTITY.ACCOUNT_LOCKED", "Too many failed attempts. Try again later.", ErrorType.Forbidden));
+
+        // The lockout has elapsed -- clear it AND the counter that caused it. Leaving the counter
+        // at the threshold meant the very next wrong password re-locked the account instantly,
+        // turning a 15-minute lockout into a permanent one for anyone mistyping twice.
+        if (user.LockoutEndAt is not null)
+        {
+            user.LockoutEndAt = null;
+            user.FailedLoginCount = 0;
+        }
 
         if (!user.IsActive)
             return Result.Failure<AuthResult>(new Error("IDENTITY.ACCOUNT_DISABLED", "This account has been disabled.", ErrorType.Forbidden));
@@ -97,7 +116,8 @@ public sealed class AuthService : IAuthService
         {
             user.FailedLoginCount++;
             if (user.FailedLoginCount >= MaxFailedAttempts)
-                user.LockoutEndAt = DateTimeOffset.UtcNow.Add(LockoutDuration);
+                user.LockoutEndAt = now.Add(LockoutDuration);
+            user.UpdatedAt = now;
             await _users.SaveChangesAsync(ct);
             return genericFailure;
         }
@@ -110,6 +130,7 @@ public sealed class AuthService : IAuthService
 
         user.FailedLoginCount = 0;
         user.LockoutEndAt = null;
+        user.UpdatedAt = now;
         await _users.SaveChangesAsync(ct);
 
         return Result.Success(await IssueTokensAsync(user, ip, userAgent, ct));
@@ -119,14 +140,21 @@ public sealed class AuthService : IAuthService
     {
         var rotated = await _refreshTokens.ValidateAndRotateAsync(presentedRefreshToken, ct);
         if (rotated is null)
-            return Result.Failure<AuthResult>(new Error("IDENTITY.REFRESH_TOKEN_INVALID", "Session expired -- please log in again.", ErrorType.Forbidden));
+            return Result.Failure<AuthResult>(SessionExpired());
 
         var user = await _users.GetByIdAsync(rotated.Value.UserId, ct);
+
         // Re-check state at refresh time too, not just at login -- an account disabled or
-        // force-logged-out (token_version bumped) between login and this refresh should not
-        // silently keep working.
-        if (user is null || !user.IsActive)
-            return Result.Failure<AuthResult>(new Error("IDENTITY.REFRESH_TOKEN_INVALID", "Session expired -- please log in again.", ErrorType.Forbidden));
+        // deleted between login and this refresh should not silently keep working. IsDeleted is
+        // checked explicitly rather than relying on the DbContext query filter, so this stays
+        // correct even if a caller passes an unfiltered query.
+        if (user is null || !user.IsActive || user.IsDeleted)
+        {
+            // The session is over, so tear down the whole rotation chain instead of leaving the
+            // freshly-issued token usable for a disabled account.
+            await _refreshTokens.RevokeAsync(rotated.Value.NewToken, ct);
+            return Result.Failure<AuthResult>(SessionExpired());
+        }
 
         var (accessToken, expiresAt) = _jwtTokens.IssueAccessToken(user, user.DefaultEntityId ?? Guid.Empty);
         return Result.Success(new AuthResult(accessToken, expiresAt, rotated.Value.NewToken, ToUserResponse(user)));
@@ -134,6 +162,9 @@ public sealed class AuthService : IAuthService
 
     public Task LogoutAsync(string presentedRefreshToken, CancellationToken ct = default)
         => _refreshTokens.RevokeAsync(presentedRefreshToken, ct);
+
+    private static Error SessionExpired()
+        => new("IDENTITY.REFRESH_TOKEN_INVALID", "Session expired -- please log in again.", ErrorType.Forbidden);
 
     private async Task<AuthResult> IssueTokensAsync(User user, string? ip, string? userAgent, CancellationToken ct)
     {

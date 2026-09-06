@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Daraban.Modules.Software.Data.Configurations;
 
-public class SoftwareConfiguration : IEntityTypeConfiguration<Software>
+public class SoftwareConfiguration : IEntityTypeConfiguration<SoftwareProduct>
 {
-    public void Configure(EntityTypeBuilder<Software> builder)
+    public void Configure(EntityTypeBuilder<SoftwareProduct> builder)
     {
         builder.ToTable("softwares");
 

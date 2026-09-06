@@ -49,7 +49,8 @@ public class AgentAuthService(
         if (credential.ExpiresAt.HasValue && credential.ExpiresAt.Value < DateTimeOffset.UtcNow)
             return Result.Failure<TokenResponse>(new Error("AGENTS.AUTH_CREDENTIAL_EXPIRED", "This credential has expired.", ErrorType.Forbidden));
 
-        // 4. Verify client_secret (SHA-256 comparison)
+        // 4. Verify client_secret. Both sides are fixed-length lowercase hex from HashSecret, so
+        //    FixedTimeEquals compares equal-length spans and reveals nothing through timing.
         var providedHash = AgentService.HashSecret(request.ClientSecret);
         if (!CryptographicOperations.FixedTimeEquals(
                 Encoding.UTF8.GetBytes(providedHash),
@@ -148,12 +149,19 @@ public class AgentAuthService(
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        // Credential scopes ⊆ Agent allowed scopes (pre-condition); intersect them
-        var available = allowed.Intersect(credLimited, StringComparer.OrdinalIgnoreCase).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        // The wildcard has to be resolved BEFORE intersecting. A credential scoped to "*" shares no
+        // literal element with the agent's concrete scope list, so intersecting first collapsed it
+        // to the empty set and the wildcard branch could never fire -- the broadest credential was
+        // silently the most restricted one.
+        var available = credLimited.Contains("*")
+            ? allowed
+            : allowed.Intersect(credLimited, StringComparer.OrdinalIgnoreCase).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        // If wildcard, all agent-allowed scopes are available
-        if (available.Contains("*"))
-            available = allowed;
+        // An agent with no usable scopes must be denied, not handed a token with scope="". A
+        // zero-scope token authenticates successfully and then fails every authorization check,
+        // which looks like a permissions bug rather than the misconfiguration it is.
+        if (available.Count == 0)
+            return null;
 
         if (string.IsNullOrWhiteSpace(requestedScope))
         {
@@ -166,12 +174,11 @@ public class AgentAuthService(
 
         var granted = requested.Where(s => available.Contains(s, StringComparer.OrdinalIgnoreCase)).ToList();
 
-        if (granted.Count == 0)
-            return null; // nothing overlaps → denied
-
-        // Check if all requested scopes are granted
+        // Partial matches are denied outright rather than downgraded: silently granting the half
+        // that was permitted leaves the agent believing it holds both, then failing confusingly
+        // later.
         if (granted.Count != requested.Length)
-            return null; // partial match → denied (don't grant partial)
+            return null;
 
         return string.Join(" ", granted);
     }

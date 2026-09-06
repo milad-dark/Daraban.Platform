@@ -24,11 +24,13 @@ public class InfocomService : IInfocomService
         int pageSize,
         CancellationToken ct = default)
     {
+        var (normalizedPage, normalizedPageSize) = NormalizePaging(page, pageSize);
+
         var (items, totalCount) = await _infocomRepository.GetPagedAsync(
-            entityNodeId, search, supplierId, budgetId, page, pageSize, ct);
+            entityNodeId, search, supplierId, budgetId, normalizedPage, normalizedPageSize, ct);
 
         var dtos = items.Select(MapToListDto).ToList();
-        return Result<InfocomPagedResult>.Success(new InfocomPagedResult(dtos, totalCount, page, pageSize));
+        return Result.Success(new InfocomPagedResult(dtos, totalCount, normalizedPage, normalizedPageSize));
     }
 
     public async Task<Result<InfocomDto>> GetByIdAsync(Guid id, CancellationToken ct = default)
@@ -58,7 +60,7 @@ public class InfocomService : IInfocomService
 
         var infocom = new Infocom
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.CreateVersion7(),
             EntityId = request.EntityNodeId,
             AssetId = request.AssetId,
             PurchaseOrderNumber = request.PurchaseOrderNumber,
@@ -156,13 +158,34 @@ public class InfocomService : IInfocomService
     {
         var infocom = await _infocomRepository.GetByIdAsync(id, ct);
         if (infocom is null)
-            return Result.Failure<DepreciationCalculationResult>(new Error("INFOCOM.NOT_FOUND", "Infocom entry not found.", ErrorType.NotFound));
+            return Result.Failure<DepreciationCalculationResult>(new Error(
+                "INFOCOM.NOT_FOUND", "Infocom entry not found.", ErrorType.NotFound));
+
+        // "None" means no depreciation tracking: the value stays at cost and nothing is written off.
+        // Previously this fell into the default branch and returned the same result, but only after
+        // computing (and potentially dividing by) a period that doesn't apply.
+        if (infocom.DepreciationMethod == DepreciationMethod.None)
+        {
+            return Result.Success(new DepreciationCalculationResult(
+                id, infocom.AssetId, infocom.TotalCost,
+                DepreciationAmount: 0, CurrentValue: infocom.TotalCost,
+                infocom.ResidualValue, RemainingMonths: 0, FullyDepreciated: false,
+                DepreciationStartDate: infocom.PurchaseDate ?? infocom.UseDate ?? DateTimeOffset.UtcNow,
+                infocom.DepreciationMethod));
+        }
 
         var totalCost = infocom.TotalCost;
         var depreciationDate = infocom.DepreciationOnUseDate ? infocom.UseDate : infocom.PurchaseDate;
-        
+
         if (depreciationDate is null)
-            return Result.Failure<DepreciationCalculationResult>(new Error("INFOCOM.NO_DATE", "Depreciation date is required.", ErrorType.Validation));
+            return Result.Failure<DepreciationCalculationResult>(new Error(
+                "INFOCOM.NO_DATE", "Depreciation date is required.", ErrorType.Validation));
+
+        // A duration of zero would divide by zero in every method below.
+        if (infocom.DepreciationDurationMonths <= 0)
+            return Result.Failure<DepreciationCalculationResult>(new Error(
+                "INFOCOM.INVALID_DURATION",
+                "Depreciation duration must be greater than zero.", ErrorType.Validation));
 
         var monthsElapsed = (int)((DateTimeOffset.UtcNow - depreciationDate.Value).TotalDays / 30);
         var depreciationMonths = Math.Min(monthsElapsed, infocom.DepreciationDurationMonths);
@@ -174,19 +197,27 @@ public class InfocomService : IInfocomService
         switch (infocom.DepreciationMethod)
         {
             case DepreciationMethod.StraightLine:
-                depreciationAmount = depreciableAmount / infocom.DepreciationDurationMonths * depreciationMonths;
+                // Multiply before dividing: 3000/36*36 evaluates left-to-right as 83.33...*36 =
+                // 2999.999...9 in decimal arithmetic, while 3000*36/36 is exact. Order matters.
+                depreciationAmount = depreciableAmount * depreciationMonths / infocom.DepreciationDurationMonths;
                 currentValue = totalCost - depreciationAmount;
                 break;
 
             case DepreciationMethod.DecliningBalance:
+                // Standard declining-balance: monthly rate = coefficient / useful life in months.
+                // A coefficient of 2.0 is double-declining: 2/36 ≈ 5.56%/month on a 36-month
+                // schedule, i.e. twice the straight-line 2.78%. The previous formula (rate/100/12)
+                // treated the coefficient as an annual percentage, so the default 2.0 meant ~2%
+                // per YEAR -- slower than straight line, which defeats the entire purpose of an
+                // accelerated method.
                 var rate = infocom.DepreciationCoefficient ?? 2.0m;
                 depreciationAmount = 0;
                 var remainingValue = totalCost;
                 for (var i = 0; i < depreciationMonths; i++)
                 {
-                    var yearlyDepreciation = remainingValue * rate / 100 / 12;
-                    depreciationAmount += yearlyDepreciation;
-                    remainingValue -= yearlyDepreciation;
+                    var monthlyDepreciation = remainingValue * rate / infocom.DepreciationDurationMonths;
+                    depreciationAmount += monthlyDepreciation;
+                    remainingValue -= monthlyDepreciation;
                 }
                 currentValue = Math.Max(remainingValue, infocom.ResidualValue);
                 break;
@@ -224,6 +255,9 @@ public class InfocomService : IInfocomService
             depreciationDate.Value,
             infocom.DepreciationMethod));
     }
+
+    private static (int Page, int PageSize) NormalizePaging(int page, int pageSize)
+        => (page < 1 ? 1 : page, pageSize switch { < 1 => 20, > 200 => 200, _ => pageSize });
 
     private static InfocomDto MapToDto(Infocom infocom) => new(
         infocom.Id,

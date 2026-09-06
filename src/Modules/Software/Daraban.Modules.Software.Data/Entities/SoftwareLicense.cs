@@ -10,7 +10,7 @@ public class SoftwareLicense : TenantScopedEntity
 {
     /// <summary>Associated software.</summary>
     public Guid SoftwareId { get; set; }
-    public Software Software { get; set; } = null!;
+    public SoftwareProduct Software { get; set; } = null!;
 
     /// <summary>License name/title.</summary>
     public string Name { get; set; } = string.Empty;
