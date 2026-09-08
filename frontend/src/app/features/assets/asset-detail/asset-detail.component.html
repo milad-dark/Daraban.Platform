@@ -91,7 +91,7 @@
             <div class="detail-item">
               <span class="detail-label">Purchase Cost</span>
               <span class="detail-value">
-                {{ asset.purchaseCost != null ? (asset.purchaseCost | currency:asset.purchaseCurrency) : '—' }}
+                {{ asset.purchaseCost != null ? (asset.purchaseCost | currency:asset.purchaseCurrency ?? undefined) : '—' }}
               </span>
             </div>
             <div class="detail-item">

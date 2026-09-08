@@ -62,7 +62,7 @@ import { Asset, CreateAssetRequest, UpdateAssetRequest } from '../models/asset.m
               <mat-form-field appearance="outline">
                 <mat-label>Name</mat-label>
                 <input matInput formControlName="name" placeholder="Asset name" />
-                @if (form.controls.name.hasError('required')) {
+                @if (form.controls['name'].hasError('required')) {
                   <mat-error>Name is required</mat-error>
                 }
               </mat-form-field>
@@ -74,7 +74,7 @@ import { Asset, CreateAssetRequest, UpdateAssetRequest } from '../models/asset.m
                     <mat-option [value]="type.id">{{ type.name }}</mat-option>
                   }
                 </mat-select>
-                @if (form.controls.assetTypeId.hasError('required')) {
+                @if (form.controls['assetTypeId'].hasError('required')) {
                   <mat-error>Asset type is required</mat-error>
                 }
               </mat-form-field>

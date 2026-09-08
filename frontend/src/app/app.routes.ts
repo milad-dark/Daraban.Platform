@@ -44,6 +44,16 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/discovery/discovery.routes').then((m) => m.DISCOVERY_ROUTES),
       },
+      {
+        path: 'tickets',
+        loadChildren: () =>
+          import('./features/tickets/ticket.routes').then((m) => m.TICKET_ROUTES),
+      },
+      {
+        path: 'knowledge-base',
+        loadChildren: () =>
+          import('./features/knowledge-base/kb.routes').then((m) => m.KB_ROUTES),
+      },
     ],
   },
   {
