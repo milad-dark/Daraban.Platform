@@ -7,6 +7,7 @@ import {
   patchState,
 } from '@ngrx/signals';
 import { firstValueFrom } from 'rxjs';
+import { extractError } from '../../core/utils/error.util';
 import { AgentService } from './agent.service';
 import {
   AgentListItem,
@@ -131,29 +132,6 @@ export const AgentStore = signalStore(
         }
       },
 
-      setPage(page: number): void {
-        patchState(store, { page });
-        store.loadAgents();
-      },
-
-      setPageSize(pageSize: number): void {
-        patchState(store, { pageSize, page: 1 });
-        store.loadAgents();
-      },
-
-      updateFilters(filters: Partial<AgentFilters>): void {
-        patchState(store, {
-          filters: { ...store.filters(), ...filters },
-          page: 1,
-        });
-        store.loadAgents();
-      },
-
-      clearFilters(): void {
-        patchState(store, { filters: initialState.filters, page: 1 });
-        store.loadAgents();
-      },
-
       // ── Agent Detail ──
       async loadAgentDetail(agentId: string): Promise<void> {
         patchState(store, { isLoadingDetail: true, error: null });
@@ -221,7 +199,63 @@ export const AgentStore = signalStore(
         }
       },
 
-      // ── Command Dispatch ──
+      // ── Real-time update (from SignalR) ──
+      updateAgentStatus(agentId: string, isOnline: boolean): void {
+        const agents = store.agents().map((a) =>
+          a.id === agentId ? { ...a, isOnline } : a
+        );
+        patchState(store, { agents });
+      },
+
+      updateCommandStatus(
+        commandId: string,
+        status: string
+      ): void {
+        const commandHistory = store.commandHistory().map((c) =>
+          c.commandId === commandId
+            ? { ...c, status: status as any, completedAt: new Date().toISOString() }
+            : c
+        );
+        patchState(store, { commandHistory });
+      },
+
+      clearError(): void {
+        patchState(store, { error: null });
+      },
+    })
+  ),
+
+  // Methods that call other store methods live in a second withMethods feature so they
+  // can see them on the store type (methods of the same feature are not visible to each
+  // other). Runtime behavior is identical -- this only fixes the typing.
+  withMethods(
+    (
+      store,
+      agentService = inject(AgentService)
+    ) => ({
+      setPage(page: number): void {
+        patchState(store, { page });
+        store.loadAgents();
+      },
+
+      setPageSize(pageSize: number): void {
+        patchState(store, { pageSize, page: 1 });
+        store.loadAgents();
+      },
+
+      updateFilters(filters: Partial<AgentFilters>): void {
+        patchState(store, {
+          filters: { ...store.filters(), ...filters },
+          page: 1,
+        });
+        store.loadAgents();
+      },
+
+      clearFilters(): void {
+        patchState(store, { filters: initialState.filters, page: 1 });
+        store.loadAgents();
+      },
+
       async dispatchCommand(
         agentId: string,
         commandType: string,
@@ -250,39 +284,7 @@ export const AgentStore = signalStore(
           return false;
         }
       },
-
-      // ── Real-time update (from SignalR) ──
-      updateAgentStatus(agentId: string, isOnline: boolean): void {
-        const agents = store.agents().map((a) =>
-          a.id === agentId ? { ...a, isOnline } : a
-        );
-        patchState(store, { agents });
-      },
-
-      updateCommandStatus(
-        commandId: string,
-        status: string
-      ): void {
-        const commandHistory = store.commandHistory().map((c) =>
-          c.commandId === commandId
-            ? { ...c, status: status as any, completedAt: new Date().toISOString() }
-            : c
-        );
-        patchState(store, { commandHistory });
-      },
-
-      clearError(): void {
-        patchState(store, { error: null });
-      },
     })
   )
 );
 
-function extractError(err: unknown): string {
-  if (err && typeof err === 'object' && 'error' in err) {
-    const httpError = err as { error: { detail?: string; title?: string } };
-    if (httpError.error?.detail) return httpError.error.detail;
-    if (httpError.error?.title) return httpError.error.title;
-  }
-  return 'An unexpected error occurred.';
-}

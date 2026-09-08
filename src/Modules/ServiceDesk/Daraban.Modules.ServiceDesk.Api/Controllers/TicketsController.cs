@@ -3,6 +3,7 @@ using Daraban.Modules.ServiceDesk.Services.Dtos;
 using Daraban.Modules.ServiceDesk.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
+using Daraban.Platform.Hosting;
 using Daraban.Platform.Hosting.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -40,7 +41,7 @@ public class TicketsController : ControllerBase
         var result = await _ticketService.GetPagedAsync(
             _currentUser.ActiveEntityId, type, status, priority, assignedUserId, assignedGroupId, search, page, pageSize, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(result.Value);
     }
 
@@ -50,7 +51,7 @@ public class TicketsController : ControllerBase
     {
         var result = await _ticketService.GetByIdAsync(id, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(result.Value);
     }
 
@@ -64,7 +65,7 @@ public class TicketsController : ControllerBase
             request, _currentUser.ActiveEntityId, _currentUser.UserId, ct);
 
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return CreatedAtAction(nameof(GetById), new { id = result.Value.Id }, result.Value);
     }
 
@@ -74,7 +75,7 @@ public class TicketsController : ControllerBase
     {
         var result = await _ticketService.UpdateAsync(id, request, _currentUser.UserId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(result.Value);
     }
 
@@ -84,7 +85,7 @@ public class TicketsController : ControllerBase
     {
         var result = await _ticketService.DeleteAsync(id, _currentUser.UserId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return NoContent();
     }
 
@@ -94,7 +95,7 @@ public class TicketsController : ControllerBase
     {
         var result = await _ticketService.ChangeStatusAsync(id, request.Status, _currentUser.UserId, request.Reason, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(result.Value);
     }
 
@@ -104,7 +105,7 @@ public class TicketsController : ControllerBase
     {
         var result = await _ticketService.AssignAsync(id, request.AssignedUserId, request.AssignedGroupId, _currentUser.UserId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(result.Value);
     }
 
@@ -114,7 +115,7 @@ public class TicketsController : ControllerBase
     {
         var result = await _ticketService.EscalateAsync(id, _currentUser.UserId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(result.Value);
     }
 
@@ -124,7 +125,7 @@ public class TicketsController : ControllerBase
     {
         var result = await _ticketService.SolveAsync(id, _currentUser.UserId, request.Solution, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(result.Value);
     }
 
@@ -134,7 +135,7 @@ public class TicketsController : ControllerBase
     {
         var result = await _ticketService.CloseAsync(id, _currentUser.UserId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(result.Value);
     }
 
@@ -144,7 +145,7 @@ public class TicketsController : ControllerBase
     {
         var result = await _ticketService.GetHistoryAsync(id, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(result.Value);
     }
 
@@ -154,7 +155,7 @@ public class TicketsController : ControllerBase
     {
         var result = await _ticketService.GetOpenCountAsync(_currentUser.ActiveEntityId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(new { count = result.Value });
     }
 
@@ -164,28 +165,10 @@ public class TicketsController : ControllerBase
     {
         var result = await _ticketService.GetOverdueCountAsync(_currentUser.ActiveEntityId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(new { count = result.Value });
     }
 
-    private ObjectResult ProblemFrom(Error error)
-    {
-        var status = error.Type switch
-        {
-            ErrorType.NotFound => StatusCodes.Status404NotFound,
-            ErrorType.Conflict => StatusCodes.Status409Conflict,
-            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-            ErrorType.BusinessRule => StatusCodes.Status422UnprocessableEntity,
-            _ => StatusCodes.Status400BadRequest,
-        };
-        return new ObjectResult(new ProblemDetails
-        {
-            Title = error.Message,
-            Status = status,
-            Extensions = { ["errorCode"] = error.Code },
-        })
-        { StatusCode = status };
-    }
 }
 
 // ---- Request DTOs for controller actions ----

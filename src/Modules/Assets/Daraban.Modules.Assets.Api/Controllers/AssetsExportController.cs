@@ -1,6 +1,7 @@
 using Daraban.Modules.Assets.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
+using Daraban.Platform.Hosting;
 using Daraban.Platform.Hosting.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,28 +33,10 @@ public class AssetsExportController(IAssetExportService exportService, ICurrentU
             currentUser.ActiveEntityId, format, status, assetTypeId, locationId, search, ct);
 
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
 
         var (stream, contentType, fileName) = result.Value;
         return File(stream, contentType, fileName);
     }
 
-    private ObjectResult ProblemFrom(Error error)
-    {
-        var status = error.Type switch
-        {
-            ErrorType.NotFound => StatusCodes.Status404NotFound,
-            ErrorType.Conflict => StatusCodes.Status409Conflict,
-            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-            ErrorType.BusinessRule => StatusCodes.Status422UnprocessableEntity,
-            _ => StatusCodes.Status400BadRequest,
-        };
-        return new ObjectResult(new ProblemDetails
-        {
-            Title = error.Message,
-            Status = status,
-            Extensions = { ["errorCode"] = error.Code },
-        })
-        { StatusCode = status };
-    }
 }

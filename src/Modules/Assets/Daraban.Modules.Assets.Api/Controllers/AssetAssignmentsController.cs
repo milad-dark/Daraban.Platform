@@ -1,6 +1,7 @@
 using Daraban.Modules.Assets.Services.Dtos;
 using Daraban.Modules.Assets.Services.Interfaces;
 using Daraban.Platform.Common;
+using Daraban.Platform.Hosting;
 using Daraban.Platform.Hosting.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +31,7 @@ public class AssetAssignmentsController : ControllerBase
         var result = await _assignmentService.AssignAsync(
             assetId, request, currentUser.UserId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(result.Value);
     }
 
@@ -46,7 +47,7 @@ public class AssetAssignmentsController : ControllerBase
         var result = await _assignmentService.UnassignAsync(
             assetId, currentUser.UserId, notes, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return NoContent();
     }
 
@@ -57,7 +58,7 @@ public class AssetAssignmentsController : ControllerBase
     {
         var result = await _assignmentService.GetCurrentAsync(assetId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return result.Value is null ? NoContent() : Ok(result.Value);
     }
 
@@ -68,28 +69,10 @@ public class AssetAssignmentsController : ControllerBase
     {
         var result = await _assignmentService.GetHistoryAsync(assetId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return Ok(result.Value);
     }
 
-    private ObjectResult ProblemFrom(Error error)
-    {
-        var status = error.Type switch
-        {
-            ErrorType.NotFound => StatusCodes.Status404NotFound,
-            ErrorType.Conflict => StatusCodes.Status409Conflict,
-            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-            ErrorType.BusinessRule => StatusCodes.Status422UnprocessableEntity,
-            _ => StatusCodes.Status400BadRequest,
-        };
-        return new ObjectResult(new ProblemDetails
-        {
-            Title = error.Message,
-            Status = status,
-            Extensions = { ["errorCode"] = error.Code },
-        })
-        { StatusCode = status };
-    }
 }
 
 

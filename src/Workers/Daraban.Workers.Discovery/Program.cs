@@ -1,15 +1,15 @@
 using Daraban.Modules.Discovery.Services;
 using Daraban.Modules.Discovery.Services.Processing;
 using Daraban.Modules.Discovery.Services.Scheduling;
+using Daraban.Platform.Hosting;
 using Daraban.Platform.Messaging;
 using Daraban.Workers.Discovery;
-using Serilog;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Configuration.AddEnvironmentVariables(prefix: "DARABAN_");
 
-Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
-builder.Services.AddSerilog();
+// Shared Serilog setup (console + rolling file) owned by Daraban.Platform.Hosting.
+builder.UseDarabanSerilog(applicationName: "Daraban.Workers.Discovery");
 
 // Discovery module (provides IDiscoveryService + repository + DbContext)
 builder.Services.AddDiscoveryModule(builder.Configuration);

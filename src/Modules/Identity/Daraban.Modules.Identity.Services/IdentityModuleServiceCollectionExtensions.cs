@@ -41,7 +41,15 @@ public static class IdentityModuleServiceCollectionExtensions
         services.AddScoped<IEntityScopeAccessor, EntityScopeAccessor>();
         services.AddScoped<IPermissionResolver, PermissionResolver>();
 
-        // ---- Agent Command services (Task 4.4: Remote Commands) ----
+        // ---- Agent services (Task 4.1/4.4: agent auth, fleet management, remote commands) ----
+        // Registered here, not in each host's Program.cs, so every host that loads the
+        // Identity module (Host.Api and Host.AgentApi both) gets a working agent service
+        // graph. Host.Api's AdminAgentController depends on IAgentService/IAgentCommandRepository;
+        // previously they were only registered in AgentApi and Host.Api's agent endpoints
+        // failed to resolve them at runtime.
+        services.AddScoped<IAgentRepository, AgentRepository>();
+        services.AddScoped<IAgentService, AgentService>();
+        services.AddScoped<IAgentAuthService, AgentAuthService>();
         services.AddScoped<IAgentCommandRepository, AgentCommandRepository>();
         services.AddScoped<IAgentCommandService, AgentCommandService>();
 

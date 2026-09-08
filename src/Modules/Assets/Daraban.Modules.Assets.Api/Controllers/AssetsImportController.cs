@@ -2,6 +2,7 @@ using Daraban.Modules.Assets.Services.Dtos;
 using Daraban.Modules.Assets.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
+using Daraban.Platform.Hosting;
 using Daraban.Platform.Hosting.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +44,7 @@ public class AssetsImportController(IAssetImportService importService, ICurrentU
             stream, file.FileName, currentUser.ActiveEntityId, currentUser.UserId, dryRun, ct);
 
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
 
         return Ok(result.Value);
     }
@@ -60,22 +61,4 @@ public class AssetsImportController(IAssetImportService importService, ICurrentU
         return File(stream, "text/csv", "asset-import-template.csv");
     }
 
-    private ObjectResult ProblemFrom(Error error)
-    {
-        var status = error.Type switch
-        {
-            ErrorType.NotFound => StatusCodes.Status404NotFound,
-            ErrorType.Conflict => StatusCodes.Status409Conflict,
-            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-            ErrorType.BusinessRule => StatusCodes.Status422UnprocessableEntity,
-            _ => StatusCodes.Status400BadRequest,
-        };
-        return new ObjectResult(new ProblemDetails
-        {
-            Title = error.Message,
-            Status = status,
-            Extensions = { ["errorCode"] = error.Code },
-        })
-        { StatusCode = status };
-    }
 }

@@ -18,7 +18,6 @@ using Daraban.Platform.Messaging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,15 +29,7 @@ builder.Configuration.AddEnvironmentVariables(prefix: "DARABAN_");
 builder.Host.UseDarabanSerilog(applicationName: "Daraban.Host.Api");
 
 // ---- Exception handling + ProblemDetails (Task 2.2) -----------------------------------
-builder.Services.AddProblemDetails(options =>
-{
-    options.CustomizeProblemDetails = context =>
-    {
-        context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
-        context.ProblemDetails.Extensions["instance"] = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
-    };
-});
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddDarabanProblemDetails();
 
 // ---- Health checks (Task 2.2) ----------------------------------------------------------
 builder.Services.AddDarabanHealthChecks(builder.Configuration);
@@ -83,34 +74,22 @@ mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Reporting.Api.AssemblyMarke
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Discovery.Api.AssemblyMarker).Assembly);
 
 // ---- Auth (Task 2.3): validates JWTs issued directly by AuthService/JwtTokenService ---
-// (a plain JWT Bearer setup, not OpenIddict -- see AuthController's doc comment for why
-// the original OpenIddict Authorization Code + PKCE plan from Task 1.3 was descoped here).
-// JwtSigningKeyProvider is registered as a singleton inside AddIdentityModule above, so the
-// RSA key resolved here for *validation* is guaranteed to be the exact same instance
-// JwtTokenService uses to *sign* -- both run in this same process.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+// Validation policy (issuer/audience/signing key) is owned by the Identity module's
+// AddDarabanJwtBearer -- the same setup Host.AgentApi uses. JwtSigningKeyProvider is a
+// singleton inside AddIdentityModule, so the key resolved here for validation is the exact
+// same instance JwtTokenService signs with. See AuthController's doc comment for why the
+// original OpenIddict plan was descoped.
+builder.Services.AddDarabanJwtBearer(builder.Configuration, requireHttpsMetadata: !builder.Environment.IsDevelopment());
+
+// token_version revocation (Task 1.3 SS8): layered on top of the shared validation policy --
+// rejects an otherwise-still-valid JWT the instant identity.users.token_version no longer
+// matches what was embedded at issuance. Password change, forced logout, or an admin
+// disabling the account all take effect immediately instead of waiting out the token's exp.
 builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
-    .Configure<Daraban.Modules.Identity.Services.Auth.JwtSigningKeyProvider>((options, keyProvider) =>
+    .Configure(options =>
     {
-        options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
-        options.MapInboundClaims = false; // keep claim names exactly as issued (e.g. "token_version"), not remapped to long XML-namespace URIs
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidateAudience = true,
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.FromSeconds(30), // tight -- these are already short-lived (15 min) tokens, not the 5-minute default
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new RsaSecurityKey(keyProvider.GetKey()),
-        };
         options.Events = new JwtBearerEvents
         {
-            // token_version revocation (Task 1.3 SS8): rejects an otherwise-still-valid JWT
-            // the instant identity.users.token_version no longer matches what was embedded
-            // at issuance -- password change, forced logout, or an admin disabling the
-            // account all take effect immediately instead of waiting out the token's exp.
             OnTokenValidated = async context =>
             {
                 var tokenVersionClaim = context.Principal?.FindFirst("token_version")?.Value;
@@ -177,10 +156,6 @@ builder.Services.AddCors(options => options.AddPolicy("Frontend", policy =>
           .AllowAnyHeader()
           .AllowAnyMethod()));
 
-// ---- Redis (permission cache, Task 1.3 SS4.3; dashboard widget cache, Task 1.1 SS6) --
-//builder.Services.AddStackExchangeRedisCache(o =>
-//    o.Configuration = builder.Configuration.GetConnectionString("Redis"));
-
 // ---- SignalR (DashboardHub / TicketHub, Task 1.1 SS4/SS2.3) -------------------
 builder.Services.AddSignalR();
 
@@ -209,7 +184,5 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapDarabanHealthCheckEndpoints();
 app.MapHub<Daraban.Host.Api.Hubs.AgentStatusHub>("/hubs/agent-status");
-// app.MapHub<DashboardHub>("/hubs/dashboard");
-// app.MapHub<TicketHub>("/hubs/tickets");
 
 app.Run();

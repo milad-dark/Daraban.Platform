@@ -3,6 +3,7 @@ using Daraban.Modules.Software.Services.Dtos;
 using Daraban.Modules.Software.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
+using Daraban.Platform.Hosting;
 using Daraban.Platform.Hosting.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -40,7 +41,7 @@ public class SoftwaresController : ControllerBase
         var result = await _softwareService.GetPagedAsync(
             _currentUser.ActiveEntityId, search, category, isActive, page, pageSize, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
 
         return Ok(result.Value);
     }
@@ -51,7 +52,7 @@ public class SoftwaresController : ControllerBase
     {
         var result = await _softwareService.GetByIdAsync(id, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
 
         return Ok(result.Value);
     }
@@ -65,7 +66,7 @@ public class SoftwaresController : ControllerBase
         var result = await _softwareService.CreateAsync(
             request with { EntityNodeId = _currentUser.ActiveEntityId }, _currentUser.UserId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
 
         return CreatedAtAction(nameof(GetById), new { id = result.Value.Id }, result.Value);
     }
@@ -76,7 +77,7 @@ public class SoftwaresController : ControllerBase
     {
         var result = await _softwareService.UpdateAsync(id, request, _currentUser.UserId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
 
         return Ok(result.Value);
     }
@@ -87,27 +88,9 @@ public class SoftwaresController : ControllerBase
     {
         var result = await _softwareService.DeleteAsync(id, _currentUser.UserId, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
 
         return NoContent();
     }
 
-    private ObjectResult ProblemFrom(Error error)
-    {
-        var status = error.Type switch
-        {
-            ErrorType.NotFound => StatusCodes.Status404NotFound,
-            ErrorType.Conflict => StatusCodes.Status409Conflict,
-            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-            ErrorType.BusinessRule => StatusCodes.Status422UnprocessableEntity,
-            _ => StatusCodes.Status400BadRequest,
-        };
-        return new ObjectResult(new ProblemDetails
-        {
-            Title = error.Message,
-            Status = status,
-            Extensions = { ["errorCode"] = error.Code },
-        })
-        { StatusCode = status };
-    }
 }

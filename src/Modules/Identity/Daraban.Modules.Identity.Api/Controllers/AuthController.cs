@@ -1,5 +1,6 @@
 using Daraban.Modules.Identity.Services.Auth;
 using Daraban.Platform.Common;
+using Daraban.Platform.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -45,7 +46,7 @@ public class AuthController : ControllerBase
     {
         var result = await _authService.RegisterAsync(request, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         return CreatedAtAction(nameof(Register), result.Value);
     }
 
@@ -57,7 +58,7 @@ public class AuthController : ControllerBase
 
         var result = await _authService.LoginAsync(request, ip, userAgent, ct);
         if (!result.IsSuccess)
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
 
         SetRefreshCookie(result.Value.RefreshToken);
         return Ok(new { accessToken = result.Value.AccessToken, expiresAt = result.Value.AccessTokenExpiresAt, user = result.Value.User });
@@ -67,7 +68,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Refresh(CancellationToken ct)
     {
         if (!Request.Cookies.TryGetValue(RefreshCookieName, out var presented) || string.IsNullOrEmpty(presented))
-            return ProblemFrom(new Error("IDENTITY.REFRESH_TOKEN_MISSING", "No refresh session found.", ErrorType.Forbidden));
+            return new Error("IDENTITY.REFRESH_TOKEN_MISSING", "No refresh session found.", ErrorType.Forbidden).ToProblemResult(HttpContext);
 
         var result = await _authService.RefreshAsync(presented, ct);
         if (!result.IsSuccess)
@@ -75,7 +76,7 @@ public class AuthController : ControllerBase
             // Always clear the cookie on a failed refresh -- an invalid/reused/expired
             // token should never be presented again by the browser on its own.
             Response.Cookies.Delete(RefreshCookieName);
-            return ProblemFrom(result.Error!);
+            return result.Error!.ToProblemResult(HttpContext);
         }
 
         SetRefreshCookie(result.Value.RefreshToken);
@@ -113,22 +114,4 @@ public class AuthController : ControllerBase
         });
     }
 
-    private ObjectResult ProblemFrom(Error error)
-    {
-        var status = error.Type switch
-        {
-            ErrorType.NotFound => StatusCodes.Status404NotFound,
-            ErrorType.Conflict => StatusCodes.Status409Conflict,
-            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-            ErrorType.BusinessRule => StatusCodes.Status422UnprocessableEntity,
-            _ => StatusCodes.Status400BadRequest,
-        };
-        return new ObjectResult(new ProblemDetails
-        {
-            Title = error.Message,
-            Status = status,
-            Extensions = { ["errorCode"] = error.Code },
-        })
-        { StatusCode = status };
-    }
 }

@@ -3,11 +3,8 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Serilog.AspNetCore" />
-    <PackageReference Include="Serilog.Sinks.Console" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Modules\Inventory\Daraban.Modules.Inventory.Services\Daraban.Modules.Inventory.Services.csproj" />
+    <ProjectReference Include="..\..\Shared\Daraban.Platform.Hosting\Daraban.Platform.Hosting.csproj" />
     <ProjectReference Include="..\..\Shared\Daraban.Platform.Messaging\Daraban.Platform.Messaging.csproj" />
   </ItemGroup>
 </Project>

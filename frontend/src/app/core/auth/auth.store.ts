@@ -8,6 +8,7 @@ import {
 } from '@ngrx/signals';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { extractError } from '../utils/error.util';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './models/current-user.model';
 import { LoginRequest } from './models/login-request.model';
@@ -52,14 +53,7 @@ function buildCurrentUser(token: string): CurrentUser {
   };
 }
 
-function extractErrorMessage(err: unknown): string {
-  if (err && typeof err === 'object' && 'error' in err) {
-    const httpError = err as { error: { detail?: string; title?: string } };
-    if (httpError.error?.detail) return httpError.error.detail;
-    if (httpError.error?.title) return httpError.error.title;
-  }
-  return 'An unexpected error occurred. Please try again.';
-}
+
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
@@ -101,7 +95,7 @@ export const AuthStore = signalStore(
           });
           await router.navigate(['/dashboard']);
         } catch (err: unknown) {
-          patchState(store, { isLoading: false, error: extractErrorMessage(err) });
+          patchState(store, { isLoading: false, error: extractError(err) });
         }
       },
 
@@ -120,7 +114,7 @@ export const AuthStore = signalStore(
           });
           await router.navigate(['/dashboard']);
         } catch (err: unknown) {
-          patchState(store, { isLoading: false, error: extractErrorMessage(err) });
+          patchState(store, { isLoading: false, error: extractError(err) });
         }
       },
 

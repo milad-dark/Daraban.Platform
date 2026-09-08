@@ -7,6 +7,13 @@
     <InternalsVisibleTo Include="Daraban.Modules.Identity.Tests" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Shared JWT bearer validation setup (AddDarabanJwtBearer). JwtBearer is no longer
+         part of the App shared framework (since .NET 9), so the package is pinned centrally
+         like the hosts do; the App framework reference covers SignalR/Hubs and MVC types. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />

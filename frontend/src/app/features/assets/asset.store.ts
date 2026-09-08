@@ -7,6 +7,7 @@ import {
   patchState,
 } from '@ngrx/signals';
 import { firstValueFrom } from 'rxjs';
+import { extractError } from '../../core/utils/error.util';
 import { AssetService } from './asset.service';
 import {
   Asset,
@@ -114,29 +115,6 @@ export const AssetStore = signalStore(
       }
     },
 
-    setPage(page: number): void {
-      patchState(store, { page });
-      store.loadAssets();
-    },
-
-    setPageSize(pageSize: number): void {
-      patchState(store, { pageSize, page: 1 });
-      store.loadAssets();
-    },
-
-    updateFilters(filters: Partial<AssetFilters>): void {
-      patchState(store, {
-        filters: { ...store.filters(), ...filters },
-        page: 1,
-      });
-      store.loadAssets();
-    },
-
-    clearFilters(): void {
-      patchState(store, { filters: initialState.filters, page: 1 });
-      store.loadAssets();
-    },
-
     // ── Detail ──
     async loadAsset(id: string): Promise<void> {
       patchState(store, { isLoadingDetail: true, error: null });
@@ -221,6 +199,38 @@ export const AssetStore = signalStore(
       }
     },
 
+    clearError(): void {
+      patchState(store, { error: null });
+    },
+  })),
+
+  // Methods that call other store methods live in a second withMethods feature so they
+  // can see them on the store type (methods of the same feature are not visible to each
+  // other). Runtime behavior is identical -- this only fixes the typing.
+  withMethods((store, assetService = inject(AssetService)) => ({
+    setPage(page: number): void {
+      patchState(store, { page });
+      store.loadAssets();
+    },
+
+    setPageSize(pageSize: number): void {
+      patchState(store, { pageSize, page: 1 });
+      store.loadAssets();
+    },
+
+    updateFilters(filters: Partial<AssetFilters>): void {
+      patchState(store, {
+        filters: { ...store.filters(), ...filters },
+        page: 1,
+      });
+      store.loadAssets();
+    },
+
+    clearFilters(): void {
+      patchState(store, { filters: initialState.filters, page: 1 });
+      store.loadAssets();
+    },
+
     // ── Lifecycle ──
     async transitionAsset(
       assetId: string,
@@ -241,18 +251,6 @@ export const AssetStore = signalStore(
         return false;
       }
     },
-
-    clearError(): void {
-      patchState(store, { error: null });
-    },
   }))
 );
 
-function extractError(err: unknown): string {
-  if (err && typeof err === 'object' && 'error' in err) {
-    const httpError = err as { error: { detail?: string; title?: string } };
-    if (httpError.error?.detail) return httpError.error.detail;
-    if (httpError.error?.title) return httpError.error.title;
-  }
-  return 'An unexpected error occurred.';
-}

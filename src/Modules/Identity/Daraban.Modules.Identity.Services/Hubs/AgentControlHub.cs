@@ -2,11 +2,15 @@ using Daraban.Modules.Identity.Services.Agents;
 using Daraban.Platform.Contracts.Agents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
-namespace Daraban.Host.AgentApi.Hubs;
+namespace Daraban.Modules.Identity.Services.Hubs;
 
 /// <summary>
 /// Server → Agent push channel (Task 4.1 SS2.3).
+/// Lives in the Identity module (which owns agent commands) rather than the agent host so the
+/// CommandDispatch worker can push via IHubContext<AgentControlHub> without depending on a
+/// host project -- workers reference module services, never hosts.
 /// Agents connect here after authenticating to receive:
 ///   - Command dispatches (the server pushes work items to the agent)
 ///   - Configuration updates (scope changes, rate limit changes)

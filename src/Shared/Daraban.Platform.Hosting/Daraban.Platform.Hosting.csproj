@@ -3,8 +3,6 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 	<ItemGroup>
-		<!-- Configuration validation -->
-		<!--<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />-->
 		<!-- Authorization (Task 2.4): JwtRegisteredClaimNames for reading claims in CurrentUser;
          IDistributedCache abstractions for the permission-resolution cache. -->
 		<PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
@@ -21,8 +19,6 @@
 		<PackageReference Include="Serilog.Sinks.Console" />
 		<PackageReference Include="Serilog.Sinks.File" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" />
-		<!--<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />-->
-
 	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />

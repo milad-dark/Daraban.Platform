@@ -1,4 +1,4 @@
-using Daraban.Host.AgentApi.Hubs;
+using Daraban.Modules.Identity.Services.Hubs;
 using Daraban.Modules.Identity.Services.Agents;
 using Daraban.Platform.Contracts.Agents;
 using Daraban.Platform.Messaging;
