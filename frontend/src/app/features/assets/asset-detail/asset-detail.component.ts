@@ -17,6 +17,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
 import { AssetStore } from '../asset.store';
 import {
   AssetStatus,
@@ -29,6 +30,7 @@ import {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CommonModule,
     MatTabsModule,
     MatCardModule,
     MatIconModule,
@@ -91,7 +93,7 @@ export class AssetDetailComponent implements OnInit, OnDestroy {
     this.router.navigate(['/assets', this.assetId(), 'edit']);
   }
 
-  async onDelete(): void {
+  async onDelete(): Promise<void> {
     const asset = this.store.selectedAsset();
     if (asset && confirm(`Delete asset "${asset.name}"?`)) {
       const success = await this.store.deleteAsset(asset.id);

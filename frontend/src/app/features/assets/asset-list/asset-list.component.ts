@@ -21,6 +21,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 import { AssetStore } from '../asset.store';
 import { AssetService } from '../asset.service';
 import { AssetList as AssetListItem, ASSET_STATUS_OPTIONS } from '../models/asset.model';
@@ -44,6 +45,7 @@ import { AssetList as AssetListItem, ASSET_STATUS_OPTIONS } from '../models/asse
     MatProgressBarModule,
     MatTooltipModule,
     MatCardModule,
+    MatDividerModule,
   ],
   templateUrl: './asset-list.component.html',
   styleUrl: './asset-list.component.scss',

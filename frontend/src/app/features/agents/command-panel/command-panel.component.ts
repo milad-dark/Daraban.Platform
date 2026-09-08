@@ -144,7 +144,7 @@ import { COMMAND_TYPE_OPTIONS, CommandType } from '../models/agent.model';
   `],
 })
 export class CommandPanelComponent {
-  @Input({ required }) agentId!: string;
+  @Input({ required: true }) agentId!: string;
 
   protected readonly store = inject(AgentStore);
   protected readonly commandOptions = COMMAND_TYPE_OPTIONS;

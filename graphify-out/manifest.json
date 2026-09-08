@@ -1,9 +1,9 @@
 {
   "Daraban.Platform.sln": {
-    "mtime": 1786911378.6176293,
-    "seen": 1787846071.743126,
-    "ast_hash": "90969129ed3a9a66e85385f5420ac72a",
-    "semantic_hash": "90969129ed3a9a66e85385f5420ac72a"
+    "mtime": 1788707971.887776,
+    "seen": 1788877892.730996,
+    "ast_hash": "c727b9df41e7061c4407440cc9d4750d",
+    "semantic_hash": "c727b9df41e7061c4407440cc9d4750d"
   },
   "frontend/angular.json": {
     "mtime": 1787383213.9257493,
@@ -12,10 +12,10 @@
     "semantic_hash": "b2b175aee65cf22e2e9f40d5812d9250"
   },
   "frontend/package.json": {
-    "mtime": 1787383205.146318,
-    "seen": 1787846071.7431324,
-    "ast_hash": "8398f48f35e0feec0ffdc63e8ed7e5cd",
-    "semantic_hash": "8398f48f35e0feec0ffdc63e8ed7e5cd"
+    "mtime": 1788870172.8629816,
+    "seen": 1788877892.7310078,
+    "ast_hash": "b50efe6cdd3f3e4fb4efef98d74fb580",
+    "semantic_hash": "b50efe6cdd3f3e4fb4efef98d74fb580"
   },
   "frontend/proxy.conf.json": {
     "mtime": 1787383099.7919314,
@@ -36,10 +36,10 @@
     "semantic_hash": "ca4a48f9f089248bffbe01017f9e804e"
   },
   "frontend/src/app/app.routes.ts": {
-    "mtime": 1787383716.800105,
-    "seen": 1787846071.743136,
-    "ast_hash": "3f805462f8b4475768408e84efea4cd1",
-    "semantic_hash": "3f805462f8b4475768408e84efea4cd1"
+    "mtime": 1788871315.989006,
+    "seen": 1788877892.7310138,
+    "ast_hash": "d042c946edbf12bf6592e66271e33715",
+    "semantic_hash": "d042c946edbf12bf6592e66271e33715"
   },
   "frontend/src/app/core/auth/auth.guard.ts": {
     "mtime": 1787383716.7499394,
@@ -60,10 +60,10 @@
     "semantic_hash": "972be1f2f1b6cad5ab92beec33c848b6"
   },
   "frontend/src/app/core/auth/auth.store.ts": {
-    "mtime": 1787383716.7609553,
-    "seen": 1787846071.7431388,
-    "ast_hash": "47def0cbd4663ea73ebbc6a26163c50e",
-    "semantic_hash": "47def0cbd4663ea73ebbc6a26163c50e"
+    "mtime": 1788790461.7940936,
+    "seen": 1788877892.7310183,
+    "ast_hash": "a943cae7e3d5ed404f91a42f9e5d9d9a",
+    "semantic_hash": "a943cae7e3d5ed404f91a42f9e5d9d9a"
   },
   "frontend/src/app/core/auth/guest.guard.ts": {
     "mtime": 1787383716.762462,
@@ -162,16 +162,16 @@
     "semantic_hash": "07011608bb35ba5b8dd94d65bc796971"
   },
   "src/Host/Daraban.Host.AgentApi/Daraban.Host.AgentApi.csproj": {
-    "mtime": 1786911378.6189735,
-    "seen": 1787846071.7431507,
-    "ast_hash": "b9b359ebef36ee1bae0378bbbd020640",
-    "semantic_hash": "b9b359ebef36ee1bae0378bbbd020640"
+    "mtime": 1787939165.6660626,
+    "seen": 1788877892.7310758,
+    "ast_hash": "38d5366003bf368d2d9a589f18191186",
+    "semantic_hash": "38d5366003bf368d2d9a589f18191186"
   },
   "src/Host/Daraban.Host.AgentApi/Program.cs": {
-    "mtime": 1786911378.620335,
-    "seen": 1787846071.7431514,
-    "ast_hash": "24d9d4f32c732596637a03e79efaaa6a",
-    "semantic_hash": "24d9d4f32c732596637a03e79efaaa6a"
+    "mtime": 1788789752.7801661,
+    "seen": 1788877892.731077,
+    "ast_hash": "2c534ae94e760bad7da0ecc7a2d10105",
+    "semantic_hash": "2c534ae94e760bad7da0ecc7a2d10105"
   },
   "src/Host/Daraban.Host.AgentApi/Properties/launchSettings.json": {
     "mtime": 1785352882.430488,
@@ -186,16 +186,16 @@
     "semantic_hash": "350ef3dee177057a95a9a76f5203b888"
   },
   "src/Host/Daraban.Host.Api/Daraban.Host.Api.csproj": {
-    "mtime": 1787584891.2937438,
-    "seen": 1787846071.7431533,
-    "ast_hash": "f916fcceca3d691427076ad654c975cb",
-    "semantic_hash": "f916fcceca3d691427076ad654c975cb"
+    "mtime": 1788683829.7706552,
+    "seen": 1788877892.7310808,
+    "ast_hash": "17433ae8ac5e7151f785743221590703",
+    "semantic_hash": "17433ae8ac5e7151f785743221590703"
   },
   "src/Host/Daraban.Host.Api/Program.cs": {
-    "mtime": 1786911378.6213574,
-    "seen": 1787846071.7431538,
-    "ast_hash": "a86f06a9818a976929a3823bdd26cf09",
-    "semantic_hash": "a86f06a9818a976929a3823bdd26cf09"
+    "mtime": 1788870072.3780477,
+    "seen": 1788877892.731083,
+    "ast_hash": "e221ac5783c08c5c0302ae71a8d2ed21",
+    "semantic_hash": "e221ac5783c08c5c0302ae71a8d2ed21"
   },
   "src/Host/Daraban.Host.Api/Properties/launchSettings.json": {
     "mtime": 1785352882.430488,
@@ -222,64 +222,64 @@
     "semantic_hash": "33b098e3be08554cfa9895fff52fc886"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Api/Controllers/AssetAssignmentLookupController.cs": {
-    "mtime": 1787771843.4286492,
-    "seen": 1787846071.7431574,
-    "ast_hash": "641f5cca9ded77932234a0461811957e",
-    "semantic_hash": "641f5cca9ded77932234a0461811957e"
+    "mtime": 1788789860.356081,
+    "seen": 1788877892.731088,
+    "ast_hash": "7b2aa6db4a9dfaab8063927b40c2486c",
+    "semantic_hash": "7b2aa6db4a9dfaab8063927b40c2486c"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Api/Controllers/AssetAssignmentsController.cs": {
-    "mtime": 1787771843.42965,
-    "seen": 1787846071.743158,
-    "ast_hash": "b5e27447c17e22f7f1ebe1c5bceb724b",
-    "semantic_hash": "b5e27447c17e22f7f1ebe1c5bceb724b"
+    "mtime": 1788789860.403258,
+    "seen": 1788877892.7310886,
+    "ast_hash": "689b54215333cf886b42ab27d2e385e3",
+    "semantic_hash": "689b54215333cf886b42ab27d2e385e3"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Api/Controllers/AssetCategoriesController.cs": {
-    "mtime": 1787769916.8465636,
-    "seen": 1787846071.7431588,
-    "ast_hash": "caeb2c352e220f8fa95b06064e1fe102",
-    "semantic_hash": "caeb2c352e220f8fa95b06064e1fe102"
+    "mtime": 1788789860.4229398,
+    "seen": 1788877892.7310894,
+    "ast_hash": "55ca0d355984a6f23acb14dcf649d3ad",
+    "semantic_hash": "55ca0d355984a6f23acb14dcf649d3ad"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Api/Controllers/AssetLifecycleController.cs": {
-    "mtime": 1787842329.6898296,
-    "seen": 1787846071.7431593,
-    "ast_hash": "2de69f2fe2090abf76f862133d93e6c2",
-    "semantic_hash": "2de69f2fe2090abf76f862133d93e6c2"
+    "mtime": 1788789860.438793,
+    "seen": 1788877892.73109,
+    "ast_hash": "54d3d78545c9775d5ffff242bc55deb8",
+    "semantic_hash": "54d3d78545c9775d5ffff242bc55deb8"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Api/Controllers/AssetTypesController.cs": {
-    "mtime": 1787769916.8475573,
-    "seen": 1787846071.7431598,
-    "ast_hash": "b8b6cb252c66cf71053cc204cdc1c4cd",
-    "semantic_hash": "b8b6cb252c66cf71053cc204cdc1c4cd"
+    "mtime": 1788789860.452927,
+    "seen": 1788877892.731091,
+    "ast_hash": "d23d4766c4d3caca62da6b69b0f55b7f",
+    "semantic_hash": "d23d4766c4d3caca62da6b69b0f55b7f"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Api/Controllers/AssetsController.cs": {
-    "mtime": 1787769916.8475573,
-    "seen": 1787846071.7431605,
-    "ast_hash": "a7d396da6aa0fe658d5d4932e0972473",
-    "semantic_hash": "a7d396da6aa0fe658d5d4932e0972473"
+    "mtime": 1788789860.4700348,
+    "seen": 1788877892.7310917,
+    "ast_hash": "2f5a9f40d31e7dda2f94f8f8260c746b",
+    "semantic_hash": "2f5a9f40d31e7dda2f94f8f8260c746b"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Api/Controllers/AssetsExportController.cs": {
-    "mtime": 1787843923.9221654,
-    "seen": 1787846071.7431617,
-    "ast_hash": "8eae885030dd640125bf447ef509739d",
-    "semantic_hash": "8eae885030dd640125bf447ef509739d"
+    "mtime": 1788789860.49413,
+    "seen": 1788877892.7310925,
+    "ast_hash": "f30e30623585bb22ac1381f145c43e93",
+    "semantic_hash": "f30e30623585bb22ac1381f145c43e93"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Api/Controllers/AssetsImportController.cs": {
-    "mtime": 1787843915.2474747,
-    "seen": 1787846071.7431622,
-    "ast_hash": "d4284e0e579aae19ada54d366bfbd9c0",
-    "semantic_hash": "d4284e0e579aae19ada54d366bfbd9c0"
+    "mtime": 1788789860.5086951,
+    "seen": 1788877892.7310932,
+    "ast_hash": "e49d338fb64e8dcdebc05d746b06da7b",
+    "semantic_hash": "e49d338fb64e8dcdebc05d746b06da7b"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Api/Controllers/LocationsController.cs": {
-    "mtime": 1787769916.8475573,
-    "seen": 1787846071.7431629,
-    "ast_hash": "3875ec69e6737c69af8bd26ba4695693",
-    "semantic_hash": "3875ec69e6737c69af8bd26ba4695693"
+    "mtime": 1788789860.5262263,
+    "seen": 1788877892.7310941,
+    "ast_hash": "140c8aa24f72fcacd6db1ba89417ac80",
+    "semantic_hash": "140c8aa24f72fcacd6db1ba89417ac80"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Api/Controllers/ManufacturersController.cs": {
-    "mtime": 1787769916.8487687,
-    "seen": 1787846071.7431633,
-    "ast_hash": "fb73d6b61e4a9b38a46d2d88cd61fd24",
-    "semantic_hash": "fb73d6b61e4a9b38a46d2d88cd61fd24"
+    "mtime": 1788789860.5443082,
+    "seen": 1788877892.7310948,
+    "ast_hash": "3c523e55022ec96fcf997f81c730f575",
+    "semantic_hash": "3c523e55022ec96fcf997f81c730f575"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Api/Daraban.Modules.Assets.Api.csproj": {
     "mtime": 1787769205.3119307,
@@ -468,10 +468,10 @@
     "semantic_hash": "2df7b5226c8e8f32a2da96d301e9a11a"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Data/Repositories/AssetCategoryRepository.cs": {
-    "mtime": 1787769916.859869,
-    "seen": 1787846071.743184,
-    "ast_hash": "179beb7f2f14ee5355beccbe84991322",
-    "semantic_hash": "179beb7f2f14ee5355beccbe84991322"
+    "mtime": 1788706895.9178925,
+    "seen": 1788877892.7311244,
+    "ast_hash": "4227a58c90e6a5f467734b9bfa7bec64",
+    "semantic_hash": "4227a58c90e6a5f467734b9bfa7bec64"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Data/Repositories/AssetRepository.cs": {
     "mtime": 1787769916.859869,
@@ -486,8 +486,8 @@
     "semantic_hash": "0eebdceeb35b99ee670d75c139ee52cc"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Data/Repositories/AssetTypeRepository.cs": {
-    "mtime": 1787842842.7138662,
-    "seen": 1787846071.743186,
+    "mtime": 1787846534.8806117,
+    "seen": 1788877892.7311273,
     "ast_hash": "52ef4f9ad1fd69fa7432e45950439131",
     "semantic_hash": "52ef4f9ad1fd69fa7432e45950439131"
   },
@@ -498,10 +498,10 @@
     "semantic_hash": "a31c4b4208471504f2cf9fcdc00d11bb"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Data/Repositories/IAssetCategoryRepository.cs": {
-    "mtime": 1787769916.8618686,
-    "seen": 1787846071.7431874,
-    "ast_hash": "669f90aa54f8573487fd9839c8d7dc24",
-    "semantic_hash": "669f90aa54f8573487fd9839c8d7dc24"
+    "mtime": 1788706626.268981,
+    "seen": 1788877892.7311292,
+    "ast_hash": "746ca33fd88cfe96d38eb817a05f39e3",
+    "semantic_hash": "746ca33fd88cfe96d38eb817a05f39e3"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Data/Repositories/IAssetRepository.cs": {
     "mtime": 1787769916.8618686,
@@ -516,16 +516,16 @@
     "semantic_hash": "5592145087f97be9c06f88e2b77b00a5"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Data/Repositories/IAssetTypeRepository.cs": {
-    "mtime": 1787842809.0167027,
-    "seen": 1787846071.7431903,
+    "mtime": 1787846534.8806117,
+    "seen": 1788877892.7311313,
     "ast_hash": "e63383d962dd3667c8d847529bfe2473",
     "semantic_hash": "e63383d962dd3667c8d847529bfe2473"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Data/Repositories/ILocationRepository.cs": {
-    "mtime": 1787769916.8628683,
-    "seen": 1787846071.743191,
-    "ast_hash": "6500fb403936844b69f8d2e5ae616e12",
-    "semantic_hash": "6500fb403936844b69f8d2e5ae616e12"
+    "mtime": 1788707210.3396575,
+    "seen": 1788877892.7311323,
+    "ast_hash": "9df1522d92f37007b57ebdfcc99d5b12",
+    "semantic_hash": "9df1522d92f37007b57ebdfcc99d5b12"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Data/Repositories/IManufacturerRepository.cs": {
     "mtime": 1787769916.8638692,
@@ -534,10 +534,10 @@
     "semantic_hash": "b78da62b9c50cdb81ad93a6c1ec74fad"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Data/Repositories/LocationRepository.cs": {
-    "mtime": 1787769916.8638692,
-    "seen": 1787846071.7431924,
-    "ast_hash": "8de618b6c4aa63b44b8b4a33894881c5",
-    "semantic_hash": "8de618b6c4aa63b44b8b4a33894881c5"
+    "mtime": 1788707994.8176062,
+    "seen": 1788877892.731134,
+    "ast_hash": "cf5c5a86b65519206fb7d73a509592bd",
+    "semantic_hash": "cf5c5a86b65519206fb7d73a509592bd"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Data/Repositories/ManufacturerRepository.cs": {
     "mtime": 1787769916.8638692,
@@ -552,56 +552,56 @@
     "semantic_hash": "35c78993eaafba66ab3d60d6bcf37f2b"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/AssetCategoryService.cs": {
-    "mtime": 1787843871.222117,
-    "seen": 1787846071.743194,
-    "ast_hash": "4c5536d17ab7fdaa49f43d6cfc4123da",
-    "semantic_hash": "4c5536d17ab7fdaa49f43d6cfc4123da"
+    "mtime": 1788708895.497573,
+    "seen": 1788877892.7311366,
+    "ast_hash": "bc47489a7f4c238a9e56384136ecbb28",
+    "semantic_hash": "bc47489a7f4c238a9e56384136ecbb28"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/AssetExportService.cs": {
-    "mtime": 1787843820.886819,
-    "seen": 1787846071.7431948,
-    "ast_hash": "7c78246e6010cee26bc09fe0127f6d8f",
-    "semantic_hash": "7c78246e6010cee26bc09fe0127f6d8f"
+    "mtime": 1787846534.882706,
+    "seen": 1788877892.7311373,
+    "ast_hash": "1471af88632c82ad56afbae491a38b65",
+    "semantic_hash": "1471af88632c82ad56afbae491a38b65"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/AssetImportService.cs": {
-    "mtime": 1787844567.4563043,
-    "seen": 1787846071.7431955,
-    "ast_hash": "614ab7ebeaba563a94c5ebaeee967f7c",
-    "semantic_hash": "614ab7ebeaba563a94c5ebaeee967f7c"
+    "mtime": 1788637247.4606557,
+    "seen": 1788877892.731138,
+    "ast_hash": "8aa882fb9afa18d50db33cbace62fefc",
+    "semantic_hash": "8aa882fb9afa18d50db33cbace62fefc"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/AssetLifecycleService.cs": {
-    "mtime": 1787843871.3010664,
-    "seen": 1787846071.7431965,
+    "mtime": 1787846534.883757,
+    "seen": 1788877892.7311387,
     "ast_hash": "7e1ae149baf2d27a6824767aafd5acf3",
     "semantic_hash": "7e1ae149baf2d27a6824767aafd5acf3"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/AssetService.cs": {
-    "mtime": 1787843871.2486608,
-    "seen": 1787846071.743197,
+    "mtime": 1787846534.884763,
+    "seen": 1788877892.7311397,
     "ast_hash": "355e66b737140a6a7e36c32919bc4415",
     "semantic_hash": "355e66b737140a6a7e36c32919bc4415"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/AssetTypeService.cs": {
-    "mtime": 1787843871.2609375,
-    "seen": 1787846071.7431977,
+    "mtime": 1787846534.884763,
+    "seen": 1788877892.7311406,
     "ast_hash": "fa7191ddd7b8d4105be4a6c07826ef53",
     "semantic_hash": "fa7191ddd7b8d4105be4a6c07826ef53"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/AssetsModuleServiceCollectionExtensions.cs": {
-    "mtime": 1787843253.5108778,
-    "seen": 1787846071.7431982,
+    "mtime": 1787846534.88578,
+    "seen": 1788877892.7311413,
     "ast_hash": "0e76bce7196fdc20465349c7fbf95570",
     "semantic_hash": "0e76bce7196fdc20465349c7fbf95570"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/Daraban.Modules.Assets.Services.csproj": {
-    "mtime": 1787842761.6808138,
-    "seen": 1787846071.7431989,
-    "ast_hash": "e66252a2d688ea4c6895b1b2d0d4c962",
-    "semantic_hash": "e66252a2d688ea4c6895b1b2d0d4c962"
+    "mtime": 1787846534.88578,
+    "seen": 1788877892.7311418,
+    "ast_hash": "c4a69ea0401a48bc756bec4a2de19817",
+    "semantic_hash": "c4a69ea0401a48bc756bec4a2de19817"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/Dtos/AssetDtos.cs": {
-    "mtime": 1787843871.2742462,
-    "seen": 1787846071.7431996,
+    "mtime": 1787846534.8867855,
+    "seen": 1788877892.731143,
     "ast_hash": "315cf3695ea5872b8649335c6ddf7492",
     "semantic_hash": "315cf3695ea5872b8649335c6ddf7492"
   },
@@ -618,16 +618,16 @@
     "semantic_hash": "cbd638f7f6e0bf00914f128e6519cf7b"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/Interfaces/IAssetExportService.cs": {
-    "mtime": 1787843854.473646,
-    "seen": 1787846071.7432015,
-    "ast_hash": "23ed73c71fa69795fd0e80b3f66e748c",
-    "semantic_hash": "23ed73c71fa69795fd0e80b3f66e748c"
+    "mtime": 1787846534.8867855,
+    "seen": 1788877892.7311454,
+    "ast_hash": "c40280f6da03f1708eb0010e31defe27",
+    "semantic_hash": "c40280f6da03f1708eb0010e31defe27"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/Interfaces/IAssetImportService.cs": {
-    "mtime": 1787843863.5914679,
-    "seen": 1787846071.7432022,
-    "ast_hash": "c4cc659ed6c052f3d9489e7c69402bc3",
-    "semantic_hash": "c4cc659ed6c052f3d9489e7c69402bc3"
+    "mtime": 1787846534.8878355,
+    "seen": 1788877892.7311463,
+    "ast_hash": "b3df491f89f34f3494226f782b93396e",
+    "semantic_hash": "b3df491f89f34f3494226f782b93396e"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/Interfaces/IAssetLifecycleService.cs": {
     "mtime": 1787769916.8674276,
@@ -660,14 +660,14 @@
     "semantic_hash": "bd99350b9c67cb9369e3f4059c3a7e97"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/LocationService.cs": {
-    "mtime": 1787843871.286852,
-    "seen": 1787846071.7432058,
-    "ast_hash": "ccbe604912b06a10a0dd56e8212f51ce",
-    "semantic_hash": "ccbe604912b06a10a0dd56e8212f51ce"
+    "mtime": 1788709697.9832015,
+    "seen": 1788877892.7311537,
+    "ast_hash": "7b2e326b77bf1b234f8c3e2cb1b45f29",
+    "semantic_hash": "7b2e326b77bf1b234f8c3e2cb1b45f29"
   },
   "src/Modules/Assets/Daraban.Modules.Assets.Services/ManufacturerService.cs": {
-    "mtime": 1787843871.2365253,
-    "seen": 1787846071.7432067,
+    "mtime": 1787846534.8889265,
+    "seen": 1788877892.7311552,
     "ast_hash": "0f8af8f9b3c6f8b69f9ef75bdd53785e",
     "semantic_hash": "0f8af8f9b3c6f8b69f9ef75bdd53785e"
   },
@@ -732,10 +732,10 @@
     "semantic_hash": "df246b57c3781c166efad9a845673fdb"
   },
   "src/Modules/Financial/Daraban.Modules.Financial.Data/FinancialDbContext.cs": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.7432137,
-    "ast_hash": "8cbc65fb2705b07657fe8a29cc616f80",
-    "semantic_hash": "8cbc65fb2705b07657fe8a29cc616f80"
+    "mtime": 1788463398.2610395,
+    "seen": 1788877892.731256,
+    "ast_hash": "87e3e5bf836a42d4d77a1011fe75a336",
+    "semantic_hash": "87e3e5bf836a42d4d77a1011fe75a336"
   },
   "src/Modules/Financial/Daraban.Modules.Financial.Services/Daraban.Modules.Financial.Services.csproj": {
     "mtime": 1785229925.0,
@@ -744,10 +744,10 @@
     "semantic_hash": "bb3044315ad4e3d3c024322d5016adeb"
   },
   "src/Modules/Financial/Daraban.Modules.Financial.Services/FinancialModuleServiceCollectionExtensions.cs": {
-    "mtime": 1785354470.415906,
-    "seen": 1787846071.7432148,
-    "ast_hash": "8ef0b910488250a69f475ece330d4444",
-    "semantic_hash": "8ef0b910488250a69f475ece330d4444"
+    "mtime": 1788463398.2672257,
+    "seen": 1788877892.7312732,
+    "ast_hash": "c8036092adff947f4462ece9999eb27b",
+    "semantic_hash": "c8036092adff947f4462ece9999eb27b"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Api/AssemblyMarker.cs": {
     "mtime": 1785229925.0,
@@ -756,16 +756,16 @@
     "semantic_hash": "63c11b60d4258845223a5b9339be6a46"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Api/Controllers/AuthController.cs": {
-    "mtime": 1786272089.7186117,
-    "seen": 1787846071.743216,
-    "ast_hash": "b9dd255766e9b474b0d2af6ae5f79d76",
-    "semantic_hash": "b9dd255766e9b474b0d2af6ae5f79d76"
+    "mtime": 1788789896.4599752,
+    "seen": 1788877892.7312806,
+    "ast_hash": "c2312b0d75453bba0309f564a9ddca89",
+    "semantic_hash": "c2312b0d75453bba0309f564a9ddca89"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Api/Controllers/UsersController.cs": {
-    "mtime": 1786911378.6243422,
-    "seen": 1787846071.743217,
-    "ast_hash": "cbf1d15558b61e3772dc00b89b00dd58",
-    "semantic_hash": "cbf1d15558b61e3772dc00b89b00dd58"
+    "mtime": 1788643900.4392166,
+    "seen": 1788877892.7312815,
+    "ast_hash": "d64d0100989f7399e9c84915765cfcfe",
+    "semantic_hash": "d64d0100989f7399e9c84915765cfcfe"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Api/Daraban.Modules.Identity.Api.csproj": {
     "mtime": 1786911378.6243422,
@@ -792,10 +792,10 @@
     "semantic_hash": "6de3ee6eba0046190d2fee9aefd22548"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Data/Configurations/RefreshTokenConfiguration.cs": {
-    "mtime": 1786272089.7196186,
-    "seen": 1787846071.7432199,
-    "ast_hash": "119dc86136eae639c9b83a69cc27944f",
-    "semantic_hash": "119dc86136eae639c9b83a69cc27944f"
+    "mtime": 1788643520.4391806,
+    "seen": 1788877892.7312891,
+    "ast_hash": "6ffb3896459a3e547565f3de7edbae03",
+    "semantic_hash": "6ffb3896459a3e547565f3de7edbae03"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Data/Configurations/UserConfiguration.cs": {
     "mtime": 1785229925.0,
@@ -810,10 +810,10 @@
     "semantic_hash": "1179c5aca11cc468e0257c4a5a7bd26c"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Data/Daraban.Modules.Identity.Data.csproj": {
-    "mtime": 1785354374.2878723,
-    "seen": 1787846071.7432218,
-    "ast_hash": "3e79e4e406a112a33dcdafac860e1b2b",
-    "semantic_hash": "3e79e4e406a112a33dcdafac860e1b2b"
+    "mtime": 1788038061.939974,
+    "seen": 1788877892.731292,
+    "ast_hash": "162eedf62abeb226394839a2a4deb506",
+    "semantic_hash": "162eedf62abeb226394839a2a4deb506"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Data/Entities/EntityNode.cs": {
     "mtime": 1786911378.6263416,
@@ -834,10 +834,10 @@
     "semantic_hash": "aa10114a0de5f34a74f7f4543ab4cf45"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Data/Entities/RefreshToken.cs": {
-    "mtime": 1786272089.7196186,
-    "seen": 1787846071.743226,
-    "ast_hash": "a2f2a2652aeaf5d8a3f9fe4619770371",
-    "semantic_hash": "a2f2a2652aeaf5d8a3f9fe4619770371"
+    "mtime": 1788643440.8232045,
+    "seen": 1788877892.731298,
+    "ast_hash": "eaa7e7bb5bc5f03eb2c37c5ed8f4197f",
+    "semantic_hash": "eaa7e7bb5bc5f03eb2c37c5ed8f4197f"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Data/Entities/User.cs": {
     "mtime": 1786272089.7230055,
@@ -852,10 +852,10 @@
     "semantic_hash": "6ff6d6e86530f0ca0b2a89c45ae73567"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Data/IdentityDbContext.cs": {
-    "mtime": 1786911378.6273417,
-    "seen": 1787846071.7432282,
-    "ast_hash": "09800d454edc4a5fe051d8e67b754557",
-    "semantic_hash": "09800d454edc4a5fe051d8e67b754557"
+    "mtime": 1788038061.9409738,
+    "seen": 1788877892.7313006,
+    "ast_hash": "adb1117e32b78fb45d8c2a48dcf1e99d",
+    "semantic_hash": "adb1117e32b78fb45d8c2a48dcf1e99d"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Data/Repositories/IRefreshTokenRepository.cs": {
     "mtime": 1786272089.7298117,
@@ -876,10 +876,10 @@
     "semantic_hash": "c644096f5d5c8b13e4bc0d13df704f25"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Data/Repositories/UserRepository.cs": {
-    "mtime": 1786272089.7408423,
-    "seen": 1787846071.7432308,
-    "ast_hash": "262471c155ec89cf1edf45785b594c75",
-    "semantic_hash": "262471c155ec89cf1edf45785b594c75"
+    "mtime": 1788643840.9198067,
+    "seen": 1788877892.731307,
+    "ast_hash": "84d2f74d646ba14d6b2a15fa5e053c32",
+    "semantic_hash": "84d2f74d646ba14d6b2a15fa5e053c32"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Services/Auth/AuthDtos.cs": {
     "mtime": 1786272089.7418425,
@@ -888,10 +888,10 @@
     "semantic_hash": "745f7daca757522c69b25a84655070a4"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Services/Auth/AuthService.cs": {
-    "mtime": 1786272089.7423475,
-    "seen": 1787846071.7432323,
-    "ast_hash": "58667a8f2d52a7b8512a4e052193d12a",
-    "semantic_hash": "58667a8f2d52a7b8512a4e052193d12a"
+    "mtime": 1788643676.297795,
+    "seen": 1788877892.7313137,
+    "ast_hash": "5a2ad4ef688997116ecd355e757d7ea1",
+    "semantic_hash": "5a2ad4ef688997116ecd355e757d7ea1"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Services/Auth/AuthValidators.cs": {
     "mtime": 1786272089.743353,
@@ -930,10 +930,10 @@
     "semantic_hash": "c36b11664d872c156064adaf59cc5275"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Services/Auth/RefreshTokenService.cs": {
-    "mtime": 1786272089.7578957,
-    "seen": 1787846071.7432368,
-    "ast_hash": "f43519e0aad1e6714910d4fe1151d754",
-    "semantic_hash": "f43519e0aad1e6714910d4fe1151d754"
+    "mtime": 1788643568.2437725,
+    "seen": 1788877892.7313209,
+    "ast_hash": "b775bd12ead1d064c393bb8780d73ab3",
+    "semantic_hash": "b775bd12ead1d064c393bb8780d73ab3"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Services/Authorization/EntityScopeAccessor.cs": {
     "mtime": 1786911378.6273417,
@@ -948,28 +948,28 @@
     "semantic_hash": "ac6b9689fdb3f36f9c9fe38584ec7a04"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Services/Daraban.Modules.Identity.Services.csproj": {
-    "mtime": 1786911378.6286983,
-    "seen": 1787846071.743239,
-    "ast_hash": "83e41db2180212490e6f4eda6f1409e8",
-    "semantic_hash": "83e41db2180212490e6f4eda6f1409e8"
+    "mtime": 1788790033.3091571,
+    "seen": 1788877892.7313237,
+    "ast_hash": "1f794685031d30130cec84fb653cabb3",
+    "semantic_hash": "1f794685031d30130cec84fb653cabb3"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Services/IdentityModuleServiceCollectionExtensions.cs": {
-    "mtime": 1786911378.630086,
-    "seen": 1787846071.7432394,
-    "ast_hash": "8cc438b5624fb42d3537d48695111609",
-    "semantic_hash": "8cc438b5624fb42d3537d48695111609"
+    "mtime": 1788789595.8298037,
+    "seen": 1788877892.7313251,
+    "ast_hash": "b01ec21155551ea81c5421a555fcf3c3",
+    "semantic_hash": "b01ec21155551ea81c5421a555fcf3c3"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Services/Users/CreateUserRequestValidator.cs": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.74324,
-    "ast_hash": "f0d1b7f22f8d44572477261bbcba8b34",
-    "semantic_hash": "f0d1b7f22f8d44572477261bbcba8b34"
+    "mtime": 1788643791.7599096,
+    "seen": 1788877892.731326,
+    "ast_hash": "af7c2b569f91c2c087a425fa53ede37a",
+    "semantic_hash": "af7c2b569f91c2c087a425fa53ede37a"
   },
   "src/Modules/Identity/Daraban.Modules.Identity.Services/Users/UserService.cs": {
-    "mtime": 1785354794.1899953,
-    "seen": 1787846071.7432406,
-    "ast_hash": "2c91d4472755329bbe676e322ee2f533",
-    "semantic_hash": "2c91d4472755329bbe676e322ee2f533"
+    "mtime": 1788643756.4389977,
+    "seen": 1788877892.731327,
+    "ast_hash": "f7b05c32a75ee34120aa23bee99fceb8",
+    "semantic_hash": "f7b05c32a75ee34120aa23bee99fceb8"
   },
   "src/Modules/Inventory/Daraban.Modules.Inventory.Api/AssemblyMarker.cs": {
     "mtime": 1785229925.0,
@@ -990,10 +990,10 @@
     "semantic_hash": "df246b57c3781c166efad9a845673fdb"
   },
   "src/Modules/Inventory/Daraban.Modules.Inventory.Data/InventoryDbContext.cs": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.7432432,
-    "ast_hash": "fab85b6024b981bdb41de38034c36ff0",
-    "semantic_hash": "fab85b6024b981bdb41de38034c36ff0"
+    "mtime": 1788033991.8329165,
+    "seen": 1788877892.7313318,
+    "ast_hash": "2e40db75fa9cfb3a92aa932fae63718b",
+    "semantic_hash": "2e40db75fa9cfb3a92aa932fae63718b"
   },
   "src/Modules/Inventory/Daraban.Modules.Inventory.Services/Daraban.Modules.Inventory.Services.csproj": {
     "mtime": 1785229925.0,
@@ -1002,10 +1002,10 @@
     "semantic_hash": "0734a992a82342ab63136d2bed6e8201"
   },
   "src/Modules/Inventory/Daraban.Modules.Inventory.Services/InventoryModuleServiceCollectionExtensions.cs": {
-    "mtime": 1785354470.3842947,
-    "seen": 1787846071.7432442,
-    "ast_hash": "328c19bb0d2e79545731165a73f96865",
-    "semantic_hash": "328c19bb0d2e79545731165a73f96865"
+    "mtime": 1788033991.8369074,
+    "seen": 1788877892.731336,
+    "ast_hash": "bc69e716f755d5bd6c752cf87c15b83f",
+    "semantic_hash": "bc69e716f755d5bd6c752cf87c15b83f"
   },
   "src/Modules/Knowledge/Daraban.Modules.Knowledge.Api/AssemblyMarker.cs": {
     "mtime": 1785229925.0,
@@ -1020,16 +1020,16 @@
     "semantic_hash": "cf6625ea122cd647a9d1b28f34117164"
   },
   "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Daraban.Modules.Knowledge.Data.csproj": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.7432466,
+    "mtime": 1788620349.700063,
+    "seen": 1788877892.731345,
     "ast_hash": "df246b57c3781c166efad9a845673fdb",
     "semantic_hash": "df246b57c3781c166efad9a845673fdb"
   },
   "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/KnowledgeDbContext.cs": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.743249,
-    "ast_hash": "9c14aa37c316528e49f3cd70fc7d1a76",
-    "semantic_hash": "9c14aa37c316528e49f3cd70fc7d1a76"
+    "mtime": 1788633741.570884,
+    "seen": 1788877892.731349,
+    "ast_hash": "ade66095d413169f3b19d16c93fcad07",
+    "semantic_hash": "ade66095d413169f3b19d16c93fcad07"
   },
   "src/Modules/Knowledge/Daraban.Modules.Knowledge.Services/Daraban.Modules.Knowledge.Services.csproj": {
     "mtime": 1785229925.0,
@@ -1038,10 +1038,10 @@
     "semantic_hash": "8a3c79ce9a230ae047f4b932beed96f6"
   },
   "src/Modules/Knowledge/Daraban.Modules.Knowledge.Services/KnowledgeModuleServiceCollectionExtensions.cs": {
-    "mtime": 1785354470.3225055,
-    "seen": 1787846071.7432501,
-    "ast_hash": "05511bb4b50236e46676449f71d011c4",
-    "semantic_hash": "05511bb4b50236e46676449f71d011c4"
+    "mtime": 1788633741.606893,
+    "seen": 1788877892.7313652,
+    "ast_hash": "4f376abec5b45ed1948696d0d7a0518e",
+    "semantic_hash": "4f376abec5b45ed1948696d0d7a0518e"
   },
   "src/Modules/Notifications/Daraban.Modules.Notifications.Api/AssemblyMarker.cs": {
     "mtime": 1785229925.0,
@@ -1134,10 +1134,10 @@
     "semantic_hash": "df246b57c3781c166efad9a845673fdb"
   },
   "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/ServiceDeskDbContext.cs": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.7432606,
-    "ast_hash": "c30dfdcdf0e061de8a3385566ead21e6",
-    "semantic_hash": "c30dfdcdf0e061de8a3385566ead21e6"
+    "mtime": 1788460198.9163265,
+    "seen": 1788877892.7313948,
+    "ast_hash": "8b7886d5693490bd0d6a4b36c051bc77",
+    "semantic_hash": "8b7886d5693490bd0d6a4b36c051bc77"
   },
   "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Services/Daraban.Modules.ServiceDesk.Services.csproj": {
     "mtime": 1785229925.0,
@@ -1146,10 +1146,10 @@
     "semantic_hash": "30e3120d03a0f32c1a2ebe1b501ab53d"
   },
   "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Services/ServiceDeskModuleServiceCollectionExtensions.cs": {
-    "mtime": 1785354470.2624614,
-    "seen": 1787846071.743262,
-    "ast_hash": "e47b8e4bbe59ca7f4fdf23c666eb23d2",
-    "semantic_hash": "e47b8e4bbe59ca7f4fdf23c666eb23d2"
+    "mtime": 1788640928.7490795,
+    "seen": 1788877892.731399,
+    "ast_hash": "96db780851f29a9462293f87063ea82a",
+    "semantic_hash": "96db780851f29a9462293f87063ea82a"
   },
   "src/Shared/Daraban.Platform.Abstractions/Daraban.Platform.Abstractions.csproj": {
     "mtime": 1785229925.0,
@@ -1218,8 +1218,8 @@
     "semantic_hash": "a3e415f84a6da959d686f798d55077c3"
   },
   "src/Shared/Daraban.Platform.Contracts/Daraban.Platform.Contracts.csproj": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.74327,
+    "mtime": 1788633354.4728086,
+    "seen": 1788877892.7314348,
     "ast_hash": "80f05a21712fbff33d18e570bafa96c3",
     "semantic_hash": "80f05a21712fbff33d18e570bafa96c3"
   },
@@ -1266,10 +1266,10 @@
     "semantic_hash": "5720616126620b89604801f552b1c090"
   },
   "src/Shared/Daraban.Platform.Hosting/Daraban.Platform.Hosting.csproj": {
-    "mtime": 1786911378.6350417,
-    "seen": 1787846071.743275,
-    "ast_hash": "775547233f483b29952f9d9e10eff39d",
-    "semantic_hash": "775547233f483b29952f9d9e10eff39d"
+    "mtime": 1788791064.0448568,
+    "seen": 1788877892.7314427,
+    "ast_hash": "d88993fc0f7143f814695e25fe1d7115",
+    "semantic_hash": "d88993fc0f7143f814695e25fe1d7115"
   },
   "src/Shared/Daraban.Platform.Hosting/ErrorProblemDetailsExtensions.cs": {
     "mtime": 1786911378.6350417,
@@ -1332,10 +1332,10 @@
     "semantic_hash": "511b1669334f1d65cc56e62147271c01"
   },
   "src/Workers/Daraban.Workers.InventoryProcessor/Daraban.Workers.InventoryProcessor.csproj": {
-    "mtime": 1786911378.6393113,
-    "seen": 1787846071.7432818,
-    "ast_hash": "2b14d2beee2ca5b6bca1a2df579789d8",
-    "semantic_hash": "2b14d2beee2ca5b6bca1a2df579789d8"
+    "mtime": 1788789768.0730271,
+    "seen": 1788877892.73146,
+    "ast_hash": "3a36cc6fc2817fb3bfab16729e982865",
+    "semantic_hash": "3a36cc6fc2817fb3bfab16729e982865"
   },
   "src/Workers/Daraban.Workers.InventoryProcessor/InventorySubmissionConsumer.cs": {
     "mtime": 1785355874.8688035,
@@ -1344,10 +1344,10 @@
     "semantic_hash": "02c3c5236a00769e4eb1bd56791bc0c9"
   },
   "src/Workers/Daraban.Workers.InventoryProcessor/Program.cs": {
-    "mtime": 1785356667.2780862,
-    "seen": 1787846071.7432833,
-    "ast_hash": "557c4e33a89064a1c3ba0e75c7e5edc7",
-    "semantic_hash": "557c4e33a89064a1c3ba0e75c7e5edc7"
+    "mtime": 1788789785.589628,
+    "seen": 1788877892.731462,
+    "ast_hash": "b18a0321c47774c9286d8995077c6c61",
+    "semantic_hash": "b18a0321c47774c9286d8995077c6c61"
   },
   "src/Workers/Daraban.Workers.InventoryProcessor/appsettings.json": {
     "mtime": 1785229925.0,
@@ -1356,16 +1356,16 @@
     "semantic_hash": "6b0d711d473ced86220952881d15b865"
   },
   "src/Workers/Daraban.Workers.NotificationDispatcher/Daraban.Workers.NotificationDispatcher.csproj": {
-    "mtime": 1786911378.6393113,
-    "seen": 1787846071.7432845,
-    "ast_hash": "81bedd5322d313f10bc0b2f2ebda798a",
-    "semantic_hash": "81bedd5322d313f10bc0b2f2ebda798a"
+    "mtime": 1788789768.0897386,
+    "seen": 1788877892.7314637,
+    "ast_hash": "0bc99a3c2b6565cf10d297912372c48b",
+    "semantic_hash": "0bc99a3c2b6565cf10d297912372c48b"
   },
   "src/Workers/Daraban.Workers.NotificationDispatcher/Program.cs": {
-    "mtime": 1785356686.5512807,
-    "seen": 1787846071.7432852,
-    "ast_hash": "f405a1e74a4e7c5935852a37de48d74a",
-    "semantic_hash": "f405a1e74a4e7c5935852a37de48d74a"
+    "mtime": 1788789785.6008058,
+    "seen": 1788877892.7314644,
+    "ast_hash": "0232ff544e63d8b78def482532eb255c",
+    "semantic_hash": "0232ff544e63d8b78def482532eb255c"
   },
   "src/Workers/Daraban.Workers.NotificationDispatcher/QueuedNotificationConsumer.cs": {
     "mtime": 1785355927.9000692,
@@ -1380,16 +1380,16 @@
     "semantic_hash": "6b0d711d473ced86220952881d15b865"
   },
   "src/Workers/Daraban.Workers.RuleEvaluator/Daraban.Workers.RuleEvaluator.csproj": {
-    "mtime": 1786911378.6407552,
-    "seen": 1787846071.7432873,
-    "ast_hash": "c9f0ac2872efcf0b42d70819e5d0980a",
-    "semantic_hash": "c9f0ac2872efcf0b42d70819e5d0980a"
+    "mtime": 1788789768.101374,
+    "seen": 1788877892.7314675,
+    "ast_hash": "06a2d7e758912aa50d219360e08df986",
+    "semantic_hash": "06a2d7e758912aa50d219360e08df986"
   },
   "src/Workers/Daraban.Workers.RuleEvaluator/Program.cs": {
-    "mtime": 1785356698.1349652,
-    "seen": 1787846071.7432878,
-    "ast_hash": "2c646a6367d9e948ce092a26a11e818a",
-    "semantic_hash": "2c646a6367d9e948ce092a26a11e818a"
+    "mtime": 1788789785.6141798,
+    "seen": 1788877892.7314682,
+    "ast_hash": "628cad3ca5051b69c3c325462bdc621f",
+    "semantic_hash": "628cad3ca5051b69c3c325462bdc621f"
   },
   "src/Workers/Daraban.Workers.RuleEvaluator/RuleEvaluationConsumer.cs": {
     "mtime": 1785355947.4631279,
@@ -1416,10 +1416,10 @@
     "semantic_hash": "6cf4ca66db7c23cdab8fe15f242a4f1a"
   },
   "tests/UnitTests/Daraban.Modules.Assets.Tests/Daraban.Modules.Assets.Tests.csproj": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.743291,
-    "ast_hash": "1c085f5f5eea3f3a93c1d7c0154a7696",
-    "semantic_hash": "1c085f5f5eea3f3a93c1d7c0154a7696"
+    "mtime": 1788635104.1397753,
+    "seen": 1788877892.7314768,
+    "ast_hash": "b833b9bc5d79fc196bbfe0d956f63d8c",
+    "semantic_hash": "b833b9bc5d79fc196bbfe0d956f63d8c"
   },
   "tests/UnitTests/Daraban.Modules.Automation.Tests/Daraban.Modules.Automation.Tests.csproj": {
     "mtime": 1785229925.0,
@@ -1428,28 +1428,28 @@
     "semantic_hash": "988bf4c50468e6671896a4d034a326aa"
   },
   "tests/UnitTests/Daraban.Modules.Financial.Tests/Daraban.Modules.Financial.Tests.csproj": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.7432923,
-    "ast_hash": "9a27de6ae40f47dd20dc6b55d88cac85",
-    "semantic_hash": "9a27de6ae40f47dd20dc6b55d88cac85"
+    "mtime": 1788680201.0586195,
+    "seen": 1788877892.731482,
+    "ast_hash": "af8d9c38282ceae3b19c32f5893acd53",
+    "semantic_hash": "af8d9c38282ceae3b19c32f5893acd53"
   },
   "tests/UnitTests/Daraban.Modules.Identity.Tests/Daraban.Modules.Identity.Tests.csproj": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.743293,
-    "ast_hash": "4f47949b957bbe83e0312ec6caec899a",
-    "semantic_hash": "4f47949b957bbe83e0312ec6caec899a"
+    "mtime": 1788645384.048593,
+    "seen": 1788877892.731487,
+    "ast_hash": "044d42bbac864b674c6f41f9dd434c06",
+    "semantic_hash": "044d42bbac864b674c6f41f9dd434c06"
   },
   "tests/UnitTests/Daraban.Modules.Inventory.Tests/Daraban.Modules.Inventory.Tests.csproj": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.7432938,
-    "ast_hash": "c81d7efa84d9652cb4420ec6a0515a42",
-    "semantic_hash": "c81d7efa84d9652cb4420ec6a0515a42"
+    "mtime": 1788695024.6358428,
+    "seen": 1788877892.7314913,
+    "ast_hash": "b8bbd742159d0060dc1a9b36d30b88fa",
+    "semantic_hash": "b8bbd742159d0060dc1a9b36d30b88fa"
   },
   "tests/UnitTests/Daraban.Modules.Knowledge.Tests/Daraban.Modules.Knowledge.Tests.csproj": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.7432945,
-    "ast_hash": "d91abe764e16e15863985e7f35e83f4e",
-    "semantic_hash": "d91abe764e16e15863985e7f35e83f4e"
+    "mtime": 1788633741.6088984,
+    "seen": 1788877892.7314928,
+    "ast_hash": "3e518a2e55ee840b1f8e0b18cadb3f3a",
+    "semantic_hash": "3e518a2e55ee840b1f8e0b18cadb3f3a"
   },
   "tests/UnitTests/Daraban.Modules.Notifications.Tests/Daraban.Modules.Notifications.Tests.csproj": {
     "mtime": 1785229925.0,
@@ -1464,16 +1464,16 @@
     "semantic_hash": "2d6a73c20ad71cb775835ecfe24c637a"
   },
   "tests/UnitTests/Daraban.Modules.ServiceDesk.Tests/Daraban.Modules.ServiceDesk.Tests.csproj": {
-    "mtime": 1785229925.0,
-    "seen": 1787846071.7432961,
-    "ast_hash": "8877288f40d9e279684e45c1d8aad015",
-    "semantic_hash": "8877288f40d9e279684e45c1d8aad015"
+    "mtime": 1788637764.2881398,
+    "seen": 1788877892.7314994,
+    "ast_hash": "0b798c0d0d852527a54dc2f2a6395461",
+    "semantic_hash": "0b798c0d0d852527a54dc2f2a6395461"
   },
   "README.md": {
-    "mtime": 1785356813.035002,
-    "seen": 1787846071.743297,
-    "ast_hash": "91ecdae6d0aa833f2fe0d16877da5525",
-    "semantic_hash": "91ecdae6d0aa833f2fe0d16877da5525"
+    "mtime": 1788791083.3673098,
+    "seen": 1788877892.7315083,
+    "ast_hash": "69edbce678ecc966c4456d344621fcb4",
+    "semantic_hash": "69edbce678ecc966c4456d344621fcb4"
   },
   "docker-compose.override.yml": {
     "mtime": 1787584891.263654,
@@ -1510,5 +1510,2027 @@
     "seen": 1787846071.7433012,
     "ast_hash": "e05d9656d007e5320aca748170cc6b6e",
     "semantic_hash": "e05d9656d007e5320aca748170cc6b6e"
+  },
+  "docs/_build/build.js": {
+    "mtime": 1788793427.2833188,
+    "seen": 1788877892.731001,
+    "ast_hash": "bf9fd1755909a464f120e08828ab2fde",
+    "semantic_hash": "bf9fd1755909a464f120e08828ab2fde"
+  },
+  "docs/_build/package.json": {
+    "mtime": 1788791940.1141384,
+    "seen": 1788877892.7310026,
+    "ast_hash": "cdbfaeebdc2551027d009c191758d2ac",
+    "semantic_hash": "cdbfaeebdc2551027d009c191758d2ac"
+  },
+  "frontend/src/app/core/utils/error.util.ts": {
+    "mtime": 1788789941.885263,
+    "seen": 1788877892.731026,
+    "ast_hash": "180e50de929c962bffdd30dc82d2f34c",
+    "semantic_hash": "180e50de929c962bffdd30dc82d2f34c"
+  },
+  "frontend/src/app/features/agents/agent-detail/agent-detail.component.ts": {
+    "mtime": 1788038149.3288352,
+    "seen": 1788877892.7310266,
+    "ast_hash": "bc92243def9449f3fbea175f4852d878",
+    "semantic_hash": "bc92243def9449f3fbea175f4852d878"
+  },
+  "frontend/src/app/features/agents/agent-list/agent-list.component.ts": {
+    "mtime": 1788038149.3298407,
+    "seen": 1788877892.7310274,
+    "ast_hash": "9c572924066d11dde4519e0445e9446e",
+    "semantic_hash": "9c572924066d11dde4519e0445e9446e"
+  },
+  "frontend/src/app/features/agents/agent.service.ts": {
+    "mtime": 1788038149.3298407,
+    "seen": 1788877892.731028,
+    "ast_hash": "70f2366baa218e8a9421724acacf2d0c",
+    "semantic_hash": "70f2366baa218e8a9421724acacf2d0c"
+  },
+  "frontend/src/app/features/agents/agent.store.ts": {
+    "mtime": 1788790535.1841707,
+    "seen": 1788877892.7310286,
+    "ast_hash": "ee7ffe6fba080b25c26bf72e0932681d",
+    "semantic_hash": "ee7ffe6fba080b25c26bf72e0932681d"
+  },
+  "frontend/src/app/features/agents/agents.routes.ts": {
+    "mtime": 1788038149.3308408,
+    "seen": 1788877892.7310295,
+    "ast_hash": "8f03ec31cba7d8fb47beea08e2436d18",
+    "semantic_hash": "8f03ec31cba7d8fb47beea08e2436d18"
+  },
+  "frontend/src/app/features/agents/command-panel/command-panel.component.ts": {
+    "mtime": 1788873129.1180632,
+    "seen": 1788877892.7310302,
+    "ast_hash": "4559995cba53d908653abf06b134eeec",
+    "semantic_hash": "4559995cba53d908653abf06b134eeec"
+  },
+  "frontend/src/app/features/agents/heartbeat-indicator/heartbeat-indicator.component.ts": {
+    "mtime": 1788038149.3318524,
+    "seen": 1788877892.731031,
+    "ast_hash": "79255190fbcfa893a192bbdcf692b8a0",
+    "semantic_hash": "79255190fbcfa893a192bbdcf692b8a0"
+  },
+  "frontend/src/app/features/agents/models/agent.model.ts": {
+    "mtime": 1788038149.332852,
+    "seen": 1788877892.731032,
+    "ast_hash": "b037dee326c330f8b50cdb71d7fe075f",
+    "semantic_hash": "b037dee326c330f8b50cdb71d7fe075f"
+  },
+  "frontend/src/app/features/assets/asset-detail/asset-detail.component.ts": {
+    "mtime": 1788873552.6150036,
+    "seen": 1788877892.7310328,
+    "ast_hash": "27d7d075d5e8d3a35d6537832c1ae067",
+    "semantic_hash": "27d7d075d5e8d3a35d6537832c1ae067"
+  },
+  "frontend/src/app/features/assets/asset-form/asset-form.component.ts": {
+    "mtime": 1788873675.2620814,
+    "seen": 1788877892.7310336,
+    "ast_hash": "1e9bebc28a2f7ce4081f45dc95abca98",
+    "semantic_hash": "1e9bebc28a2f7ce4081f45dc95abca98"
+  },
+  "frontend/src/app/features/assets/asset-import/asset-import.component.ts": {
+    "mtime": 1788873552.575965,
+    "seen": 1788877892.7310345,
+    "ast_hash": "1ac6139b34fce4281ee8b247762a766c",
+    "semantic_hash": "1ac6139b34fce4281ee8b247762a766c"
+  },
+  "frontend/src/app/features/assets/asset-list/asset-list.component.ts": {
+    "mtime": 1788873800.9283867,
+    "seen": 1788877892.7310352,
+    "ast_hash": "00e4328dc98d7f96c7f60032d5e1cb9d",
+    "semantic_hash": "00e4328dc98d7f96c7f60032d5e1cb9d"
+  },
+  "frontend/src/app/features/assets/asset.routes.ts": {
+    "mtime": 1787850512.954531,
+    "seen": 1788877892.731036,
+    "ast_hash": "5f99726542d09d301552da99d0146a00",
+    "semantic_hash": "5f99726542d09d301552da99d0146a00"
+  },
+  "frontend/src/app/features/assets/asset.service.ts": {
+    "mtime": 1787850512.954531,
+    "seen": 1788877892.7310367,
+    "ast_hash": "de1efcfc782359b795fef9265a4c78c4",
+    "semantic_hash": "de1efcfc782359b795fef9265a4c78c4"
+  },
+  "frontend/src/app/features/assets/asset.store.ts": {
+    "mtime": 1788790552.9326217,
+    "seen": 1788877892.7310371,
+    "ast_hash": "a5306b14e7bd9406ad0a0423c9f40271",
+    "semantic_hash": "a5306b14e7bd9406ad0a0423c9f40271"
+  },
+  "frontend/src/app/features/assets/models/asset.model.ts": {
+    "mtime": 1787850512.95553,
+    "seen": 1788877892.731038,
+    "ast_hash": "abcd59a7480b9dd3e527af28965de2a9",
+    "semantic_hash": "abcd59a7480b9dd3e527af28965de2a9"
+  },
+  "frontend/src/app/features/discovery/device-detail/device-detail.component.ts": {
+    "mtime": 1788384157.9744313,
+    "seen": 1788877892.7310436,
+    "ast_hash": "7048dea1c1b274830828114ec3670e11",
+    "semantic_hash": "7048dea1c1b274830828114ec3670e11"
+  },
+  "frontend/src/app/features/discovery/discovery-range-list/discovery-range-list.component.ts": {
+    "mtime": 1788384157.9754317,
+    "seen": 1788877892.7310443,
+    "ast_hash": "7fb65e0626c5f203a657ce8cb13b1857",
+    "semantic_hash": "7fb65e0626c5f203a657ce8cb13b1857"
+  },
+  "frontend/src/app/features/discovery/discovery.routes.ts": {
+    "mtime": 1788458999.5976014,
+    "seen": 1788877892.731045,
+    "ast_hash": "33ddd281d2adcc44b3ad8bebbeebf3df",
+    "semantic_hash": "33ddd281d2adcc44b3ad8bebbeebf3df"
+  },
+  "frontend/src/app/features/discovery/discovery.service.ts": {
+    "mtime": 1788458999.6136086,
+    "seen": 1788877892.731046,
+    "ast_hash": "60d99de6e8b0b6938dea6bbefc7061c7",
+    "semantic_hash": "60d99de6e8b0b6938dea6bbefc7061c7"
+  },
+  "frontend/src/app/features/discovery/discovery.store.ts": {
+    "mtime": 1788384157.976887,
+    "seen": 1788877892.7310467,
+    "ast_hash": "02ebedac4c6e0467b275ffccf6c0e29d",
+    "semantic_hash": "02ebedac4c6e0467b275ffccf6c0e29d"
+  },
+  "frontend/src/app/features/discovery/import-rule-editor/import-rule-editor.component.ts": {
+    "mtime": 1788458999.6287544,
+    "seen": 1788877892.7310474,
+    "ast_hash": "865e8c893fc5880874c3bf2f07796cb2",
+    "semantic_hash": "865e8c893fc5880874c3bf2f07796cb2"
+  },
+  "frontend/src/app/features/discovery/models/discovery.models.ts": {
+    "mtime": 1788384157.976887,
+    "seen": 1788877892.7310483,
+    "ast_hash": "8a90ce35c5f2e144700051256077b0a8",
+    "semantic_hash": "8a90ce35c5f2e144700051256077b0a8"
+  },
+  "frontend/src/app/features/discovery/network-map/network-map.component.ts": {
+    "mtime": 1788384157.9778934,
+    "seen": 1788877892.7310493,
+    "ast_hash": "44f980d8cae61d158908a38c94c1bd00",
+    "semantic_hash": "44f980d8cae61d158908a38c94c1bd00"
+  },
+  "frontend/src/app/features/discovery/scan-progress/scan-progress.component.ts": {
+    "mtime": 1788384157.9778934,
+    "seen": 1788877892.7310503,
+    "ast_hash": "2a041dcf093cbfb6958db106cf4051f6",
+    "semantic_hash": "2a041dcf093cbfb6958db106cf4051f6"
+  },
+  "frontend/src/app/features/discovery/scan-results/scan-results.component.ts": {
+    "mtime": 1788384157.979213,
+    "seen": 1788877892.731051,
+    "ast_hash": "8b0b8eb6902d3442ac90c08ddc4d8cea",
+    "semantic_hash": "8b0b8eb6902d3442ac90c08ddc4d8cea"
+  },
+  "frontend/src/app/features/knowledge-base/kb-article/kb-article.component.ts": {
+    "mtime": 1788871449.052927,
+    "seen": 1788877892.7310517,
+    "ast_hash": "4aa84ea4353e69a1a0e83f5d09627493",
+    "semantic_hash": "4aa84ea4353e69a1a0e83f5d09627493"
+  },
+  "frontend/src/app/features/knowledge-base/kb-search/kb-search.component.ts": {
+    "mtime": 1788871449.0144067,
+    "seen": 1788877892.7310529,
+    "ast_hash": "c360645a8685dc2c972d0534ff179483",
+    "semantic_hash": "c360645a8685dc2c972d0534ff179483"
+  },
+  "frontend/src/app/features/knowledge-base/kb.routes.ts": {
+    "mtime": 1788871284.815334,
+    "seen": 1788877892.7310536,
+    "ast_hash": "1fa213b89cc9e7e301457f324829cab4",
+    "semantic_hash": "1fa213b89cc9e7e301457f324829cab4"
+  },
+  "frontend/src/app/features/tickets/followup/followup.component.ts": {
+    "mtime": 1788872363.6171455,
+    "seen": 1788877892.7310543,
+    "ast_hash": "6d2dcdb961826e2ef72e0cec051a3bda",
+    "semantic_hash": "6d2dcdb961826e2ef72e0cec051a3bda"
+  },
+  "frontend/src/app/features/tickets/kb.service.ts": {
+    "mtime": 1788869811.506958,
+    "seen": 1788877892.731055,
+    "ast_hash": "0d4daef01da5684547f018ee20736eae",
+    "semantic_hash": "0d4daef01da5684547f018ee20736eae"
+  },
+  "frontend/src/app/features/tickets/kb.store.ts": {
+    "mtime": 1788869995.6588142,
+    "seen": 1788877892.7310562,
+    "ast_hash": "52536199451773d76ce940425180fb7f",
+    "semantic_hash": "52536199451773d76ce940425180fb7f"
+  },
+  "frontend/src/app/features/tickets/models/ticket.models.ts": {
+    "mtime": 1788871927.2280986,
+    "seen": 1788877892.731057,
+    "ast_hash": "9c22e6ba35375b5bfab129ae4b6b9556",
+    "semantic_hash": "9c22e6ba35375b5bfab129ae4b6b9556"
+  },
+  "frontend/src/app/features/tickets/sla-timer/sla-timer.component.ts": {
+    "mtime": 1788872363.6429331,
+    "seen": 1788877892.7310576,
+    "ast_hash": "d62e4df8e77e32f975e8b269215e316b",
+    "semantic_hash": "d62e4df8e77e32f975e8b269215e316b"
+  },
+  "frontend/src/app/features/tickets/ticket-create/ticket-create.component.ts": {
+    "mtime": 1788872394.355185,
+    "seen": 1788877892.7310584,
+    "ast_hash": "f8d1d3d4e8476d4eb44d196be867adeb",
+    "semantic_hash": "f8d1d3d4e8476d4eb44d196be867adeb"
+  },
+  "frontend/src/app/features/tickets/ticket-detail/ticket-detail.component.ts": {
+    "mtime": 1788871927.2712069,
+    "seen": 1788877892.7310593,
+    "ast_hash": "59853476ab639c08cb9a8e7a36670f0a",
+    "semantic_hash": "59853476ab639c08cb9a8e7a36670f0a"
+  },
+  "frontend/src/app/features/tickets/ticket-hub.service.ts": {
+    "mtime": 1788870995.8478808,
+    "seen": 1788877892.7310598,
+    "ast_hash": "c71ac6cab8ea7f98f02073d34dc1a0c4",
+    "semantic_hash": "c71ac6cab8ea7f98f02073d34dc1a0c4"
+  },
+  "frontend/src/app/features/tickets/ticket-list/ticket-list.component.ts": {
+    "mtime": 1788870439.2332666,
+    "seen": 1788877892.7310605,
+    "ast_hash": "22385ec41a99cc77652ddfdaed98dd5a",
+    "semantic_hash": "22385ec41a99cc77652ddfdaed98dd5a"
+  },
+  "frontend/src/app/features/tickets/ticket.routes.ts": {
+    "mtime": 1788871284.799039,
+    "seen": 1788877892.7310612,
+    "ast_hash": "f5aef750ea31b9b116f6c0bed63cae63",
+    "semantic_hash": "f5aef750ea31b9b116f6c0bed63cae63"
+  },
+  "frontend/src/app/features/tickets/ticket.service.ts": {
+    "mtime": 1788869749.7176783,
+    "seen": 1788877892.731062,
+    "ast_hash": "e77f6b54977d00987c14803290926067",
+    "semantic_hash": "e77f6b54977d00987c14803290926067"
+  },
+  "frontend/src/app/features/tickets/ticket.store.ts": {
+    "mtime": 1788871793.5114233,
+    "seen": 1788877892.731063,
+    "ast_hash": "828c924d7429b83e1f2896e4958ee19f",
+    "semantic_hash": "828c924d7429b83e1f2896e4958ee19f"
+  },
+  "src/Host/Daraban.Host.AgentApi/Authorization/AgentScopeAuthorizationHandler.cs": {
+    "mtime": 1788033991.8269048,
+    "seen": 1788877892.7310698,
+    "ast_hash": "89096d8945908ad7afbbdcb1364d3709",
+    "semantic_hash": "89096d8945908ad7afbbdcb1364d3709"
+  },
+  "src/Host/Daraban.Host.AgentApi/Authorization/AgentScopePolicyProvider.cs": {
+    "mtime": 1787939165.631877,
+    "seen": 1788877892.7310708,
+    "ast_hash": "d085bc074454e693252b0464cb9102c7",
+    "semantic_hash": "d085bc074454e693252b0464cb9102c7"
+  },
+  "src/Host/Daraban.Host.AgentApi/Authorization/AgentScopeRequirement.cs": {
+    "mtime": 1787939165.647843,
+    "seen": 1788877892.7310715,
+    "ast_hash": "a11762dff4d722b6de11d27c867b7364",
+    "semantic_hash": "a11762dff4d722b6de11d27c867b7364"
+  },
+  "src/Host/Daraban.Host.AgentApi/Controllers/AgentAuthController.cs": {
+    "mtime": 1787859509.8924937,
+    "seen": 1788877892.7310722,
+    "ast_hash": "8d09ae82a56b68a5d275b014a7740380",
+    "semantic_hash": "8d09ae82a56b68a5d275b014a7740380"
+  },
+  "src/Host/Daraban.Host.AgentApi/Controllers/AgentCommandController.cs": {
+    "mtime": 1788038061.9379685,
+    "seen": 1788877892.7310727,
+    "ast_hash": "294cb0c85942d0ea0cf431f4088e16f3",
+    "semantic_hash": "294cb0c85942d0ea0cf431f4088e16f3"
+  },
+  "src/Host/Daraban.Host.AgentApi/Controllers/AgentCommandsController.cs": {
+    "mtime": 1788038061.9389744,
+    "seen": 1788877892.7310736,
+    "ast_hash": "c3dab72fc39135590bb3aa5ae451cf37",
+    "semantic_hash": "c3dab72fc39135590bb3aa5ae451cf37"
+  },
+  "src/Host/Daraban.Host.AgentApi/Controllers/AgentInventoryController.cs": {
+    "mtime": 1788033991.8269048,
+    "seen": 1788877892.7310743,
+    "ast_hash": "3673fda78070c6c2f1ffcfab79d6b55d",
+    "semantic_hash": "3673fda78070c6c2f1ffcfab79d6b55d"
+  },
+  "src/Host/Daraban.Host.AgentApi/Controllers/AgentManagementController.cs": {
+    "mtime": 1787861369.3994393,
+    "seen": 1788877892.731075,
+    "ast_hash": "176db91932a4150f9d0a75fd3e7b1c0b",
+    "semantic_hash": "176db91932a4150f9d0a75fd3e7b1c0b"
+  },
+  "src/Host/Daraban.Host.Api/Controllers/AdminAgentController.cs": {
+    "mtime": 1788038149.3338401,
+    "seen": 1788877892.7310796,
+    "ast_hash": "fbd6b36837653ca175ef75be09bcdee0",
+    "semantic_hash": "fbd6b36837653ca175ef75be09bcdee0"
+  },
+  "src/Host/Daraban.Host.Api/Hubs/AgentStatusHub.cs": {
+    "mtime": 1788038149.3338401,
+    "seen": 1788877892.7310815,
+    "ast_hash": "ae26437a843a8a480ba206de81b683a5",
+    "semantic_hash": "ae26437a843a8a480ba206de81b683a5"
+  },
+  "src/Host/Daraban.Host.Api/Hubs/TicketHub.cs": {
+    "mtime": 1788870018.7434125,
+    "seen": 1788877892.7310822,
+    "ast_hash": "6952ec06aa9f6f6a483428d359965a28",
+    "semantic_hash": "6952ec06aa9f6f6a483428d359965a28"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Api/AssemblyMarker.cs": {
+    "mtime": 1788246607.2490897,
+    "seen": 1788877892.7311673,
+    "ast_hash": "fc539e03e3b4fee1ea96008f430b806b",
+    "semantic_hash": "fc539e03e3b4fee1ea96008f430b806b"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Api/Controllers/DiscoveryDashboardController.cs": {
+    "mtime": 1788246607.2490897,
+    "seen": 1788877892.7311685,
+    "ast_hash": "80d60cfbc8fee3ab5bbf966d3b2c5467",
+    "semantic_hash": "80d60cfbc8fee3ab5bbf966d3b2c5467"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Api/Controllers/DiscoveryRangeController.cs": {
+    "mtime": 1788246607.2651396,
+    "seen": 1788877892.7311695,
+    "ast_hash": "014869431cb678a505b5fe5473a8ef39",
+    "semantic_hash": "014869431cb678a505b5fe5473a8ef39"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Api/Controllers/DiscoveryRuleController.cs": {
+    "mtime": 1788246607.2671454,
+    "seen": 1788877892.731171,
+    "ast_hash": "64d73c0bfb68d0e40c63540b26ac41fe",
+    "semantic_hash": "64d73c0bfb68d0e40c63540b26ac41fe"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Api/Controllers/DiscoveryScanController.cs": {
+    "mtime": 1788246607.2681425,
+    "seen": 1788877892.731172,
+    "ast_hash": "fba84d6abd7fe589c22e1af89720a531",
+    "semantic_hash": "fba84d6abd7fe589c22e1af89720a531"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Api/Controllers/ImportRuleController.cs": {
+    "mtime": 1788458999.6455574,
+    "seen": 1788877892.731173,
+    "ast_hash": "dd2c6551405b7624429cc12bdfd53819",
+    "semantic_hash": "dd2c6551405b7624429cc12bdfd53819"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Api/Controllers/SnmpCredentialController.cs": {
+    "mtime": 1788246607.2787464,
+    "seen": 1788877892.7311745,
+    "ast_hash": "3ae4fc55b60f9545780064476d37d90e",
+    "semantic_hash": "3ae4fc55b60f9545780064476d37d90e"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Api/Daraban.Modules.Discovery.Api.csproj": {
+    "mtime": 1788246607.279749,
+    "seen": 1788877892.7311754,
+    "ast_hash": "ca5500416f87568760446cb765570494",
+    "semantic_hash": "ca5500416f87568760446cb765570494"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Configurations/DiscoveredDeviceConfiguration.cs": {
+    "mtime": 1788246607.308402,
+    "seen": 1788877892.7311769,
+    "ast_hash": "68141dbaf80c39200b4d7aed32c75725",
+    "semantic_hash": "68141dbaf80c39200b4d7aed32c75725"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Configurations/DiscoveryRangeConfiguration.cs": {
+    "mtime": 1788246607.3104043,
+    "seen": 1788877892.7311783,
+    "ast_hash": "4457d544ca78dd5fcfdca177dc0c73eb",
+    "semantic_hash": "4457d544ca78dd5fcfdca177dc0c73eb"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Configurations/DiscoveryRuleConfiguration.cs": {
+    "mtime": 1788246607.3134022,
+    "seen": 1788877892.7311797,
+    "ast_hash": "ba3c7ddc541d71646d196a5c50e529df",
+    "semantic_hash": "ba3c7ddc541d71646d196a5c50e529df"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Configurations/DiscoveryScanConfiguration.cs": {
+    "mtime": 1788246607.3144073,
+    "seen": 1788877892.7311811,
+    "ast_hash": "04c9ae2452eaba18716645311b5ab249",
+    "semantic_hash": "04c9ae2452eaba18716645311b5ab249"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Configurations/ImportRuleConfiguration.cs": {
+    "mtime": 1788458999.6465595,
+    "seen": 1788877892.731182,
+    "ast_hash": "79da084ae73f8adf6cc5e46d6547dbb6",
+    "semantic_hash": "79da084ae73f8adf6cc5e46d6547dbb6"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Configurations/SnmpCredentialConfiguration.cs": {
+    "mtime": 1788246607.3174033,
+    "seen": 1788877892.7311833,
+    "ast_hash": "cda92065376a2fcac914e4439fcb7861",
+    "semantic_hash": "cda92065376a2fcac914e4439fcb7861"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Daraban.Modules.Discovery.Data.csproj": {
+    "mtime": 1788246607.3295252,
+    "seen": 1788877892.731185,
+    "ast_hash": "adfa4145a1a2b4308a6a4c090199a7da",
+    "semantic_hash": "adfa4145a1a2b4308a6a4c090199a7da"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/DiscoveryDbContext.cs": {
+    "mtime": 1788458999.6465595,
+    "seen": 1788877892.7311864,
+    "ast_hash": "1f7fae8ddf9cc721abce59a0e1a0c8f2",
+    "semantic_hash": "1f7fae8ddf9cc721abce59a0e1a0c8f2"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Entities/DiscoveredDevice.cs": {
+    "mtime": 1788246607.3714938,
+    "seen": 1788877892.7311878,
+    "ast_hash": "67e09ea2be2f995e9a31eb762fdb124c",
+    "semantic_hash": "67e09ea2be2f995e9a31eb762fdb124c"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Entities/DiscoveryRange.cs": {
+    "mtime": 1788246607.3804944,
+    "seen": 1788877892.7311919,
+    "ast_hash": "f1eddcbe9e255e306561f269554a7478",
+    "semantic_hash": "f1eddcbe9e255e306561f269554a7478"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Entities/DiscoveryRule.cs": {
+    "mtime": 1788246607.3840687,
+    "seen": 1788877892.7311928,
+    "ast_hash": "24665514d2fdd40efe792f476abe8e03",
+    "semantic_hash": "24665514d2fdd40efe792f476abe8e03"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Entities/DiscoveryScan.cs": {
+    "mtime": 1788246607.3921916,
+    "seen": 1788877892.7311943,
+    "ast_hash": "169d2e7c5fe23fcd904a99778f93674b",
+    "semantic_hash": "169d2e7c5fe23fcd904a99778f93674b"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Entities/ImportRule.cs": {
+    "mtime": 1788458999.6505578,
+    "seen": 1788877892.7311957,
+    "ast_hash": "a888f055c6948837764897ab7e0905b6",
+    "semantic_hash": "a888f055c6948837764897ab7e0905b6"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Entities/SnmpCredential.cs": {
+    "mtime": 1788246607.395195,
+    "seen": 1788877892.7311966,
+    "ast_hash": "a9187b2d9d3fa6251e06d5e670d8c3ab",
+    "semantic_hash": "a9187b2d9d3fa6251e06d5e670d8c3ab"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Repositories/DiscoveryRepository.cs": {
+    "mtime": 1788458999.6535575,
+    "seen": 1788877892.7311983,
+    "ast_hash": "48958545dffe887150ded2a05bf8a61e",
+    "semantic_hash": "48958545dffe887150ded2a05bf8a61e"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Data/Repositories/IDiscoveryRepository.cs": {
+    "mtime": 1788458999.65685,
+    "seen": 1788877892.7311997,
+    "ast_hash": "b1e8f2082153da37496fae1b491092f8",
+    "semantic_hash": "b1e8f2082153da37496fae1b491092f8"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/CredentialEncryptionService.cs": {
+    "mtime": 1788689814.3679519,
+    "seen": 1788877892.731201,
+    "ast_hash": "cc259a174d14a2fa46666366a94074fc",
+    "semantic_hash": "cc259a174d14a2fa46666366a94074fc"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/Daraban.Modules.Discovery.Services.csproj": {
+    "mtime": 1788382262.6058512,
+    "seen": 1788877892.7312026,
+    "ast_hash": "12ad9ac8904233e2a33ee974f1354132",
+    "semantic_hash": "12ad9ac8904233e2a33ee974f1354132"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/DiscoveryDtos.cs": {
+    "mtime": 1788246607.4331398,
+    "seen": 1788877892.7312038,
+    "ast_hash": "62b1df94f3020566ae24d3f21452b17d",
+    "semantic_hash": "62b1df94f3020566ae24d3f21452b17d"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/DiscoveryModuleServiceCollectionExtensions.cs": {
+    "mtime": 1788458999.6578493,
+    "seen": 1788877892.7312052,
+    "ast_hash": "bb301bebbf175472f7fc1b721bd5caab",
+    "semantic_hash": "bb301bebbf175472f7fc1b721bd5caab"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/DiscoveryService.cs": {
+    "mtime": 1788381521.1167023,
+    "seen": 1788877892.7312074,
+    "ast_hash": "349b2e62b8df50880cff23583cabec18",
+    "semantic_hash": "349b2e62b8df50880cff23583cabec18"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/IDiscoveryService.cs": {
+    "mtime": 1788381521.1282222,
+    "seen": 1788877892.7312088,
+    "ast_hash": "6d628c0c49cdf1fe2c667f0c47692b4b",
+    "semantic_hash": "6d628c0c49cdf1fe2c667f0c47692b4b"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/IImportRuleService.cs": {
+    "mtime": 1788458999.6578493,
+    "seen": 1788877892.7312098,
+    "ast_hash": "9913e20ded176a3c051d82cb60b1ee99",
+    "semantic_hash": "9913e20ded176a3c051d82cb60b1ee99"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/ImportRuleService.cs": {
+    "mtime": 1788458999.6668494,
+    "seen": 1788877892.731211,
+    "ast_hash": "879c2361eb14f47efd108107e1c0085e",
+    "semantic_hash": "879c2361eb14f47efd108107e1c0085e"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/Processing/DiscoveryResultProcessor.cs": {
+    "mtime": 1788382262.6068506,
+    "seen": 1788877892.7312121,
+    "ast_hash": "99a1f9fc69fa8485cb7467fda6428769",
+    "semantic_hash": "99a1f9fc69fa8485cb7467fda6428769"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/Processing/IDiscoveryResultProcessor.cs": {
+    "mtime": 1788382262.6073563,
+    "seen": 1788877892.7312133,
+    "ast_hash": "898d48f5e8272a807dad27a7c544bf9b",
+    "semantic_hash": "898d48f5e8272a807dad27a7c544bf9b"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/Scheduling/DiscoveryScheduler.cs": {
+    "mtime": 1788382262.6073563,
+    "seen": 1788877892.7312145,
+    "ast_hash": "5c13b35c7ccdbf5952488446cdf4655d",
+    "semantic_hash": "5c13b35c7ccdbf5952488446cdf4655d"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/Scheduling/IDiscoveryScheduler.cs": {
+    "mtime": 1788382262.6073563,
+    "seen": 1788877892.731228,
+    "ast_hash": "9468bdd5a0b8c0fcd013cd707602befa",
+    "semantic_hash": "9468bdd5a0b8c0fcd013cd707602befa"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/Snmp/ISnmpDiscoveryEngine.cs": {
+    "mtime": 1788381521.1342194,
+    "seen": 1788877892.7312288,
+    "ast_hash": "9e01599da322599aeda0da0c43d8a077",
+    "semantic_hash": "9e01599da322599aeda0da0c43d8a077"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/Snmp/SnmpDiscoveryEngine.cs": {
+    "mtime": 1788381521.1483572,
+    "seen": 1788877892.7312298,
+    "ast_hash": "32e977e2a9dcdea4083036047220765e",
+    "semantic_hash": "32e977e2a9dcdea4083036047220765e"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/Validators/CreateCredentialRequestValidator.cs": {
+    "mtime": 1788246607.4586048,
+    "seen": 1788877892.7312307,
+    "ast_hash": "0598f845d8264fcd13c60b6355d5ae95",
+    "semantic_hash": "0598f845d8264fcd13c60b6355d5ae95"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/Validators/CreateRangeRequestValidator.cs": {
+    "mtime": 1788246607.459606,
+    "seen": 1788877892.7312312,
+    "ast_hash": "172483d65a378c18db0585206772ae80",
+    "semantic_hash": "172483d65a378c18db0585206772ae80"
+  },
+  "src/Modules/Discovery/Daraban.Modules.Discovery.Services/Validators/CreateRuleRequestValidator.cs": {
+    "mtime": 1788246607.459606,
+    "seen": 1788877892.731232,
+    "ast_hash": "f1004ac35627a4fabe89cbe99e171eba",
+    "semantic_hash": "f1004ac35627a4fabe89cbe99e171eba"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Api/Controllers/BudgetsController.cs": {
+    "mtime": 1788789881.0011282,
+    "seen": 1788877892.731234,
+    "ast_hash": "b589473ebfd857a15a2ad88bb3d2490e",
+    "semantic_hash": "b589473ebfd857a15a2ad88bb3d2490e"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Api/Controllers/ContractsController.cs": {
+    "mtime": 1788789881.0344887,
+    "seen": 1788877892.7312348,
+    "ast_hash": "7f16d1319fba1c385dac1b87c486708f",
+    "semantic_hash": "7f16d1319fba1c385dac1b87c486708f"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Api/Controllers/InfocomsController.cs": {
+    "mtime": 1788789881.0562148,
+    "seen": 1788877892.7312357,
+    "ast_hash": "f28171f9449c1010f32223bc4e4cfad7",
+    "semantic_hash": "f28171f9449c1010f32223bc4e4cfad7"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Api/Controllers/PurchasesController.cs": {
+    "mtime": 1788789881.076256,
+    "seen": 1788877892.7312365,
+    "ast_hash": "a60e84c40c865a09126aea16333cedfd",
+    "semantic_hash": "a60e84c40c865a09126aea16333cedfd"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Api/Controllers/SuppliersController.cs": {
+    "mtime": 1788789881.126687,
+    "seen": 1788877892.7312372,
+    "ast_hash": "9c69855e0cff5418e52986116fca48ca",
+    "semantic_hash": "9c69855e0cff5418e52986116fca48ca"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Configurations/BudgetConfiguration.cs": {
+    "mtime": 1788463398.2570553,
+    "seen": 1788877892.7312388,
+    "ast_hash": "ad5b55447a808c9408d0a4b8c65a2d2e",
+    "semantic_hash": "ad5b55447a808c9408d0a4b8c65a2d2e"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Configurations/ContractAssetConfiguration.cs": {
+    "mtime": 1788463398.2570553,
+    "seen": 1788877892.731241,
+    "ast_hash": "bfbcef638a2cdc364e00dadacfb8e7d7",
+    "semantic_hash": "bfbcef638a2cdc364e00dadacfb8e7d7"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Configurations/ContractConfiguration.cs": {
+    "mtime": 1788463398.2580545,
+    "seen": 1788877892.7312417,
+    "ast_hash": "6e610bdac90351703939261a77902c37",
+    "semantic_hash": "6e610bdac90351703939261a77902c37"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Configurations/ContractCostConfiguration.cs": {
+    "mtime": 1788463398.2580545,
+    "seen": 1788877892.7312424,
+    "ast_hash": "8444e73ab29dd0c99ee2fb9aea22cccf",
+    "semantic_hash": "8444e73ab29dd0c99ee2fb9aea22cccf"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Configurations/ContractTypeConfiguration.cs": {
+    "mtime": 1788463398.2580545,
+    "seen": 1788877892.731243,
+    "ast_hash": "f94eaf6f4b1e7df45430afffcd3007a3",
+    "semantic_hash": "f94eaf6f4b1e7df45430afffcd3007a3"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Configurations/InfocomConfiguration.cs": {
+    "mtime": 1788463398.2590551,
+    "seen": 1788877892.7312438,
+    "ast_hash": "a6a301fb303bc715fc44df4652236f5a",
+    "semantic_hash": "a6a301fb303bc715fc44df4652236f5a"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Configurations/PurchaseConfiguration.cs": {
+    "mtime": 1788463398.2590551,
+    "seen": 1788877892.7312446,
+    "ast_hash": "08630bc8fc9af8105d3d3522153f8700",
+    "semantic_hash": "08630bc8fc9af8105d3d3522153f8700"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Configurations/PurchaseItemConfiguration.cs": {
+    "mtime": 1788463398.2590551,
+    "seen": 1788877892.7312453,
+    "ast_hash": "e2543f3b7ecf1094cd1d475c2322ccfe",
+    "semantic_hash": "e2543f3b7ecf1094cd1d475c2322ccfe"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Configurations/SupplierConfiguration.cs": {
+    "mtime": 1788463398.2590551,
+    "seen": 1788877892.7312458,
+    "ast_hash": "c6d31d1b026272151aa623b023c83668",
+    "semantic_hash": "c6d31d1b026272151aa623b023c83668"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Entities/Budget.cs": {
+    "mtime": 1788463398.2590551,
+    "seen": 1788877892.7312481,
+    "ast_hash": "913cea3b633175be31def34c1dd0382c",
+    "semantic_hash": "913cea3b633175be31def34c1dd0382c"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Entities/Contract.cs": {
+    "mtime": 1788463398.2605367,
+    "seen": 1788877892.7312493,
+    "ast_hash": "e9988fa1fe7da7f4669ddb91f3b43f8b",
+    "semantic_hash": "e9988fa1fe7da7f4669ddb91f3b43f8b"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Entities/ContractType.cs": {
+    "mtime": 1788463398.2605367,
+    "seen": 1788877892.7312508,
+    "ast_hash": "ffe85d3e3034a0759d364a0b706c05e5",
+    "semantic_hash": "ffe85d3e3034a0759d364a0b706c05e5"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Entities/Infocom.cs": {
+    "mtime": 1788463398.2610395,
+    "seen": 1788877892.731252,
+    "ast_hash": "1912c59cfaa27a13df31b52dd9ea45f7",
+    "semantic_hash": "1912c59cfaa27a13df31b52dd9ea45f7"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Entities/Purchase.cs": {
+    "mtime": 1788463398.2610395,
+    "seen": 1788877892.731253,
+    "ast_hash": "7e23348c89ba8d95e43be85665af8c24",
+    "semantic_hash": "7e23348c89ba8d95e43be85665af8c24"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Entities/Supplier.cs": {
+    "mtime": 1788463398.2610395,
+    "seen": 1788877892.7312543,
+    "ast_hash": "1da9678ca8c52ab463081f3ee6821af3",
+    "semantic_hash": "1da9678ca8c52ab463081f3ee6821af3"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Repositories/BudgetRepository.cs": {
+    "mtime": 1788463398.2622194,
+    "seen": 1788877892.7312572,
+    "ast_hash": "a46c7e7b05140cfd670d43042482d458",
+    "semantic_hash": "a46c7e7b05140cfd670d43042482d458"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Repositories/ContractRepository.cs": {
+    "mtime": 1788463398.2622194,
+    "seen": 1788877892.7312586,
+    "ast_hash": "75023921ad441b25f877776773672783",
+    "semantic_hash": "75023921ad441b25f877776773672783"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Repositories/IBudgetRepository.cs": {
+    "mtime": 1788463398.2622194,
+    "seen": 1788877892.7312598,
+    "ast_hash": "0a43aa274112f47d79bbfb25afcd1130",
+    "semantic_hash": "0a43aa274112f47d79bbfb25afcd1130"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Repositories/IContractRepository.cs": {
+    "mtime": 1788463398.263225,
+    "seen": 1788877892.731261,
+    "ast_hash": "a8fb8520fa91d55e2f0575ef0564532f",
+    "semantic_hash": "a8fb8520fa91d55e2f0575ef0564532f"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Repositories/IInfocomRepository.cs": {
+    "mtime": 1788463398.263225,
+    "seen": 1788877892.7312622,
+    "ast_hash": "aa3cc0cf970fb031bf0d0bbf1d0b2772",
+    "semantic_hash": "aa3cc0cf970fb031bf0d0bbf1d0b2772"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Repositories/IPurchaseRepository.cs": {
+    "mtime": 1788463398.263225,
+    "seen": 1788877892.7312632,
+    "ast_hash": "f58944f67592ab2b781475290269537f",
+    "semantic_hash": "f58944f67592ab2b781475290269537f"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Repositories/ISupplierRepository.cs": {
+    "mtime": 1788463398.263225,
+    "seen": 1788877892.731264,
+    "ast_hash": "d18644727e214b980eb4008eec4053dd",
+    "semantic_hash": "d18644727e214b980eb4008eec4053dd"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Repositories/InfocomRepository.cs": {
+    "mtime": 1788463398.2642255,
+    "seen": 1788877892.7312648,
+    "ast_hash": "2c6f8d12259e8ccbdda95de42e8bdeab",
+    "semantic_hash": "2c6f8d12259e8ccbdda95de42e8bdeab"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Repositories/PurchaseRepository.cs": {
+    "mtime": 1788463398.2642255,
+    "seen": 1788877892.7312653,
+    "ast_hash": "169f0b984a878c86f3281307bebc6f29",
+    "semantic_hash": "169f0b984a878c86f3281307bebc6f29"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Data/Repositories/SupplierRepository.cs": {
+    "mtime": 1788463398.2642255,
+    "seen": 1788877892.731266,
+    "ast_hash": "e9f96b8a287096aaa56b1c2a68775ab6",
+    "semantic_hash": "e9f96b8a287096aaa56b1c2a68775ab6"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/BudgetService.cs": {
+    "mtime": 1788679786.6114998,
+    "seen": 1788877892.7312667,
+    "ast_hash": "4e4e5da1e46f61af0ae3eca1da931aee",
+    "semantic_hash": "4e4e5da1e46f61af0ae3eca1da931aee"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/ContractService.cs": {
+    "mtime": 1788679909.5735862,
+    "seen": 1788877892.7312677,
+    "ast_hash": "7e18b3b388450ea86907b0875206c1bf",
+    "semantic_hash": "7e18b3b388450ea86907b0875206c1bf"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/Dtos/BudgetDtos.cs": {
+    "mtime": 1788463398.2662246,
+    "seen": 1788877892.7312694,
+    "ast_hash": "7cf4b9e8df674704b250927903f2fcb3",
+    "semantic_hash": "7cf4b9e8df674704b250927903f2fcb3"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/Dtos/ContractDtos.cs": {
+    "mtime": 1788463398.2662246,
+    "seen": 1788877892.73127,
+    "ast_hash": "01a14a655d1ac3608d62d73dd38c5573",
+    "semantic_hash": "01a14a655d1ac3608d62d73dd38c5573"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/Dtos/InfocomDtos.cs": {
+    "mtime": 1788463398.2672257,
+    "seen": 1788877892.731271,
+    "ast_hash": "ce882325799d5c1d116fd40d1775f46b",
+    "semantic_hash": "ce882325799d5c1d116fd40d1775f46b"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/Dtos/PurchaseDtos.cs": {
+    "mtime": 1788463398.2672257,
+    "seen": 1788877892.731272,
+    "ast_hash": "093b5eb61ca00d146ead388b4b0d1bab",
+    "semantic_hash": "093b5eb61ca00d146ead388b4b0d1bab"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/Dtos/SupplierDtos.cs": {
+    "mtime": 1788463398.2672257,
+    "seen": 1788877892.7312725,
+    "ast_hash": "30d28ecb7b28b004e3d91d456dae6784",
+    "semantic_hash": "30d28ecb7b28b004e3d91d456dae6784"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/InfocomService.cs": {
+    "mtime": 1788682766.465185,
+    "seen": 1788877892.731274,
+    "ast_hash": "3db63b7f57098d6202c3f80fd9b817f5",
+    "semantic_hash": "3db63b7f57098d6202c3f80fd9b817f5"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/Interfaces/IBudgetService.cs": {
+    "mtime": 1788463398.2686803,
+    "seen": 1788877892.7312748,
+    "ast_hash": "bdb0f6261d680183e7f2c751413e6d9a",
+    "semantic_hash": "bdb0f6261d680183e7f2c751413e6d9a"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/Interfaces/IContractService.cs": {
+    "mtime": 1788463398.2686803,
+    "seen": 1788877892.7312756,
+    "ast_hash": "0a77af784a380f50c07aa398bd29ca6e",
+    "semantic_hash": "0a77af784a380f50c07aa398bd29ca6e"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/Interfaces/IInfocomService.cs": {
+    "mtime": 1788463398.2686803,
+    "seen": 1788877892.731276,
+    "ast_hash": "c1c12d8f4785bfa8e1605475307bc9ce",
+    "semantic_hash": "c1c12d8f4785bfa8e1605475307bc9ce"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/Interfaces/IPurchaseService.cs": {
+    "mtime": 1788463398.269994,
+    "seen": 1788877892.7312768,
+    "ast_hash": "4d50b9ab1b8f3f6dff2d9e9c7c023d19",
+    "semantic_hash": "4d50b9ab1b8f3f6dff2d9e9c7c023d19"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/Interfaces/ISupplierService.cs": {
+    "mtime": 1788463398.269994,
+    "seen": 1788877892.7312772,
+    "ast_hash": "41261df107a6333ab4dea988313be123",
+    "semantic_hash": "41261df107a6333ab4dea988313be123"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/PurchaseService.cs": {
+    "mtime": 1788680072.7494328,
+    "seen": 1788877892.7312782,
+    "ast_hash": "602b4bd06670747deab938fe64df7e62",
+    "semantic_hash": "602b4bd06670747deab938fe64df7e62"
+  },
+  "src/Modules/Financial/Daraban.Modules.Financial.Services/SupplierService.cs": {
+    "mtime": 1788681773.103663,
+    "seen": 1788877892.731279,
+    "ast_hash": "6032178e12fe17edb30324f13dd81096",
+    "semantic_hash": "6032178e12fe17edb30324f13dd81096"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Configurations/AgentAuditLogConfiguration.cs": {
+    "mtime": 1787859509.896011,
+    "seen": 1788877892.7312832,
+    "ast_hash": "cf31eb090cec002fb202ed1a7a0790b7",
+    "semantic_hash": "cf31eb090cec002fb202ed1a7a0790b7"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Configurations/AgentCommandConfiguration.cs": {
+    "mtime": 1788038061.9389744,
+    "seen": 1788877892.731284,
+    "ast_hash": "b34cc9a5cef735fd6b1f0672ba022458",
+    "semantic_hash": "b34cc9a5cef735fd6b1f0672ba022458"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Configurations/AgentConfiguration.cs": {
+    "mtime": 1787859509.8965418,
+    "seen": 1788877892.7312844,
+    "ast_hash": "e27a452b173d7529ec990cb85cc5fc24",
+    "semantic_hash": "e27a452b173d7529ec990cb85cc5fc24"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Configurations/AgentCredentialConfiguration.cs": {
+    "mtime": 1787859509.8965418,
+    "seen": 1788877892.731285,
+    "ast_hash": "6493a14a70d28135caf191b0a1d15c58",
+    "semantic_hash": "6493a14a70d28135caf191b0a1d15c58"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Configurations/CommandResultConfiguration.cs": {
+    "mtime": 1788038061.939974,
+    "seen": 1788877892.7312858,
+    "ast_hash": "d196066961c3991931238d0d229a1dc9",
+    "semantic_hash": "d196066961c3991931238d0d229a1dc9"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Entities/Agent.cs": {
+    "mtime": 1787859509.8965418,
+    "seen": 1788877892.7312927,
+    "ast_hash": "18f39cf84d3a01b50fa0cca1de15a88f",
+    "semantic_hash": "18f39cf84d3a01b50fa0cca1de15a88f"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Entities/AgentAuditLog.cs": {
+    "mtime": 1787859509.8975468,
+    "seen": 1788877892.7312932,
+    "ast_hash": "1f3b2037846e1a9754ef7ff8ea208374",
+    "semantic_hash": "1f3b2037846e1a9754ef7ff8ea208374"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Entities/AgentCommand.cs": {
+    "mtime": 1788038061.939974,
+    "seen": 1788877892.731294,
+    "ast_hash": "2052b019d82a252d96265f5742820cc5",
+    "semantic_hash": "2052b019d82a252d96265f5742820cc5"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Entities/AgentCredential.cs": {
+    "mtime": 1787859509.8975468,
+    "seen": 1788877892.7312946,
+    "ast_hash": "8a57c42a40ea5d1f3ebcd40b27c09e61",
+    "semantic_hash": "8a57c42a40ea5d1f3ebcd40b27c09e61"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Repositories/AgentCommandRepository.cs": {
+    "mtime": 1788038149.3353548,
+    "seen": 1788877892.731301,
+    "ast_hash": "0e37a194914a089219dbee264d10dfb3",
+    "semantic_hash": "0e37a194914a089219dbee264d10dfb3"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Repositories/AgentRepository.cs": {
+    "mtime": 1787859509.89859,
+    "seen": 1788877892.7313018,
+    "ast_hash": "d9d33a7b105cece4d3f96ae0fa80d66a",
+    "semantic_hash": "d9d33a7b105cece4d3f96ae0fa80d66a"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Repositories/IAgentCommandRepository.cs": {
+    "mtime": 1788038149.3353548,
+    "seen": 1788877892.7313027,
+    "ast_hash": "47dc03c49d68c15b8dd2778eafbe32ab",
+    "semantic_hash": "47dc03c49d68c15b8dd2778eafbe32ab"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Data/Repositories/IAgentRepository.cs": {
+    "mtime": 1787859509.89859,
+    "seen": 1788877892.7313035,
+    "ast_hash": "2971b14f839e4e8ee59660a1918418e7",
+    "semantic_hash": "2971b14f839e4e8ee59660a1918418e7"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Services/Agents/AgentAuthService.cs": {
+    "mtime": 1788645192.7080226,
+    "seen": 1788877892.7313077,
+    "ast_hash": "24077e4da18e67b30d17fabbe419eb1e",
+    "semantic_hash": "24077e4da18e67b30d17fabbe419eb1e"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Services/Agents/AgentCommandService.cs": {
+    "mtime": 1788038061.9419737,
+    "seen": 1788877892.7313085,
+    "ast_hash": "8a0712e60b39e4b62ee196655c9cbd8a",
+    "semantic_hash": "8a0712e60b39e4b62ee196655c9cbd8a"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Services/Agents/AgentDtos.cs": {
+    "mtime": 1788038149.3363807,
+    "seen": 1788877892.731309,
+    "ast_hash": "9a64f89e7ef943b100cef025cb74e1bf",
+    "semantic_hash": "9a64f89e7ef943b100cef025cb74e1bf"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Services/Agents/AgentService.cs": {
+    "mtime": 1788038149.3373692,
+    "seen": 1788877892.73131,
+    "ast_hash": "8783257bd311248ec23efee783d25553",
+    "semantic_hash": "8783257bd311248ec23efee783d25553"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Services/Agents/IAgentAuthService.cs": {
+    "mtime": 1787859509.9001002,
+    "seen": 1788877892.7313106,
+    "ast_hash": "ac5c41fff84a6c08bd482af470f00013",
+    "semantic_hash": "ac5c41fff84a6c08bd482af470f00013"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Services/Agents/IAgentCommandService.cs": {
+    "mtime": 1788038061.9419737,
+    "seen": 1788877892.731311,
+    "ast_hash": "218d6d9ecee1071a51c126d99c4b4a9c",
+    "semantic_hash": "218d6d9ecee1071a51c126d99c4b4a9c"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Services/Agents/IAgentService.cs": {
+    "mtime": 1788038149.3373692,
+    "seen": 1788877892.7313118,
+    "ast_hash": "46286709560ba48347cbd55c5e0e94e9",
+    "semantic_hash": "46286709560ba48347cbd55c5e0e94e9"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Services/Auth/JwtBearerServiceCollectionExtensions.cs": {
+    "mtime": 1788789525.3248684,
+    "seen": 1788877892.731318,
+    "ast_hash": "47eef78e1065c0dab3ddd116e92d6a56",
+    "semantic_hash": "47eef78e1065c0dab3ddd116e92d6a56"
+  },
+  "src/Modules/Identity/Daraban.Modules.Identity.Services/Hubs/AgentControlHub.cs": {
+    "mtime": 1788790033.325179,
+    "seen": 1788877892.7313244,
+    "ast_hash": "d6d4ee8efdf8c13270fb627a4b228ba5",
+    "semantic_hash": "d6d4ee8efdf8c13270fb627a4b228ba5"
+  },
+  "src/Modules/Inventory/Daraban.Modules.Inventory.Data/Configurations/RawInventorySubmissionConfiguration.cs": {
+    "mtime": 1788033991.8289084,
+    "seen": 1788877892.7313294,
+    "ast_hash": "bbe5e47d6b0d5ebc0fd78b486fb48235",
+    "semantic_hash": "bbe5e47d6b0d5ebc0fd78b486fb48235"
+  },
+  "src/Modules/Inventory/Daraban.Modules.Inventory.Data/Entities/RawInventorySubmission.cs": {
+    "mtime": 1788033991.8319068,
+    "seen": 1788877892.731331,
+    "ast_hash": "07c66f841a70de63a3e1a91899031871",
+    "semantic_hash": "07c66f841a70de63a3e1a91899031871"
+  },
+  "src/Modules/Inventory/Daraban.Modules.Inventory.Data/Repositories/IInventoryRepository.cs": {
+    "mtime": 1788038149.3373692,
+    "seen": 1788877892.7313325,
+    "ast_hash": "9c544cb8c072c3d3598a6ade95dc9eca",
+    "semantic_hash": "9c544cb8c072c3d3598a6ade95dc9eca"
+  },
+  "src/Modules/Inventory/Daraban.Modules.Inventory.Data/Repositories/InventoryRepository.cs": {
+    "mtime": 1788038149.3387556,
+    "seen": 1788877892.7313335,
+    "ast_hash": "78c8b3c21e71095959f95f5b235d65b4",
+    "semantic_hash": "78c8b3c21e71095959f95f5b235d65b4"
+  },
+  "src/Modules/Inventory/Daraban.Modules.Inventory.Services/IInventoryService.cs": {
+    "mtime": 1788033991.8349047,
+    "seen": 1788877892.731335,
+    "ast_hash": "01986cf312975bd3859de33b0c4c86b0",
+    "semantic_hash": "01986cf312975bd3859de33b0c4c86b0"
+  },
+  "src/Modules/Inventory/Daraban.Modules.Inventory.Services/InventoryDtos.cs": {
+    "mtime": 1788033991.8359053,
+    "seen": 1788877892.7313354,
+    "ast_hash": "0bc4b1491dfb0ade5fb4380e432aa94f",
+    "semantic_hash": "0bc4b1491dfb0ade5fb4380e432aa94f"
+  },
+  "src/Modules/Inventory/Daraban.Modules.Inventory.Services/InventoryService.cs": {
+    "mtime": 1788696621.4907513,
+    "seen": 1788877892.731337,
+    "ast_hash": "77f2986944b9179c3f43a5939db26804",
+    "semantic_hash": "77f2986944b9179c3f43a5939db26804"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Api/Controllers/KbArticlesController.cs": {
+    "mtime": 1788633741.5414138,
+    "seen": 1788877892.7313387,
+    "ast_hash": "938fd4f0d6b0529dfdc071d9b8e11f8b",
+    "semantic_hash": "938fd4f0d6b0529dfdc071d9b8e11f8b"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Api/Controllers/KbCategoriesController.cs": {
+    "mtime": 1788633741.5439215,
+    "seen": 1788877892.7313395,
+    "ast_hash": "40fc84c670e3a37666a9a028b32bb3dc",
+    "semantic_hash": "40fc84c670e3a37666a9a028b32bb3dc"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Api/Controllers/KbTicketSolutionsController.cs": {
+    "mtime": 1788633741.5472817,
+    "seen": 1788877892.73134,
+    "ast_hash": "67143f6dccdaa27b0c90f1817e512d44",
+    "semantic_hash": "67143f6dccdaa27b0c90f1817e512d44"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Configurations/KbArticleConfiguration.cs": {
+    "mtime": 1788633741.5502903,
+    "seen": 1788877892.7313418,
+    "ast_hash": "6195842212baaeaac945a08fba8f8a71",
+    "semantic_hash": "6195842212baaeaac945a08fba8f8a71"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Configurations/KbArticleTargetConfiguration.cs": {
+    "mtime": 1788633741.5522883,
+    "seen": 1788877892.7313423,
+    "ast_hash": "4e85327d19d0c9f19589bdeb4fd40e97",
+    "semantic_hash": "4e85327d19d0c9f19589bdeb4fd40e97"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Configurations/KbCategoryConfiguration.cs": {
+    "mtime": 1788633741.5548253,
+    "seen": 1788877892.731343,
+    "ast_hash": "3ccf2e0c0dcf618787a5493b0d9f608d",
+    "semantic_hash": "3ccf2e0c0dcf618787a5493b0d9f608d"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Configurations/KbFeedbackConfiguration.cs": {
+    "mtime": 1788633741.5568252,
+    "seen": 1788877892.7313435,
+    "ast_hash": "15d910cbf342dd98c51cfefa7747a21a",
+    "semantic_hash": "15d910cbf342dd98c51cfefa7747a21a"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Configurations/KbTicketLinkConfiguration.cs": {
+    "mtime": 1788633741.5593586,
+    "seen": 1788877892.7313445,
+    "ast_hash": "aa19db7fc52a795c1732a259c892d498",
+    "semantic_hash": "aa19db7fc52a795c1732a259c892d498"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Entities/KbArticle.cs": {
+    "mtime": 1788633741.5628712,
+    "seen": 1788877892.7313457,
+    "ast_hash": "ed1b5b858d2e62d9b0edb967305ab86d",
+    "semantic_hash": "ed1b5b858d2e62d9b0edb967305ab86d"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Entities/KbArticleTarget.cs": {
+    "mtime": 1788633741.5638855,
+    "seen": 1788877892.7313464,
+    "ast_hash": "0c811cfb067096e675ad8235f77526b4",
+    "semantic_hash": "0c811cfb067096e675ad8235f77526b4"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Entities/KbCategory.cs": {
+    "mtime": 1788633741.5658872,
+    "seen": 1788877892.731347,
+    "ast_hash": "f68c7c475e085b389dd3e5adbb2bd3fb",
+    "semantic_hash": "f68c7c475e085b389dd3e5adbb2bd3fb"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Entities/KbFeedback.cs": {
+    "mtime": 1788633741.5668871,
+    "seen": 1788877892.7313478,
+    "ast_hash": "742d8a69028211370e393a9eb26a8cac",
+    "semantic_hash": "742d8a69028211370e393a9eb26a8cac"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Entities/KbTicketLink.cs": {
+    "mtime": 1788633741.5688856,
+    "seen": 1788877892.7313485,
+    "ast_hash": "37912d7d4426f83a9e9c8d1cc3b627da",
+    "semantic_hash": "37912d7d4426f83a9e9c8d1cc3b627da"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/KnowledgeDbContextFactory.cs": {
+    "mtime": 1788633741.5719995,
+    "seen": 1788877892.7313497,
+    "ast_hash": "0069dcdffde02526e3faf54f8ccfe921",
+    "semantic_hash": "0069dcdffde02526e3faf54f8ccfe921"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Migrations/20260905151216_InitialKnowledge.Designer.cs": {
+    "mtime": 1788633741.5753367,
+    "seen": 1788877892.7313504,
+    "ast_hash": "3fc92e4a56807b0d7e4412d063aa6010",
+    "semantic_hash": "3fc92e4a56807b0d7e4412d063aa6010"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Migrations/20260905151216_InitialKnowledge.cs": {
+    "mtime": 1788633741.5763395,
+    "seen": 1788877892.7313516,
+    "ast_hash": "15a2b4549cd96722e90e9e38c93a6f28",
+    "semantic_hash": "15a2b4549cd96722e90e9e38c93a6f28"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Migrations/KnowledgeDbContextModelSnapshot.cs": {
+    "mtime": 1788633741.5773354,
+    "seen": 1788877892.7313523,
+    "ast_hash": "1574e203a6fb680f6774b49ebdc39675",
+    "semantic_hash": "1574e203a6fb680f6774b49ebdc39675"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Repositories/IKbArticleRepository.cs": {
+    "mtime": 1788633741.5783334,
+    "seen": 1788877892.7313528,
+    "ast_hash": "0214ea0a398e9e29c89c967440dc4da5",
+    "semantic_hash": "0214ea0a398e9e29c89c967440dc4da5"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Repositories/IKbCategoryRepository.cs": {
+    "mtime": 1788633741.579332,
+    "seen": 1788877892.7313535,
+    "ast_hash": "f72306b2d496f813480e1ab7db04169c",
+    "semantic_hash": "f72306b2d496f813480e1ab7db04169c"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Repositories/IKbFeedbackRepository.cs": {
+    "mtime": 1788633741.5803335,
+    "seen": 1788877892.731354,
+    "ast_hash": "ab8373452cae401fc0c09a6aac7c2d06",
+    "semantic_hash": "ab8373452cae401fc0c09a6aac7c2d06"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Repositories/IKbTicketLinkRepository.cs": {
+    "mtime": 1788633741.5998352,
+    "seen": 1788877892.731355,
+    "ast_hash": "c8be03b1262b03728e899762d2e5828c",
+    "semantic_hash": "c8be03b1262b03728e899762d2e5828c"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Repositories/KbArticleRepository.cs": {
+    "mtime": 1788633741.6008358,
+    "seen": 1788877892.7313554,
+    "ast_hash": "7817c3a861a2abd22d4b17c6992ddfb2",
+    "semantic_hash": "7817c3a861a2abd22d4b17c6992ddfb2"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Repositories/KbCategoryRepository.cs": {
+    "mtime": 1788633741.6018364,
+    "seen": 1788877892.7313561,
+    "ast_hash": "2c66fe9ac600a8946a2e0de4b0151e1f",
+    "semantic_hash": "2c66fe9ac600a8946a2e0de4b0151e1f"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Repositories/KbFeedbackRepository.cs": {
+    "mtime": 1788633741.6018364,
+    "seen": 1788877892.7313569,
+    "ast_hash": "6b6473c22c89eeabe4b058f6a3ff2768",
+    "semantic_hash": "6b6473c22c89eeabe4b058f6a3ff2768"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Data/Repositories/KbTicketLinkRepository.cs": {
+    "mtime": 1788633741.6028364,
+    "seen": 1788877892.7313578,
+    "ast_hash": "955e0d76ab019d35315a3cbd3ca1b0cb",
+    "semantic_hash": "955e0d76ab019d35315a3cbd3ca1b0cb"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Services/Dtos/KnowledgeDtos.cs": {
+    "mtime": 1788633741.6028364,
+    "seen": 1788877892.7313595,
+    "ast_hash": "bf9532b9b56f62dc92e2bfd9098bfade",
+    "semantic_hash": "bf9532b9b56f62dc92e2bfd9098bfade"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Services/Interfaces/IKbArticleService.cs": {
+    "mtime": 1788633741.6038368,
+    "seen": 1788877892.73136,
+    "ast_hash": "7cda3d302d32ef4cb5f2a723139edaa8",
+    "semantic_hash": "7cda3d302d32ef4cb5f2a723139edaa8"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Services/Interfaces/IKbCategoryService.cs": {
+    "mtime": 1788633741.6038368,
+    "seen": 1788877892.731361,
+    "ast_hash": "dcf26e65a56a4ebfa4807755b94d1b93",
+    "semantic_hash": "dcf26e65a56a4ebfa4807755b94d1b93"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Services/Interfaces/IKbTicketLinkService.cs": {
+    "mtime": 1788633741.6048365,
+    "seen": 1788877892.7313616,
+    "ast_hash": "d41df87ab5605a931e1c27d1b0cfd0c5",
+    "semantic_hash": "d41df87ab5605a931e1c27d1b0cfd0c5"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Services/KbArticleService.cs": {
+    "mtime": 1788633741.6048365,
+    "seen": 1788877892.7313623,
+    "ast_hash": "6210ffd18b85ab546ec10183a45d2eb5",
+    "semantic_hash": "6210ffd18b85ab546ec10183a45d2eb5"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Services/KbCategoryService.cs": {
+    "mtime": 1788633741.6058364,
+    "seen": 1788877892.7313628,
+    "ast_hash": "12aaf4e6e96472c1b2a059724dda2464",
+    "semantic_hash": "12aaf4e6e96472c1b2a059724dda2464"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Services/KbSlug.cs": {
+    "mtime": 1788633741.6058364,
+    "seen": 1788877892.7313635,
+    "ast_hash": "9e335a3a1824425bd6fe7e77b7336d0e",
+    "semantic_hash": "9e335a3a1824425bd6fe7e77b7336d0e"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Services/KbTicketLinkService.cs": {
+    "mtime": 1788633741.606893,
+    "seen": 1788877892.731364,
+    "ast_hash": "645f3128c87e73466d29099f96062099",
+    "semantic_hash": "645f3128c87e73466d29099f96062099"
+  },
+  "src/Modules/Knowledge/Daraban.Modules.Knowledge.Services/Validators/KnowledgeValidators.cs": {
+    "mtime": 1788633741.6078992,
+    "seen": 1788877892.7313657,
+    "ast_hash": "9eb6ba456724ada131f19569e5c2ee5c",
+    "semantic_hash": "9eb6ba456724ada131f19569e5c2ee5c"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Api/Controllers/TicketTasksController.cs": {
+    "mtime": 1788789881.1427517,
+    "seen": 1788877892.7313783,
+    "ast_hash": "933e31fc988b75e8777e990fc3fb0cd3",
+    "semantic_hash": "933e31fc988b75e8777e990fc3fb0cd3"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Api/Controllers/TicketTemplatesController.cs": {
+    "mtime": 1788789881.1729846,
+    "seen": 1788877892.7313793,
+    "ast_hash": "76d21b2edaf0db0cea9d57ab19909e88",
+    "semantic_hash": "76d21b2edaf0db0cea9d57ab19909e88"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Api/Controllers/TicketsController.cs": {
+    "mtime": 1788789881.190835,
+    "seen": 1788877892.73138,
+    "ast_hash": "94e72a3c9f9184c797ce7ce9203fb0e4",
+    "semantic_hash": "94e72a3c9f9184c797ce7ce9203fb0e4"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Configurations/TicketConfiguration.cs": {
+    "mtime": 1788639229.131324,
+    "seen": 1788877892.7313817,
+    "ast_hash": "f0eab88fa9adaf3687feff4e1fb04166",
+    "semantic_hash": "f0eab88fa9adaf3687feff4e1fb04166"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Configurations/TicketCostConfiguration.cs": {
+    "mtime": 1788460198.9104338,
+    "seen": 1788877892.7313824,
+    "ast_hash": "1d35d18087b895e2c50e2a6320e87694",
+    "semantic_hash": "1d35d18087b895e2c50e2a6320e87694"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Configurations/TicketHistoryConfiguration.cs": {
+    "mtime": 1788460198.9104338,
+    "seen": 1788877892.7313833,
+    "ast_hash": "dad94c74d913bb9e1c0c7ecd8d4dc58a",
+    "semantic_hash": "dad94c74d913bb9e1c0c7ecd8d4dc58a"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Configurations/TicketTaskConfiguration.cs": {
+    "mtime": 1788460198.9118729,
+    "seen": 1788877892.7313838,
+    "ast_hash": "1c0b5f83ffccbaa8e8235f0ff2531bf8",
+    "semantic_hash": "1c0b5f83ffccbaa8e8235f0ff2531bf8"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Configurations/TicketTemplateConfiguration.cs": {
+    "mtime": 1788460198.9118729,
+    "seen": 1788877892.7313845,
+    "ast_hash": "a887263f046782a73edf821b19342b28",
+    "semantic_hash": "a887263f046782a73edf821b19342b28"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Configurations/TicketValidationConfiguration.cs": {
+    "mtime": 1788460198.9118729,
+    "seen": 1788877892.731385,
+    "ast_hash": "a91e12a781bbf2b210030591079be9ab",
+    "semantic_hash": "a91e12a781bbf2b210030591079be9ab"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Entities/Ticket.cs": {
+    "mtime": 1788639124.2770665,
+    "seen": 1788877892.731387,
+    "ast_hash": "ea7a93ee9054323792e26298b424c9f0",
+    "semantic_hash": "ea7a93ee9054323792e26298b424c9f0"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Entities/TicketCost.cs": {
+    "mtime": 1788460198.9133215,
+    "seen": 1788877892.7313874,
+    "ast_hash": "82a6d8c2f2de4d3516b66b91202e5357",
+    "semantic_hash": "82a6d8c2f2de4d3516b66b91202e5357"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Entities/TicketHistory.cs": {
+    "mtime": 1788639176.7222018,
+    "seen": 1788877892.731388,
+    "ast_hash": "52504bc4d355fc3af69b7355e05eefa6",
+    "semantic_hash": "52504bc4d355fc3af69b7355e05eefa6"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Entities/TicketTask.cs": {
+    "mtime": 1788460198.9133215,
+    "seen": 1788877892.731389,
+    "ast_hash": "5246b982c07e6441f5d57fa9e1cf59a8",
+    "semantic_hash": "5246b982c07e6441f5d57fa9e1cf59a8"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Entities/TicketTemplate.cs": {
+    "mtime": 1788460198.9133215,
+    "seen": 1788877892.7313898,
+    "ast_hash": "f2f6125dd376edce43f9544a3bc0caa1",
+    "semantic_hash": "f2f6125dd376edce43f9544a3bc0caa1"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Entities/TicketValidation.cs": {
+    "mtime": 1788460198.914327,
+    "seen": 1788877892.7313902,
+    "ast_hash": "5b8da75644090589903331013db6c4c4",
+    "semantic_hash": "5b8da75644090589903331013db6c4c4"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Repositories/ITicketRepository.cs": {
+    "mtime": 1788639297.865792,
+    "seen": 1788877892.7313907,
+    "ast_hash": "6d24d8490c99dc6581819a97df3d9f94",
+    "semantic_hash": "6d24d8490c99dc6581819a97df3d9f94"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Repositories/ITicketTaskRepository.cs": {
+    "mtime": 1788640303.5272706,
+    "seen": 1788877892.7313914,
+    "ast_hash": "ea9a36578a377cd2b0fe2bd1a50ec9b0",
+    "semantic_hash": "ea9a36578a377cd2b0fe2bd1a50ec9b0"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Repositories/ITicketTemplateRepository.cs": {
+    "mtime": 1788639512.351269,
+    "seen": 1788877892.7313921,
+    "ast_hash": "3f17596d0c273f5ff27437941ea65194",
+    "semantic_hash": "3f17596d0c273f5ff27437941ea65194"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Repositories/TicketRepository.cs": {
+    "mtime": 1788639361.1887045,
+    "seen": 1788877892.731393,
+    "ast_hash": "0d48f66eb5f00f1c96448087532b1d70",
+    "semantic_hash": "0d48f66eb5f00f1c96448087532b1d70"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Repositories/TicketTaskRepository.cs": {
+    "mtime": 1788640470.074046,
+    "seen": 1788877892.7313936,
+    "ast_hash": "d13e87eed6685087df8925cc308b1892",
+    "semantic_hash": "d13e87eed6685087df8925cc308b1892"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Data/Repositories/TicketTemplateRepository.cs": {
+    "mtime": 1788639571.47605,
+    "seen": 1788877892.7313943,
+    "ast_hash": "361c26b58d30e35fb29bbddf7d5c4b97",
+    "semantic_hash": "361c26b58d30e35fb29bbddf7d5c4b97"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Services/Dtos/TicketDtos.cs": {
+    "mtime": 1788639631.8717852,
+    "seen": 1788877892.7313967,
+    "ast_hash": "cc5cccc9e88a15eba5897a4a58041254",
+    "semantic_hash": "cc5cccc9e88a15eba5897a4a58041254"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Services/Interfaces/ITicketService.cs": {
+    "mtime": 1788639809.1141968,
+    "seen": 1788877892.7313972,
+    "ast_hash": "0020a7aba9498409ad2e2500e1999645",
+    "semantic_hash": "0020a7aba9498409ad2e2500e1999645"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Services/Interfaces/ITicketTaskService.cs": {
+    "mtime": 1788460198.917327,
+    "seen": 1788877892.7313979,
+    "ast_hash": "8a4de65b19c6277ec5083233b1315905",
+    "semantic_hash": "8a4de65b19c6277ec5083233b1315905"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Services/Interfaces/ITicketTemplateService.cs": {
+    "mtime": 1788640633.1793692,
+    "seen": 1788877892.7313983,
+    "ast_hash": "1b77145b36c6a11f474efefeeee7d5d9",
+    "semantic_hash": "1b77145b36c6a11f474efefeeee7d5d9"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Services/TicketService.cs": {
+    "mtime": 1788640005.989741,
+    "seen": 1788877892.7314,
+    "ast_hash": "2b4701e92471a32180f2b5281aa9908c",
+    "semantic_hash": "2b4701e92471a32180f2b5281aa9908c"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Services/TicketTaskService.cs": {
+    "mtime": 1788640086.4318142,
+    "seen": 1788877892.7314007,
+    "ast_hash": "f2907513fa30cba4332933bd28699007",
+    "semantic_hash": "f2907513fa30cba4332933bd28699007"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Services/TicketTemplateService.cs": {
+    "mtime": 1788640572.5205858,
+    "seen": 1788877892.7314012,
+    "ast_hash": "1eac8020a65ee95d6c2795c30f127452",
+    "semantic_hash": "1eac8020a65ee95d6c2795c30f127452"
+  },
+  "src/Modules/ServiceDesk/Daraban.Modules.ServiceDesk.Services/Validators/TicketValidators.cs": {
+    "mtime": 1788460198.9317243,
+    "seen": 1788877892.731402,
+    "ast_hash": "26d3cb129647b25ae6a48a9432a36037",
+    "semantic_hash": "26d3cb129647b25ae6a48a9432a36037"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Api/AssemblyMarker.cs": {
+    "mtime": 1788550527.4187293,
+    "seen": 1788877892.7314026,
+    "ast_hash": "1c5d34c499239498deafe7d6a6d98da6",
+    "semantic_hash": "1c5d34c499239498deafe7d6a6d98da6"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Api/Controllers/SoftwareInstallationsController.cs": {
+    "mtime": 1788789896.3865113,
+    "seen": 1788877892.7314034,
+    "ast_hash": "739806196bd94515503677084fd3c677",
+    "semantic_hash": "739806196bd94515503677084fd3c677"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Api/Controllers/SoftwareLicensesController.cs": {
+    "mtime": 1788789896.4133148,
+    "seen": 1788877892.731404,
+    "ast_hash": "97f2578cbd7a7345f1d71435bcc3aeb5",
+    "semantic_hash": "97f2578cbd7a7345f1d71435bcc3aeb5"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Api/Controllers/SoftwaresController.cs": {
+    "mtime": 1788789896.4377625,
+    "seen": 1788877892.7314045,
+    "ast_hash": "ae36caf2080a6cc864b2a213b49a825a",
+    "semantic_hash": "ae36caf2080a6cc864b2a213b49a825a"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Api/Daraban.Modules.Software.Api.csproj": {
+    "mtime": 1788685329.6104326,
+    "seen": 1788877892.7314053,
+    "ast_hash": "8bd6b236535cc609f2692a7dafe900aa",
+    "semantic_hash": "8bd6b236535cc609f2692a7dafe900aa"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Configurations/SoftwareConfiguration.cs": {
+    "mtime": 1788684298.0122206,
+    "seen": 1788877892.731406,
+    "ast_hash": "a6796cce4e65cbb529052a458a253fbf",
+    "semantic_hash": "a6796cce4e65cbb529052a458a253fbf"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Configurations/SoftwareInstallationConfiguration.cs": {
+    "mtime": 1788550527.6646357,
+    "seen": 1788877892.731407,
+    "ast_hash": "868415f07b58ea9bc0277144955e8c71",
+    "semantic_hash": "868415f07b58ea9bc0277144955e8c71"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Configurations/SoftwareLicenseConfiguration.cs": {
+    "mtime": 1788550527.689741,
+    "seen": 1788877892.7314074,
+    "ast_hash": "09f0dacd025a1695f24f00cfa9d28130",
+    "semantic_hash": "09f0dacd025a1695f24f00cfa9d28130"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Daraban.Modules.Software.Data.csproj": {
+    "mtime": 1788550527.9987583,
+    "seen": 1788877892.7314079,
+    "ast_hash": "adfa4145a1a2b4308a6a4c090199a7da",
+    "semantic_hash": "adfa4145a1a2b4308a6a4c090199a7da"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Entities/SoftwareInstallation.cs": {
+    "mtime": 1788684875.2616868,
+    "seen": 1788877892.7314086,
+    "ast_hash": "5e25d30ffc7160b7dfbe83df888d868c",
+    "semantic_hash": "5e25d30ffc7160b7dfbe83df888d868c"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Entities/SoftwareLicense.cs": {
+    "mtime": 1788684498.557164,
+    "seen": 1788877892.7314093,
+    "ast_hash": "4881d9e1c6f43bf0f08b91c075ecbd04",
+    "semantic_hash": "4881d9e1c6f43bf0f08b91c075ecbd04"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Entities/SoftwareProduct.cs": {
+    "mtime": 1788684191.728861,
+    "seen": 1788877892.73141,
+    "ast_hash": "a3ccc4bd37e113cbaf2ad0a6b9ddfa87",
+    "semantic_hash": "a3ccc4bd37e113cbaf2ad0a6b9ddfa87"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Repositories/ISoftwareInstallationRepository.cs": {
+    "mtime": 1788550528.338133,
+    "seen": 1788877892.7314107,
+    "ast_hash": "0704bd49afe6bad55783efe87e67c212",
+    "semantic_hash": "0704bd49afe6bad55783efe87e67c212"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Repositories/ISoftwareLicenseRepository.cs": {
+    "mtime": 1788550528.338133,
+    "seen": 1788877892.7314112,
+    "ast_hash": "0fc1a3188e4cb10c77488be74ec891a5",
+    "semantic_hash": "0fc1a3188e4cb10c77488be74ec891a5"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Repositories/ISoftwareRepository.cs": {
+    "mtime": 1788684354.676137,
+    "seen": 1788877892.7314122,
+    "ast_hash": "c3076c2377848d5e733df4f255759a6b",
+    "semantic_hash": "c3076c2377848d5e733df4f255759a6b"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Repositories/SoftwareInstallationRepository.cs": {
+    "mtime": 1788550528.4286075,
+    "seen": 1788877892.7314126,
+    "ast_hash": "bce76a96bc6814897e9a09305ac4f1f4",
+    "semantic_hash": "bce76a96bc6814897e9a09305ac4f1f4"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Repositories/SoftwareLicenseRepository.cs": {
+    "mtime": 1788550528.9472842,
+    "seen": 1788877892.7314134,
+    "ast_hash": "fb0fd49c562bb63f8869110e4fa050f3",
+    "semantic_hash": "fb0fd49c562bb63f8869110e4fa050f3"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/Repositories/SoftwareRepository.cs": {
+    "mtime": 1788684447.130796,
+    "seen": 1788877892.731414,
+    "ast_hash": "0a3d4e759b12ac586db2635824638e75",
+    "semantic_hash": "0a3d4e759b12ac586db2635824638e75"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Data/SoftwareDbContext.cs": {
+    "mtime": 1788684298.0244179,
+    "seen": 1788877892.7314146,
+    "ast_hash": "30cb32ff5ee4f0fbd19925e9fa7bca6f",
+    "semantic_hash": "30cb32ff5ee4f0fbd19925e9fa7bca6f"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Services/Daraban.Modules.Software.Services.csproj": {
+    "mtime": 1788550528.9610412,
+    "seen": 1788877892.7314153,
+    "ast_hash": "666b3a582ec5ee81fd5eedb586c95ba6",
+    "semantic_hash": "666b3a582ec5ee81fd5eedb586c95ba6"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Services/Dtos/SoftwareDtos.cs": {
+    "mtime": 1788550528.9630656,
+    "seen": 1788877892.7314157,
+    "ast_hash": "1cb5b364692a992e9813dceef4d59e41",
+    "semantic_hash": "1cb5b364692a992e9813dceef4d59e41"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Services/Dtos/SoftwareInstallationDtos.cs": {
+    "mtime": 1788550528.9654293,
+    "seen": 1788877892.7314165,
+    "ast_hash": "97b9321714cb90e132d1006cd3f258a4",
+    "semantic_hash": "97b9321714cb90e132d1006cd3f258a4"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Services/Dtos/SoftwareLicenseDtos.cs": {
+    "mtime": 1788550528.9674287,
+    "seen": 1788877892.7314174,
+    "ast_hash": "6e833f51583bd4d35d7c19c8480ead6b",
+    "semantic_hash": "6e833f51583bd4d35d7c19c8480ead6b"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Services/Interfaces/ISoftwareInstallationService.cs": {
+    "mtime": 1788550528.9694302,
+    "seen": 1788877892.7314181,
+    "ast_hash": "d3d7401079d71a3cad1f723a45e22a2e",
+    "semantic_hash": "d3d7401079d71a3cad1f723a45e22a2e"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Services/Interfaces/ISoftwareLicenseService.cs": {
+    "mtime": 1788550528.9704292,
+    "seen": 1788877892.7314186,
+    "ast_hash": "3676c58b537233d2daa7efeca993c444",
+    "semantic_hash": "3676c58b537233d2daa7efeca993c444"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Services/Interfaces/ISoftwareService.cs": {
+    "mtime": 1788550528.972425,
+    "seen": 1788877892.7314193,
+    "ast_hash": "115d5be76d348d101098e69393b15467",
+    "semantic_hash": "115d5be76d348d101098e69393b15467"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Services/SoftwareInstallationService.cs": {
+    "mtime": 1788687528.5488007,
+    "seen": 1788877892.7314198,
+    "ast_hash": "9c2bd20b2bb5c676adbd52a5849160a5",
+    "semantic_hash": "9c2bd20b2bb5c676adbd52a5849160a5"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Services/SoftwareLicenseService.cs": {
+    "mtime": 1788684936.004342,
+    "seen": 1788877892.7314208,
+    "ast_hash": "2fb9a2bdb9ec524938970edd624a7782",
+    "semantic_hash": "2fb9a2bdb9ec524938970edd624a7782"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Services/SoftwareModuleServiceCollectionExtensions.cs": {
+    "mtime": 1788550529.2027493,
+    "seen": 1788877892.7314215,
+    "ast_hash": "559832c2163284da315cb6f50080840f",
+    "semantic_hash": "559832c2163284da315cb6f50080840f"
+  },
+  "src/Modules/Software/Daraban.Modules.Software.Services/SoftwareService.cs": {
+    "mtime": 1788685138.1015904,
+    "seen": 1788877892.731422,
+    "ast_hash": "5b654627fba078136b0bec2efa77fdfc",
+    "semantic_hash": "5b654627fba078136b0bec2efa77fdfc"
+  },
+  "src/Shared/Daraban.Platform.Contracts/Agents/CommandContracts.cs": {
+    "mtime": 1788038061.9429739,
+    "seen": 1788877892.7314322,
+    "ast_hash": "88bcccbac2299e37383283594e04cd3f",
+    "semantic_hash": "88bcccbac2299e37383283594e04cd3f"
+  },
+  "src/Shared/Daraban.Platform.Contracts/Agents/Events.cs": {
+    "mtime": 1787859509.9006045,
+    "seen": 1788877892.731433,
+    "ast_hash": "6a63ce44b2f73d8aa8e478e4a87ff1a5",
+    "semantic_hash": "6a63ce44b2f73d8aa8e478e4a87ff1a5"
+  },
+  "src/Shared/Daraban.Platform.Contracts/Knowledge/Events.cs": {
+    "mtime": 1788633741.6088984,
+    "seen": 1788877892.7314363,
+    "ast_hash": "f65f1b828cc71f3ae75ad1e0e7febc33",
+    "semantic_hash": "f65f1b828cc71f3ae75ad1e0e7febc33"
+  },
+  "src/Shared/Daraban.Platform.Hosting/ProblemDetailsServiceCollectionExtensions.cs": {
+    "mtime": 1788789502.421078,
+    "seen": 1788877892.7314463,
+    "ast_hash": "531cc127da97df0c527d7f9a13a2a8d5",
+    "semantic_hash": "531cc127da97df0c527d7f9a13a2a8d5"
+  },
+  "src/Workers/Daraban.Workers.CommandDispatch/AgentCommandConsumer.cs": {
+    "mtime": 1788789752.8049576,
+    "seen": 1788877892.7314532,
+    "ast_hash": "a00c16af6a0aca709b2f2c4a4b1c0622",
+    "semantic_hash": "a00c16af6a0aca709b2f2c4a4b1c0622"
+  },
+  "src/Workers/Daraban.Workers.CommandDispatch/CommandTimeoutService.cs": {
+    "mtime": 1788038061.943974,
+    "seen": 1788877892.731454,
+    "ast_hash": "724dbd9aaa9b7b5b4390d37ec664a741",
+    "semantic_hash": "724dbd9aaa9b7b5b4390d37ec664a741"
+  },
+  "src/Workers/Daraban.Workers.CommandDispatch/Daraban.Workers.CommandDispatch.csproj": {
+    "mtime": 1788789768.0544996,
+    "seen": 1788877892.7314546,
+    "ast_hash": "42a4b2e27ae7a9f56bd16597839f6d3f",
+    "semantic_hash": "42a4b2e27ae7a9f56bd16597839f6d3f"
+  },
+  "src/Workers/Daraban.Workers.CommandDispatch/Program.cs": {
+    "mtime": 1788789785.5520263,
+    "seen": 1788877892.7314553,
+    "ast_hash": "75f9b90838e4c241aa41288d84721c82",
+    "semantic_hash": "75f9b90838e4c241aa41288d84721c82"
+  },
+  "src/Workers/Daraban.Workers.Discovery/Daraban.Workers.Discovery.csproj": {
+    "mtime": 1788789768.0655057,
+    "seen": 1788877892.731456,
+    "ast_hash": "7dc01e120e6331a451aba2c8761c1ec0",
+    "semantic_hash": "7dc01e120e6331a451aba2c8761c1ec0"
+  },
+  "src/Workers/Daraban.Workers.Discovery/DiscoverySchedulerWorker.cs": {
+    "mtime": 1788382262.6083765,
+    "seen": 1788877892.7314565,
+    "ast_hash": "1e5aa239743fcaf91e85d6aa5f8e6dce",
+    "semantic_hash": "1e5aa239743fcaf91e85d6aa5f8e6dce"
+  },
+  "src/Workers/Daraban.Workers.Discovery/IIPScanner.cs": {
+    "mtime": 1788381521.149861,
+    "seen": 1788877892.7314572,
+    "ast_hash": "f47563af20ad03608ca94fa048244572",
+    "semantic_hash": "f47563af20ad03608ca94fa048244572"
+  },
+  "src/Workers/Daraban.Workers.Discovery/IPScannerEngine.cs": {
+    "mtime": 1788385522.9967875,
+    "seen": 1788877892.731458,
+    "ast_hash": "ad798bc4e0b96dfa30654f5c900d6ed2",
+    "semantic_hash": "ad798bc4e0b96dfa30654f5c900d6ed2"
+  },
+  "src/Workers/Daraban.Workers.Discovery/Program.cs": {
+    "mtime": 1788789785.5741286,
+    "seen": 1788877892.7314587,
+    "ast_hash": "87648617276f36c0b626e64ae849ca84",
+    "semantic_hash": "87648617276f36c0b626e64ae849ca84"
+  },
+  "src/Workers/Daraban.Workers.Discovery/ScanWorker.cs": {
+    "mtime": 1788381521.1508663,
+    "seen": 1788877892.7314594,
+    "ast_hash": "e0329d5aceb9100d37644ce9475f05ed",
+    "semantic_hash": "e0329d5aceb9100d37644ce9475f05ed"
+  },
+  "tests/UnitTests/Daraban.Modules.Assets.Tests/AssetAssignmentServiceTests.cs": {
+    "mtime": 1788635442.2686987,
+    "seen": 1788877892.7314734,
+    "ast_hash": "cb49351f0f050102869562c140567f7d",
+    "semantic_hash": "cb49351f0f050102869562c140567f7d"
+  },
+  "tests/UnitTests/Daraban.Modules.Assets.Tests/AssetImportExportServiceTests.cs": {
+    "mtime": 1788637406.4028952,
+    "seen": 1788877892.731474,
+    "ast_hash": "2ae020dbd2d90a38ae510789198f5cad",
+    "semantic_hash": "2ae020dbd2d90a38ae510789198f5cad"
+  },
+  "tests/UnitTests/Daraban.Modules.Assets.Tests/AssetLifecycleServiceTests.cs": {
+    "mtime": 1788635861.7065036,
+    "seen": 1788877892.7314746,
+    "ast_hash": "d3bf0fa2887ef92f9e824beeb73ee86c",
+    "semantic_hash": "d3bf0fa2887ef92f9e824beeb73ee86c"
+  },
+  "tests/UnitTests/Daraban.Modules.Assets.Tests/AssetReferenceDataServiceTests.cs": {
+    "mtime": 1788714159.9716642,
+    "seen": 1788877892.731475,
+    "ast_hash": "3eeeda5f3c40b490fc110687b007a45f",
+    "semantic_hash": "3eeeda5f3c40b490fc110687b007a45f"
+  },
+  "tests/UnitTests/Daraban.Modules.Assets.Tests/AssetServiceTests.cs": {
+    "mtime": 1788635238.1459954,
+    "seen": 1788877892.731476,
+    "ast_hash": "341e1a79064b0a03ae78e2ce58172ef1",
+    "semantic_hash": "341e1a79064b0a03ae78e2ce58172ef1"
+  },
+  "tests/UnitTests/Daraban.Modules.Discovery.Tests/CredentialEncryptionServiceTests.cs": {
+    "mtime": 1788690564.796912,
+    "seen": 1788877892.7314787,
+    "ast_hash": "ed35d61792dd0b453bc470f8df5714fb",
+    "semantic_hash": "ed35d61792dd0b453bc470f8df5714fb"
+  },
+  "tests/UnitTests/Daraban.Modules.Discovery.Tests/Daraban.Modules.Discovery.Tests.csproj": {
+    "mtime": 1788689418.7149744,
+    "seen": 1788877892.7314794,
+    "ast_hash": "0281ebf6256910a73cbe0d298f536e04",
+    "semantic_hash": "0281ebf6256910a73cbe0d298f536e04"
+  },
+  "tests/UnitTests/Daraban.Modules.Discovery.Tests/ImportRuleServiceTests.cs": {
+    "mtime": 1788693777.6736221,
+    "seen": 1788877892.7314801,
+    "ast_hash": "9e641bab41eacc522e2aea6568cee994",
+    "semantic_hash": "9e641bab41eacc522e2aea6568cee994"
+  },
+  "tests/UnitTests/Daraban.Modules.Financial.Tests/BudgetServiceTests.cs": {
+    "mtime": 1788680452.9294012,
+    "seen": 1788877892.7314806,
+    "ast_hash": "8b450e997c400f967fa8d6e34460cb5e",
+    "semantic_hash": "8b450e997c400f967fa8d6e34460cb5e"
+  },
+  "tests/UnitTests/Daraban.Modules.Financial.Tests/ContractServiceTests.cs": {
+    "mtime": 1788682790.5841513,
+    "seen": 1788877892.7314813,
+    "ast_hash": "ee42381d99ce4497983184fd80f63ad5",
+    "semantic_hash": "ee42381d99ce4497983184fd80f63ad5"
+  },
+  "tests/UnitTests/Daraban.Modules.Financial.Tests/InfocomServiceTests.cs": {
+    "mtime": 1788682444.298107,
+    "seen": 1788877892.731483,
+    "ast_hash": "904961ab3c49b9feea5a8a08dc85ab74",
+    "semantic_hash": "904961ab3c49b9feea5a8a08dc85ab74"
+  },
+  "tests/UnitTests/Daraban.Modules.Financial.Tests/PurchaseServiceTests.cs": {
+    "mtime": 1788681553.8194005,
+    "seen": 1788877892.7314835,
+    "ast_hash": "2ca16c57f906b34d0faa8a53c0c53254",
+    "semantic_hash": "2ca16c57f906b34d0faa8a53c0c53254"
+  },
+  "tests/UnitTests/Daraban.Modules.Financial.Tests/SupplierServiceTests.cs": {
+    "mtime": 1788682695.440653,
+    "seen": 1788877892.7314842,
+    "ast_hash": "d4d932f8151999cd06fa907177bf9d36",
+    "semantic_hash": "d4d932f8151999cd06fa907177bf9d36"
+  },
+  "tests/UnitTests/Daraban.Modules.Identity.Tests/AgentAuthServiceTests.cs": {
+    "mtime": 1788645110.0593016,
+    "seen": 1788877892.7314847,
+    "ast_hash": "065df27ffa78f36844cb26797abb12a1",
+    "semantic_hash": "065df27ffa78f36844cb26797abb12a1"
+  },
+  "tests/UnitTests/Daraban.Modules.Identity.Tests/AgentCommandServiceTests.cs": {
+    "mtime": 1788644527.6603684,
+    "seen": 1788877892.7314854,
+    "ast_hash": "ae71639cac397d1ace1a797e04bb8446",
+    "semantic_hash": "ae71639cac397d1ace1a797e04bb8446"
+  },
+  "tests/UnitTests/Daraban.Modules.Identity.Tests/AuthServiceTests.cs": {
+    "mtime": 1788644060.8986948,
+    "seen": 1788877892.7314863,
+    "ast_hash": "55002573eca9b72c0d7a99486fd5075d",
+    "semantic_hash": "55002573eca9b72c0d7a99486fd5075d"
+  },
+  "tests/UnitTests/Daraban.Modules.Identity.Tests/EntityScopeAccessorTests.cs": {
+    "mtime": 1788645505.0712192,
+    "seen": 1788877892.7314878,
+    "ast_hash": "d8df8e6d260d7cf53daf738f59052c08",
+    "semantic_hash": "d8df8e6d260d7cf53daf738f59052c08"
+  },
+  "tests/UnitTests/Daraban.Modules.Identity.Tests/JwtTokenServiceTests.cs": {
+    "mtime": 1788644407.132728,
+    "seen": 1788877892.7314885,
+    "ast_hash": "a3ff837a086e7e0ecbee5482ad0c7d46",
+    "semantic_hash": "a3ff837a086e7e0ecbee5482ad0c7d46"
+  },
+  "tests/UnitTests/Daraban.Modules.Identity.Tests/PermissionResolverTests.cs": {
+    "mtime": 1788645299.0860572,
+    "seen": 1788877892.731489,
+    "ast_hash": "abb013362f3fd8c80abd0b5c584ba6e9",
+    "semantic_hash": "abb013362f3fd8c80abd0b5c584ba6e9"
+  },
+  "tests/UnitTests/Daraban.Modules.Identity.Tests/RefreshTokenServiceTests.cs": {
+    "mtime": 1788644185.7564573,
+    "seen": 1788877892.73149,
+    "ast_hash": "f0f0869c1e6166b800703c4e66ecffc3",
+    "semantic_hash": "f0f0869c1e6166b800703c4e66ecffc3"
+  },
+  "tests/UnitTests/Daraban.Modules.Identity.Tests/UserServiceTests.cs": {
+    "mtime": 1788644301.6085806,
+    "seen": 1788877892.7314906,
+    "ast_hash": "36ed7bde06fb41c2183a630b8f747574",
+    "semantic_hash": "36ed7bde06fb41c2183a630b8f747574"
+  },
+  "tests/UnitTests/Daraban.Modules.Inventory.Tests/InventoryServiceTests.cs": {
+    "mtime": 1788696437.1358814,
+    "seen": 1788877892.731492,
+    "ast_hash": "ae40a7737275e5a8db15db07eead1aea",
+    "semantic_hash": "ae40a7737275e5a8db15db07eead1aea"
+  },
+  "tests/UnitTests/Daraban.Modules.Knowledge.Tests/KbArticleServiceTests.cs": {
+    "mtime": 1788633741.609898,
+    "seen": 1788877892.7314935,
+    "ast_hash": "14296d1aaa84bc83058ed2a6fae7e50c",
+    "semantic_hash": "14296d1aaa84bc83058ed2a6fae7e50c"
+  },
+  "tests/UnitTests/Daraban.Modules.Knowledge.Tests/KbCategoryServiceTests.cs": {
+    "mtime": 1788633741.609898,
+    "seen": 1788877892.7314942,
+    "ast_hash": "3c113d829b2d1cf0819dd46a384959bb",
+    "semantic_hash": "3c113d829b2d1cf0819dd46a384959bb"
+  },
+  "tests/UnitTests/Daraban.Modules.Knowledge.Tests/KbTicketLinkServiceTests.cs": {
+    "mtime": 1788633741.6108987,
+    "seen": 1788877892.731495,
+    "ast_hash": "1e5165b552987d8b77cc032dee5c990f",
+    "semantic_hash": "1e5165b552987d8b77cc032dee5c990f"
+  },
+  "tests/UnitTests/Daraban.Modules.Knowledge.Tests/KnowledgeModelTests.cs": {
+    "mtime": 1788633741.6108987,
+    "seen": 1788877892.7314956,
+    "ast_hash": "03435da0ec627648917ccfbfe2f586be",
+    "semantic_hash": "03435da0ec627648917ccfbfe2f586be"
+  },
+  "tests/UnitTests/Daraban.Modules.Knowledge.Tests/KnowledgeQueryTranslationTests.cs": {
+    "mtime": 1788633741.6118994,
+    "seen": 1788877892.731496,
+    "ast_hash": "5d08995b20e08f10d03af61b15c5aa57",
+    "semantic_hash": "5d08995b20e08f10d03af61b15c5aa57"
+  },
+  "tests/UnitTests/Daraban.Modules.Knowledge.Tests/KnowledgeValidatorTests.cs": {
+    "mtime": 1788633741.6249428,
+    "seen": 1788877892.731497,
+    "ast_hash": "d0aa7d3601094e996fe5e8c4441b17f3",
+    "semantic_hash": "d0aa7d3601094e996fe5e8c4441b17f3"
+  },
+  "tests/UnitTests/Daraban.Modules.ServiceDesk.Tests/TicketServiceQueryTests.cs": {
+    "mtime": 1788642277.668786,
+    "seen": 1788877892.7315004,
+    "ast_hash": "bf815befc7fc660b256edce107a15c11",
+    "semantic_hash": "bf815befc7fc660b256edce107a15c11"
+  },
+  "tests/UnitTests/Daraban.Modules.ServiceDesk.Tests/TicketServiceTests.cs": {
+    "mtime": 1788642121.6355698,
+    "seen": 1788877892.731501,
+    "ast_hash": "946e208569c0f1722b8a37ebe6142c52",
+    "semantic_hash": "946e208569c0f1722b8a37ebe6142c52"
+  },
+  "tests/UnitTests/Daraban.Modules.ServiceDesk.Tests/TicketServiceWorkflowTests.cs": {
+    "mtime": 1788642154.9477954,
+    "seen": 1788877892.7315018,
+    "ast_hash": "cf1b765e07dc1fe101deb2c42819d4cf",
+    "semantic_hash": "cf1b765e07dc1fe101deb2c42819d4cf"
+  },
+  "tests/UnitTests/Daraban.Modules.ServiceDesk.Tests/TicketTaskServiceTests.cs": {
+    "mtime": 1788642392.5168655,
+    "seen": 1788877892.7315023,
+    "ast_hash": "e381a39fea6443197c671a0abdc10595",
+    "semantic_hash": "e381a39fea6443197c671a0abdc10595"
+  },
+  "tests/UnitTests/Daraban.Modules.ServiceDesk.Tests/TicketTemplateServiceTests.cs": {
+    "mtime": 1788642767.2651968,
+    "seen": 1788877892.731503,
+    "ast_hash": "7040ccb790336dd8eac431a3f74a86ec",
+    "semantic_hash": "7040ccb790336dd8eac431a3f74a86ec"
+  },
+  "tests/UnitTests/Daraban.Modules.Software.Tests/Daraban.Modules.Software.Tests.csproj": {
+    "mtime": 1788683141.5410175,
+    "seen": 1788877892.731504,
+    "ast_hash": "8bdd0d329e97fb39bb537b21bda8f2b5",
+    "semantic_hash": "8bdd0d329e97fb39bb537b21bda8f2b5"
+  },
+  "tests/UnitTests/Daraban.Modules.Software.Tests/SoftwareInstallationServiceTests.cs": {
+    "mtime": 1788686028.127781,
+    "seen": 1788877892.7315044,
+    "ast_hash": "5844544e00edc3b95abce8edaed8d175",
+    "semantic_hash": "5844544e00edc3b95abce8edaed8d175"
+  },
+  "tests/UnitTests/Daraban.Modules.Software.Tests/SoftwareLicenseServiceTests.cs": {
+    "mtime": 1788685912.3655417,
+    "seen": 1788877892.7315052,
+    "ast_hash": "320b055b404f0facd7ea4a50689f6c11",
+    "semantic_hash": "320b055b404f0facd7ea4a50689f6c11"
+  },
+  "tests/UnitTests/Daraban.Modules.Software.Tests/SoftwareServiceTests.cs": {
+    "mtime": 1788685831.1677442,
+    "seen": 1788877892.7315056,
+    "ast_hash": "c3c89ed84b5dfd9acc1075c91943c315",
+    "semantic_hash": "c3c89ed84b5dfd9acc1075c91943c315"
+  },
+  "AGENT_KNOWLEDGE.md": {
+    "mtime": 1787859741.4808912,
+    "seen": 1788877892.7315066,
+    "ast_hash": "1f1d33ae31f4bdeab50bb2d049be9b34",
+    "semantic_hash": "1f1d33ae31f4bdeab50bb2d049be9b34"
+  },
+  "ARCHITECTURE.md": {
+    "mtime": 1788791098.5921385,
+    "seen": 1788877892.7315075,
+    "ast_hash": "e7028d4dfc4be8f3df73c0d5a307120f",
+    "semantic_hash": "e7028d4dfc4be8f3df73c0d5a307120f"
+  },
+  "docs/01-Software-Architecture.md": {
+    "mtime": 1788793281.8603153,
+    "seen": 1788877892.7315109,
+    "ast_hash": "a98376c1e5076f9a6e68a9021975d2cc",
+    "semantic_hash": "a98376c1e5076f9a6e68a9021975d2cc"
+  },
+  "docs/02-Requirements.md": {
+    "mtime": 1788789040.044522,
+    "seen": 1788877892.7315116,
+    "ast_hash": "2f4524b10b36c73538039a2e270b60a0",
+    "semantic_hash": "2f4524b10b36c73538039a2e270b60a0"
+  },
+  "docs/03-Test-Guide.md": {
+    "mtime": 1788788795.1911664,
+    "seen": 1788877892.731512,
+    "ast_hash": "ec0c1f114297e0c2cbeb86791f377284",
+    "semantic_hash": "ec0c1f114297e0c2cbeb86791f377284"
+  },
+  "docs/04-User-Guide.md": {
+    "mtime": 1788788855.1262517,
+    "seen": 1788877892.7315128,
+    "ast_hash": "73f8eb716fe7e12a41918ae53b19f0f5",
+    "semantic_hash": "73f8eb716fe7e12a41918ae53b19f0f5"
+  },
+  "docs/05-Declaration.md": {
+    "mtime": 1788788884.435018,
+    "seen": 1788877892.7315135,
+    "ast_hash": "e872c3fed5a872918902abec023b4728",
+    "semantic_hash": "e872c3fed5a872918902abec023b4728"
+  },
+  "docs/06-Not-Implemented.md": {
+    "mtime": 1788788935.1019807,
+    "seen": 1788877892.7315142,
+    "ast_hash": "11cb0ffc0b97f7ff8a16c3e0f417ac0f",
+    "semantic_hash": "11cb0ffc0b97f7ff8a16c3e0f417ac0f"
+  },
+  "docs/README.md": {
+    "mtime": 1788791098.6112773,
+    "seen": 1788877892.731515,
+    "ast_hash": "560a76150b68f0802070365cb92c05c4",
+    "semantic_hash": "560a76150b68f0802070365cb92c05c4"
+  },
+  "docs/_build/combined.html": {
+    "mtime": 1788793445.4493237,
+    "seen": 1788877892.7315156,
+    "ast_hash": "23ce8e7e6d1ead9001c5bb6c1dcd88a6",
+    "semantic_hash": "23ce8e7e6d1ead9001c5bb6c1dcd88a6"
+  },
+  "docs/decisions/ADR-001-Modular-monolith-with-strict-module-boundaries.md": {
+    "mtime": 1788790915.787938,
+    "seen": 1788877892.7315164,
+    "ast_hash": "4e70ae0fc5b2b25ff8e4088c39902235",
+    "semantic_hash": "4e70ae0fc5b2b25ff8e4088c39902235"
+  },
+  "docs/decisions/ADR-002-Shared-infrastructure-policy-has-a-single-owner.md": {
+    "mtime": 1788790940.443034,
+    "seen": 1788877892.7315168,
+    "ast_hash": "936706492969031d4618dfb9622245ee",
+    "semantic_hash": "936706492969031d4618dfb9622245ee"
+  },
+  "docs/decisions/ADR-003-Domain-errors-map-to-ProblemDetails-in-one-place.md": {
+    "mtime": 1788790959.0084355,
+    "seen": 1788877892.7315178,
+    "ast_hash": "96387ae679d0e1767bcd50412d4ae848",
+    "semantic_hash": "96387ae679d0e1767bcd50412d4ae848"
+  },
+  "docs/decisions/ADR-004-Workers-never-reference-hosts.md": {
+    "mtime": 1788790976.9741638,
+    "seen": 1788877892.7315183,
+    "ast_hash": "b20ba0d6c2120ad26b8a89ddafad1574",
+    "semantic_hash": "b20ba0d6c2120ad26b8a89ddafad1574"
+  },
+  "docs/decisions/ADR-005-Module-composition-roots-own-all-registrations.md": {
+    "mtime": 1788790994.252534,
+    "seen": 1788877892.731519,
+    "ast_hash": "76202d8b0fbebc74b2730f13fa52a981",
+    "semantic_hash": "76202d8b0fbebc74b2730f13fa52a981"
+  },
+  "docs/decisions/ADR-006-Frontend-feature-stores-with-shared-error-handling.md": {
+    "mtime": 1788791013.8640752,
+    "seen": 1788877892.7315197,
+    "ast_hash": "3949879b60bb53134079f1e3390bb00e",
+    "semantic_hash": "3949879b60bb53134079f1e3390bb00e"
+  },
+  "docs/images/README.md": {
+    "mtime": 1788789050.281134,
+    "seen": 1788877892.7315204,
+    "ast_hash": "5dd3c63e08436fa28ebfbf36e67e0db7",
+    "semantic_hash": "5dd3c63e08436fa28ebfbf36e67e0db7"
+  },
+  "frontend/src/app/features/agents/agent-detail/agent-detail.component.html": {
+    "mtime": 1788038149.3273444,
+    "seen": 1788877892.7315223,
+    "ast_hash": "a8e498a2409b7ed296821a321148612e",
+    "semantic_hash": "a8e498a2409b7ed296821a321148612e"
+  },
+  "frontend/src/app/features/agents/agent-list/agent-list.component.html": {
+    "mtime": 1788873068.82296,
+    "seen": 1788877892.731523,
+    "ast_hash": "e92b9ed6b09dd054bb6a0116d8ae4de1",
+    "semantic_hash": "e92b9ed6b09dd054bb6a0116d8ae4de1"
+  },
+  "frontend/src/app/features/assets/asset-detail/asset-detail.component.html": {
+    "mtime": 1788873978.1205792,
+    "seen": 1788877892.7315235,
+    "ast_hash": "c40f1c4c39e29fe384c3f9a12c62ff17",
+    "semantic_hash": "c40f1c4c39e29fe384c3f9a12c62ff17"
+  },
+  "frontend/src/app/features/assets/asset-list/asset-list.component.html": {
+    "mtime": 1787850512.9535296,
+    "seen": 1788877892.7315245,
+    "ast_hash": "bb1c37979e1c259aea0ce4d126516cf1",
+    "semantic_hash": "bb1c37979e1c259aea0ce4d126516cf1"
+  },
+  "docs/_build/Daraban-Docs.pdf": {
+    "mtime": 1788793491.1468506,
+    "seen": 1788877892.731528,
+    "ast_hash": "9dd5a33936976309b68f38111f3dedeb",
+    "semantic_hash": "9dd5a33936976309b68f38111f3dedeb"
+  },
+  "docs/_build/page5.png": {
+    "mtime": 1788793635.4509432,
+    "seen": 1788877892.7315288,
+    "ast_hash": "c8e7f07be37fb7842ed2d27061ca4409",
+    "semantic_hash": "c8e7f07be37fb7842ed2d27061ca4409"
   }
 }

@@ -60,7 +60,7 @@ import { ImportResult } from '../models/asset.model';
             <p class="upload-text">
               @if (selectedFile()) {
                 {{ selectedFile()!.name }} ({{ formatSize(selectedFile()!.size) }})
-              } @ else {
+              } @else {
                 Click or drag a CSV/XLSX file here
               }
             </p>
@@ -84,7 +84,7 @@ import { ImportResult } from '../models/asset.model';
               (click)="onImport()">
               @if (isUploading()) {
                 Importing...
-              } @ else {
+              } @else {
                 {{ dryRun() ? 'Validate' : 'Import' }}
               }
             </button>

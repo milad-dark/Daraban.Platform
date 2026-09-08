@@ -184,5 +184,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapDarabanHealthCheckEndpoints();
 app.MapHub<Daraban.Host.Api.Hubs.AgentStatusHub>("/hubs/agent-status");
+app.MapHub<Daraban.Host.Api.Hubs.TicketHub>("/hubs/tickets");
 
 app.Run();
