@@ -4,6 +4,9 @@
   </PropertyGroup>
   <ItemGroup>
 	  <ProjectReference Include="..\..\Modules\Automation\Daraban.Modules.Automation.Services\Daraban.Modules.Automation.Services.csproj" />
+	  <!-- Scheduled reports (Task 7.2): the cron runner resolves Reporting's definition
+	       repository + SavedReport repository and publishes ReportRequestedEvent. -->
+	  <ProjectReference Include="..\..\Modules\Reporting\Daraban.Modules.Reporting.Services\Daraban.Modules.Reporting.Services.csproj" />
 	  <ProjectReference Include="..\..\Shared\Daraban.Platform.Hosting\Daraban.Platform.Hosting.csproj" />
 	  <ProjectReference Include="..\..\Shared\Daraban.Platform.Messaging\Daraban.Platform.Messaging.csproj" />
   </ItemGroup>

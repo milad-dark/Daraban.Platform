@@ -33,6 +33,8 @@
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.11" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.10" />
     <!-- Logging -->
@@ -61,5 +63,8 @@
     <!-- Import/Export -->
     <PackageVersion Include="CsvHelper" Version="33.1.0" />
     <PackageVersion Include="ClosedXML" Version="0.105.1" />
+    <!-- Report PDF rendering (Task 7.2): QuestPDF, MIT + Community license. EPPlus was
+         evaluated for Excel and rejected (Polyform Noncommercial); ClosedXML covers Excel. -->
+    <PackageVersion Include="QuestPDF" Version="2026.8.0" />
   </ItemGroup>
 </Project>

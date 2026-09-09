@@ -201,7 +201,30 @@ services:
          condition: service_healthy
      networks:
        - daraban-net
- 
+
+   worker-reports:
+     build:
+       context: .
+       dockerfile: docker/worker-reporting.Dockerfile
+     container_name: daraban-worker-reports
+     restart: unless-stopped
+     environment:
+       - DOTNET_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+       - ConnectionStrings__Postgres=${CONNECTIONSTRINGS__Postgres}
+       - RabbitMq__Host=${RABBITMQ__Host:-rabbitmq}
+       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
+       - ReportStore__RootPath=/var/daraban/reports
+     volumes:
+       - report-artifacts:/var/daraban/reports
+     depends_on:
+       postgres:
+         condition: service_healthy
+       rabbitmq:
+         condition: service_healthy
+     networks:
+       - daraban-net
+
    # ── Frontend ───────────────────────────────────────────────────────────────
  
    frontend:
@@ -235,6 +258,7 @@ volumes:
    pgdata:
    redisdata:
    rabbitmqdata:
+   report-artifacts:
  
 networks:
    daraban-net:

@@ -1,14 +1,37 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <!-- Excel: ClosedXML (MIT). EPPlus was evaluated and rejected: the Polyform Noncommercial
+         license does not permit general-purpose commercial backend use. -->
+    <PackageReference Include="ClosedXML" />
+    <PackageReference Include="CsvHelper" />
+    <!-- PDF: QuestPDF (MIT, Community license configured in PdfReportRenderer). -->
+    <PackageReference Include="QuestPDF" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Daraban.Modules.Reporting.Data\Daraban.Modules.Reporting.Data.csproj" />
     <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />
     <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Contracts\Daraban.Platform.Contracts.csproj" />
+    <!-- Read-only aggregation over sibling modules' data models (the Dashboard pattern):
+         AsNoTracking queries only, never writes to foreign schemas. -->
+    <ProjectReference Include="..\..\ServiceDesk\Daraban.Modules.ServiceDesk.Data\Daraban.Modules.ServiceDesk.Data.csproj" />
+    <ProjectReference Include="..\..\Assets\Daraban.Modules.Assets.Data\Daraban.Modules.Assets.Data.csproj" />
+    <ProjectReference Include="..\..\Identity\Daraban.Modules.Identity.Data\Daraban.Modules.Identity.Data.csproj" />
   </ItemGroup>
+
 </Project>
