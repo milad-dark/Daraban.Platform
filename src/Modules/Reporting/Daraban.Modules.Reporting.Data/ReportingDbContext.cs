@@ -1,3 +1,4 @@
+using Daraban.Modules.Reporting.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Daraban.Modules.Reporting.Data;
@@ -7,6 +8,9 @@ namespace Daraban.Modules.Reporting.Data;
 public class ReportingDbContext : DbContext
 {
     public ReportingDbContext(DbContextOptions<ReportingDbContext> options) : base(options) { }
+
+    public DbSet<ReportDefinition> Definitions => Set<ReportDefinition>();
+    public DbSet<SavedReport> SavedReports => Set<SavedReport>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

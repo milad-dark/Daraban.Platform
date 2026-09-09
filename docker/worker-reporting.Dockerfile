@@ -1,15 +1,17 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 #
 COPY Daraban.Platform.sln Directory.Packages.props ./
 COPY src/ src/
-COPY Daraban.Platform.Messaging/ Daraban.Platform.Messaging/
 #
-RUN dotnet restore src/Workers/Daraban.Worker.Reporting/Daraban.Worker.Reporting.csproj
-RUN dotnet publish src/Workers/Daraban.Worker.Reporting/Daraban.Worker.Reporting.csproj -c Release -o /app/publish --no-restore
+RUN dotnet restore src/Workers/Daraban.Workers.Reporting/Daraban.Workers.Reporting.csproj
+RUN dotnet publish src/Workers/Daraban.Workers.Reporting/Daraban.Workers.Reporting.csproj -c Release -o /app/publish --no-restore
 #
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 #
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "Daraban.Worker.Reporting.dll"]
+# Report artifacts are written here; mount a volume (see docker-compose worker-reporting).
+VOLUME ["/var/daraban/reports"]
+ENV ReportStore__RootPath=/var/daraban/reports
+ENTRYPOINT ["dotnet", "Daraban.Workers.Reporting.dll"]

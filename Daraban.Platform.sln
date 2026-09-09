@@ -161,6 +161,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daraban.Modules.Dashboard.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daraban.Modules.Dashboard.Data", "src\Modules\Dashboard\Daraban.Modules.Dashboard.Data\Daraban.Modules.Dashboard.Data.csproj", "{AE53A54F-B89F-47DD-86F4-4E28A93E938D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{6BE5FCB5-F2AF-03A9-6DAD-669556E41BC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -970,6 +972,7 @@ Global
 		{32A751AC-F0A7-4F55-BB3F-CEAF190874CC} = {9BF2A726-9349-1429-64E4-F5B69F0CD98D}
 		{EE0D8C13-BDBE-4359-BBC2-BB83B522E91C} = {9BF2A726-9349-1429-64E4-F5B69F0CD98D}
 		{AE53A54F-B89F-47DD-86F4-4E28A93E938D} = {9BF2A726-9349-1429-64E4-F5B69F0CD98D}
+		{6BE5FCB5-F2AF-03A9-6DAD-669556E41BC4} = {03421318-A477-4366-8A48-C4A8A61C3D1D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {954DED44-F6F9-4270-A6A2-1EAE0AEFCC14}

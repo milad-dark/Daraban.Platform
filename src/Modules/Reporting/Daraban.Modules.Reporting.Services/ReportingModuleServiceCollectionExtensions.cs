@@ -1,4 +1,10 @@
 using Daraban.Modules.Reporting.Data;
+using Daraban.Modules.Reporting.Data.Repositories;
+using Daraban.Modules.Reporting.Services.Interfaces;
+using Daraban.Modules.Reporting.Services.Reports;
+using Daraban.Modules.Reporting.Services.Rendering;
+using Daraban.Modules.Reporting.Services.Storage;
+using Daraban.Modules.Reporting.Services.Validators;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +23,35 @@ public static class ReportingModuleServiceCollectionExtensions
 
         services.AddValidatorsFromAssembly(typeof(ReportingModuleServiceCollectionExtensions).Assembly);
 
-        // TODO: register this module's I<Resource>Service / I<Resource>Repository pairs here
-        // as they're built out (see Identity/Assets for the concrete pattern).
+        // Repositories
+        services.AddScoped<IReportDefinitionRepository, ReportDefinitionRepository>();
+        services.AddScoped<ISavedReportRepository, SavedReportRepository>();
+
+        // Services
+        services.AddScoped<IReportingService, ReportingService>();
+        services.AddSingleton(TimeProvider.System);
+
+        // File store (Task 7.2): local filesystem by default; swap the implementation here
+        // when S3/Azure Blob land. The worker resolves the same interface for writing.
+        services.Configure<ReportStoreOptions>(configuration.GetSection(ReportStoreOptions.SectionName));
+        services.AddSingleton<IReportFileStore, LocalReportFileStore>();
+
+        // Renderers -- concrete registrations + one IReportRenderer alias per format, the
+        // same pattern the Dashboard module uses for widget providers.
+        services.AddSingleton<CsvReportRenderer>();
+        services.AddSingleton<ExcelReportRenderer>();
+        services.AddSingleton<PdfReportRenderer>();
+        services.AddSingleton<IReportRenderer>(sp => sp.GetRequiredService<CsvReportRenderer>());
+        services.AddSingleton<IReportRenderer>(sp => sp.GetRequiredService<ExcelReportRenderer>());
+        services.AddSingleton<IReportRenderer>(sp => sp.GetRequiredService<PdfReportRenderer>());
+
+        // Data providers -- one per catalog dataset (registered by the worker too).
+        services.AddScoped<TicketsReportDataProvider>();
+        services.AddScoped<AssetsReportDataProvider>();
+        services.AddScoped<AgentsReportDataProvider>();
+        services.AddScoped<IReportDataProvider>(sp => sp.GetRequiredService<TicketsReportDataProvider>());
+        services.AddScoped<IReportDataProvider>(sp => sp.GetRequiredService<AssetsReportDataProvider>());
+        services.AddScoped<IReportDataProvider>(sp => sp.GetRequiredService<AgentsReportDataProvider>());
 
         return services;
     }
