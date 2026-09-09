@@ -1,6 +1,7 @@
-import { computed, inject, signal } from '@angular/core';
-import { signalStore, withComputed, withState } from '@ngrx/signals';
+import { computed, inject } from '@angular/core';
+import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 import { firstValueFrom } from 'rxjs';
+import { extractError } from '../../core/utils/error.util';
 import {
   DashboardLayoutDto,
   WidgetData,
@@ -10,10 +11,11 @@ import {
 import { DashboardService } from './dashboard.service';
 
 /**
- * Dashboard state (Task 7.1, ADR-006 pattern: one feature store per feature).
+ * Dashboard state (Task 7.2, ADR-006 pattern: one feature store per feature).
  *
  * Layout data flows server → store → grid. Widget payloads are keyed by widgetType so the
- * WidgetHostComponent can look up its data without prop-drilling.
+ * WidgetHostComponent can look up its data without prop-drilling. Methods that call other
+ * store methods live in a later `withMethods` block, per ADR-006.
  */
 export interface DashboardState {
   widgets: WidgetDefinition[];
@@ -50,29 +52,12 @@ export const DashboardStore = signalStore(
         .filter((entry) => entry.definition !== undefined);
     }),
   })),
-  withMethods((state, dashboardService = inject(DashboardService)) => ({
-    /** Loads widget catalog + saved layout, then fetches data for every placed widget. */
-    async load(): Promise<void> {
-      state.patch({ loading: true, error: null });
-      try {
-        const [widgets, layout] = await Promise.all([
-          firstValueFrom(dashboardService.getWidgets()),
-          firstValueFrom(dashboardService.getLayout()),
-        ]);
-        state.patch({ widgets, layout: layout.widgets, loading: false });
-        await Promise.all(
-          layout.widgets.map((p) => state.loadWidgetData(p.widgetType))
-        );
-      } catch {
-        state.patch({ loading: false, error: 'Failed to load the dashboard.' });
-      }
-    },
-
+  withMethods((store, dashboardService = inject(DashboardService)) => ({
     /** Fetches (and caches) one widget payload. Failures are per-widget, not fatal. */
     async loadWidgetData(widgetType: string): Promise<void> {
       try {
         const data = await firstValueFrom(dashboardService.getWidgetData(widgetType));
-        state.patch({ data: { ...state.data(), [widgetType]: data } });
+        patchState(store, { data: { ...store.data(), [widgetType]: data } });
       } catch {
         // Absent key => widget renders its empty state. A broken widget must not
         // take the dashboard down with it.
@@ -81,19 +66,38 @@ export const DashboardStore = signalStore(
 
     /** Replaces the local layout (drag/drop/resize) -- persisted only on saveLayout(). */
     setLayout(layout: WidgetPlacement[]): void {
-      state.patch({ layout });
+      patchState(store, { layout });
     },
 
     /** Persists the current layout server-side. */
     async saveLayout(): Promise<void> {
-      state.patch({ saving: true, error: null });
+      patchState(store, { saving: true, error: null });
       try {
-        const saved = await firstValueFrom(
-          dashboardService.saveLayout(state.layout())
-        );
-        state.patch({ layout: saved.widgets, saving: false });
-      } catch {
-        state.patch({ saving: false, error: 'Failed to save the layout.' });
+        const saved = await firstValueFrom(dashboardService.saveLayout(store.layout()));
+        patchState(store, { layout: saved.widgets, saving: false });
+      } catch (err) {
+        patchState(store, { saving: false, error: extractError(err) });
+      }
+    },
+
+    /** Clears the current error banner. */
+    clearError(): void {
+      patchState(store, { error: null });
+    },
+  })),
+  withMethods((store, dashboardService = inject(DashboardService)) => ({
+    /** Loads widget catalog + saved layout, then fetches data for every placed widget. */
+    async load(): Promise<void> {
+      patchState(store, { loading: true, error: null });
+      try {
+        const [widgets, layout] = await Promise.all([
+          firstValueFrom(dashboardService.getWidgets()),
+          firstValueFrom(dashboardService.getLayout()),
+        ]);
+        patchState(store, { widgets, layout: layout.widgets, loading: false });
+        await Promise.all(layout.widgets.map((p) => store.loadWidgetData(p.widgetType)));
+      } catch (err) {
+        patchState(store, { loading: false, error: extractError(err) });
       }
     },
   }))

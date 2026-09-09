@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule, MatMenu } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   CdkDragDrop,
@@ -60,11 +60,11 @@ import { WidgetHostComponent } from '../widget-host/widget-host.component';
     </div>
 
     <!-- Menu lives in the template; defined inline to avoid a separate file. -->
-    <div mat-menu #widgetMenu="matMenu">
+    <mat-menu #widgetMenu="matMenu">
       @for (w of availableWidgets(); track w.name) {
         <button mat-menu-item (click)="addWidget.emit(w)">{{ w.name }}</button>
       }
-    </div>
+    </mat-menu>
 
     <div
       cdkDropList
