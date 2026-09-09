@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Daraban.Modules.Dashboard.Services\Daraban.Modules.Dashboard.Services.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Hosting\Daraban.Platform.Hosting.csproj" />
+  </ItemGroup>
+
+</Project>

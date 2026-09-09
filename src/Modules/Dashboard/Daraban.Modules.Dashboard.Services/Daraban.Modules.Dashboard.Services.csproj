@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Daraban.Modules.Dashboard.Data\Daraban.Modules.Dashboard.Data.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
+    <!-- Read-only aggregation over sibling modules' data models. The Dashboard module is a
+         pure consumer: it only issues AsNoTracking queries and never writes to foreign
+         schemas. Keeping the references Data-only prevents any service-layer coupling. -->
+    <ProjectReference Include="..\..\ServiceDesk\Daraban.Modules.ServiceDesk.Data\Daraban.Modules.ServiceDesk.Data.csproj" />
+    <ProjectReference Include="..\..\Assets\Daraban.Modules.Assets.Data\Daraban.Modules.Assets.Data.csproj" />
+    <ProjectReference Include="..\..\Identity\Daraban.Modules.Identity.Data\Daraban.Modules.Identity.Data.csproj" />
+    <ProjectReference Include="..\..\Inventory\Daraban.Modules.Inventory.Data\Daraban.Modules.Inventory.Data.csproj" />
+  </ItemGroup>
+
+</Project>

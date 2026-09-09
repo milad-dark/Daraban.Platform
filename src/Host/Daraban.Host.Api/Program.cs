@@ -1,5 +1,6 @@
 using Daraban.Modules.Assets.Services;
 using Daraban.Modules.Automation.Services;
+using Daraban.Modules.Dashboard.Services;
 using Daraban.Modules.Financial.Services;
 using Daraban.Modules.Identity.Data.Repositories;
 using Daraban.Modules.Identity.Services;
@@ -54,7 +55,8 @@ builder.Services
     .AddAutomationModule(builder.Configuration)
     .AddNotificationsModule(builder.Configuration)
     .AddReportingModule(builder.Configuration)
-    .AddDiscoveryModule(builder.Configuration);
+    .AddDiscoveryModule(builder.Configuration)
+    .AddDashboardModule(builder.Configuration);
 
 // ---- Controllers: every module's *.Api assembly must be added as an MVC
 // Application Part -- ASP.NET Core does NOT auto-discover controllers living in a
@@ -72,6 +74,7 @@ mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Automation.Api.AssemblyMark
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Notifications.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Reporting.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Discovery.Api.AssemblyMarker).Assembly);
+mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Dashboard.Api.AssemblyMarker).Assembly);
 
 // ---- Auth (Task 2.3): validates JWTs issued directly by AuthService/JwtTokenService ---
 // Validation policy (issuer/audience/signing key) is owned by the Identity module's
