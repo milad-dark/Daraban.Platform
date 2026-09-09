@@ -32,5 +32,7 @@
     <ProjectReference Include="..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
     <ProjectReference Include="..\..\Shared\Daraban.Platform.Hosting\Daraban.Platform.Hosting.csproj" />
     <ProjectReference Include="..\..\Shared\Daraban.Platform.Messaging\Daraban.Platform.Messaging.csproj" />
+    <ProjectReference Include="..\..\Modules\Dashboard\Daraban.Modules.Dashboard.Api\Daraban.Modules.Dashboard.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Dashboard\Daraban.Modules.Dashboard.Services\Daraban.Modules.Dashboard.Services.csproj" />
   </ItemGroup>
 </Project>
