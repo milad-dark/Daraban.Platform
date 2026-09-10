@@ -21,6 +21,7 @@ import { DatePipe } from '@angular/common';
 import { AgentStore } from '../agent.store';
 import { HeartbeatIndicatorComponent } from '../heartbeat-indicator/heartbeat-indicator.component';
 import { CommandPanelComponent } from '../command-panel/command-panel.component';
+import { EntityHistoryComponent } from '../../audit-logs/entity-history/entity-history.component';
 import { AgentListItem } from '../models/agent.model';
 
 @Component({
@@ -40,6 +41,7 @@ import { AgentListItem } from '../models/agent.model';
     DatePipe,
     HeartbeatIndicatorComponent,
     CommandPanelComponent,
+    EntityHistoryComponent,
   ],
   templateUrl: './agent-detail.component.html',
   styleUrl: './agent-detail.component.scss',

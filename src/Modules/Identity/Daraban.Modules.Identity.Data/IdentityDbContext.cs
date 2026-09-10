@@ -24,6 +24,11 @@ public class IdentityDbContext : DbContext
     public DbSet<AgentCommand> AgentCommands => Set<AgentCommand>();
     public DbSet<CommandResult> CommandResults => Set<CommandResult>();
 
+    // ---- Platform-wide audit trail (Task 7.3) ----
+    // Never exposed for writes from application code: rows are appended exclusively by
+    // AuditLogSaveChangesInterceptor so the trail stays tamper-evident.
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("identity");

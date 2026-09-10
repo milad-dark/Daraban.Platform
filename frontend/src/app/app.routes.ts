@@ -50,6 +50,13 @@ export const routes: Routes = [
           import('./features/tickets/ticket.routes').then((m) => m.TICKET_ROUTES),
       },
       {
+        path: 'audit-logs',
+        loadComponent: () =>
+          import(
+            './features/audit-logs/audit-log-browser/audit-log-browser.component'
+          ).then((m) => m.AuditLogBrowserComponent),
+      },
+      {
         path: 'knowledge-base',
         loadChildren: () =>
           import('./features/knowledge-base/kb.routes').then((m) => m.KB_ROUTES),

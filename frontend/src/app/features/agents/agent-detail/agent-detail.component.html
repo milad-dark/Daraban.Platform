@@ -252,10 +252,8 @@
           Logs
         </ng-template>
         <div class="tab-content">
-          <div class="empty-state">
-            <mat-icon>receipt_long</mat-icon>
-            <p>Audit logs coming soon</p>
-          </div>
+          <!-- Inline audit history for this agent (Task 7.3); permission-gated server-side. -->
+          <app-entity-history entityType="Agent" [entityId]="agentId()"></app-entity-history>
         </div>
       </mat-tab>
     </mat-tab-group>

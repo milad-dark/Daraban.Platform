@@ -5,16 +5,18 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Daraban.Modules.Identity.Data.Configurations;
 
 /// <summary>
-/// Append-only table (Task 7.3): no UPDATE/DELETE would ever be issued by application
-/// code, but PostgreSQL-side guards keep that true even if a future bug tries.
-/// Indexes mirror the two query paths: the paged browser (entity/actor/date filters)
-/// and the per-record history panel.
+/// Append-only table (Task 7.3) in the cross-cutting <c>core</c> schema: the audit trail
+/// describes changes across every module's entities, so it deliberately lives outside the
+/// module-owned <c>identity</c> schema. No UPDATE/DELETE would ever be issued by application
+/// code, but PostgreSQL-side guards keep that true even if a future bug tries. Indexes
+/// mirror the two query paths: the paged browser (entity/actor/date filters) and the
+/// per-record history panel.
 /// </summary>
 public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
 {
     public void Configure(EntityTypeBuilder<AuditLog> b)
     {
-        b.ToTable("audit_logs");
+        b.ToTable("audit_logs", "core");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id).ValueGeneratedOnAdd();
 
