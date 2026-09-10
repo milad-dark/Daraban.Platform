@@ -46,6 +46,7 @@ export class ShellComponent {
     { label: 'Knowledge Base', icon: 'menu_book', route: '/knowledge-base' },
     { label: 'Reports', icon: 'bar_chart', route: '/reports' },
     { label: 'Administration', icon: 'admin_panel_settings', route: '/admin' },
+    { label: 'Audit Logs', icon: 'history', route: '/audit-logs' },
   ];
 
   protected async onLogout(): Promise<void> {

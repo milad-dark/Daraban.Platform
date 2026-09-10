@@ -21,6 +21,12 @@ public interface IAuditLogRepository
         Guid entityId,
         int take,
         CancellationToken ct = default);
+
+    /// <summary>Batched id -> display-name lookup for the actor column of a page
+    /// (one query per page, never per row). Unknown ids (deleted users) are simply absent.</summary>
+    Task<IReadOnlyDictionary<Guid, string>> GetActorDisplayNamesAsync(
+        IEnumerable<Guid> userIds,
+        CancellationToken ct = default);
 }
 
 /// <summary>
@@ -71,6 +77,23 @@ public class AuditLogRepository : IAuditLogRepository
             .ThenByDescending(l => l.Id)
             .Take(take)
             .ToListAsync(ct);
+
+    public async Task<IReadOnlyDictionary<Guid, string>> GetActorDisplayNamesAsync(
+        IEnumerable<Guid> userIds,
+        CancellationToken ct = default)
+    {
+        var ids = userIds.Distinct().ToList();
+        if (ids.Count == 0)
+        {
+            return new Dictionary<Guid, string>();
+        }
+
+        return await _db.Users
+            .AsNoTracking()
+            .Where(u => ids.Contains(u.Id))
+            .Select(u => new { u.Id, u.DisplayName })
+            .ToDictionaryAsync(x => x.Id, x => x.DisplayName, ct);
+    }
 
     private IQueryable<AuditLog> BuildQuery(
         string? entityType,

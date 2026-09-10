@@ -21,11 +21,7 @@ namespace Daraban.Modules.Identity.Services.Agents;
 ///   active_entity_id: the agent's entity scope
 /// No "token_version" claim — agent tokens are revoked by deactivating the credential, not the agent.
 /// </summary>
-public class AgentAuthService(
-    IAgentRepository repo,
-    IAgentService agentService,
-    IOptions<JwtOptions> jwtOptions,
-    JwtSigningKeyProvider keyProvider) : IAgentAuthService
+public class AgentAuthService(IAgentRepository repo, IAgentService agentService, IOptions<JwtOptions> jwtOptions, JwtSigningKeyProvider keyProvider) : IAgentAuthService
 {
     private readonly JwtOptions _jwtOptions = jwtOptions.Value;
 
