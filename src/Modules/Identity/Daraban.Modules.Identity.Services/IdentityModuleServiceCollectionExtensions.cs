@@ -1,16 +1,20 @@
 using Daraban.Modules.Identity.Data;
+using Daraban.Modules.Identity.Data.Auditing;
 using Daraban.Modules.Identity.Data.Entities;
 using Daraban.Modules.Identity.Data.Repositories;
 using Daraban.Modules.Identity.Services.Agents;
+using Daraban.Modules.Identity.Services.Audit;
 using Daraban.Modules.Identity.Services.Auth;
 using Daraban.Modules.Identity.Services.Authorization;
 using Daraban.Modules.Identity.Services.Users;
 using Daraban.Platform.Abstractions;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Daraban.Modules.Identity.Services;
 
@@ -20,13 +24,27 @@ public static class IdentityModuleServiceCollectionExtensions
 {
     public static IServiceCollection AddIdentityModule(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<IdentityDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("Postgres")));
+        // ---- Audit trail (Task 7.3) --------------------------------------------------
+        // The interceptor is registered per-scope so its request context (actor, IP,
+        // user-agent) comes from the current request. Registered here -- the module
+        // composition root (ADR-005) -- so both Host.Api and Host.AgentApi get auditing
+        // without per-host wiring; ADR-002's single-owner rule keeps the audit policy in
+        // exactly one place.
+        services.AddHttpContextAccessor();
+        services.AddScoped<AuditLogSaveChangesInterceptor>();
+
+        services.AddDbContext<IdentityDbContext>((sp, options) =>
+            options.UseNpgsql(configuration.GetConnectionString("Postgres"))
+                .AddInterceptors(sp.GetRequiredService<AuditLogSaveChangesInterceptor>()));
 
         services.AddValidatorsFromAssembly(typeof(IdentityModuleServiceCollectionExtensions).Assembly);
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();
+
+        // ---- Audit log reads (Task 7.3) ----------------------------------------------
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<IAuditLogService, AuditLogService>();
 
         // ---- Auth (Task 2.3) ----------------------------------------------------------
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));

@@ -1,0 +1,203 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using Daraban.Modules.Identity.Data.Entities;
+using Daraban.Platform.Abstractions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Daraban.Modules.Identity.Data.Auditing;
+
+/// <summary>
+/// Single owner of platform-wide change auditing (Task 7.3). Attached to
+/// <see cref="IdentityDbContext"/> by <c>AddIdentityModule</c>; writes one immutable
+/// <see cref="AuditLog"/> row per Added/Modified/Deleted entity inside the same SaveChanges
+/// (and therefore the same transaction) as the change it describes.
+///
+/// Security: values of sensitive properties (password hashes, token hashes, client
+/// secrets) are redacted before serialization -- see <see cref="SensitiveProperties"/> --
+/// and whole entity types can be excluded via <c>Audit:ExcludedEntityTypes</c>.
+/// Untracked bookkeeping columns (CreatedAt/UpdatedAt/...) are ignored so an audit row
+/// describes the domain change, not the audit plumbing.
+///
+/// Request context is resolved lazily from <see cref="IHttpContextAccessor"/> rather than
+/// injected, so the same interceptor works on Host.Api (ICurrentUser registered) and
+/// Host.AgentApi (it is not) without per-host wiring.
+/// </summary>
+public sealed class AuditLogSaveChangesInterceptor : SaveChangesInterceptor
+{
+    /// <summary>camelCase property names to match the platform's JSON wire convention.</summary>
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = false,
+    };
+
+    /// <summary>Case-insensitive property names whose values must never be persisted.</summary>
+    private static readonly HashSet<string> SensitiveProperties = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "PasswordHash",
+        "TokenHash",
+        "ClientSecretHash",
+        "SecretHash",
+        "Password",
+        "ClientSecret",
+        "ApiKey",
+    };
+
+    /// <summary>Tracked bookkeeping columns that add no forensic value in a diff.</summary>
+    private static readonly HashSet<string> IgnoredProperties = new(StringComparer.OrdinalIgnoreCase)
+    {
+        nameof(BaseEntity.UpdatedAt),
+        nameof(BaseEntity.UpdatedById),
+        nameof(BaseEntity.CreatedAt),
+        nameof(BaseEntity.CreatedById),
+    };
+
+    private const int MaxUserAgentLength = 512;
+
+    private readonly IHttpContextAccessor? _httpContextAccessor;
+    private readonly ISet<string> _excludedEntityTypes;
+
+    public AuditLogSaveChangesInterceptor(IHttpContextAccessor? httpContextAccessor, IConfiguration? configuration)
+    {
+        _httpContextAccessor = httpContextAccessor;
+        _excludedEntityTypes = (configuration?.GetSection("Audit:ExcludedEntityTypes").Get<string[]>() ?? [])
+            .Select(t => t.Trim())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+        DbContextEventData eventData,
+        InterceptionResult<int> result,
+        CancellationToken cancellationToken = default)
+    {
+        if (eventData.Context is not null)
+        {
+            CollectAuditEntries(eventData.Context);
+        }
+
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
+
+    public override InterceptionResult<int> SavingChanges(
+        DbContextEventData eventData,
+        InterceptionResult<int> result)
+    {
+        if (eventData.Context is not null)
+        {
+            CollectAuditEntries(eventData.Context);
+        }
+
+        return base.SavingChanges(eventData, result);
+    }
+
+    /// <summary>
+    /// Runs inside SavingChanges (not SavedChanges) so the AuditLog rows join the same
+    /// transaction: a rolled-back change must not leave an audit row behind. Added rows use
+    /// a temporary negative PK so multiple rows in one SaveChanges never collide on
+    /// Identity values.
+    /// </summary>
+    private void CollectAuditEntries(DbContext context)
+    {
+        var occurredAt = DateTimeOffset.UtcNow;
+        var (actorId, ip, userAgent) = ResolveRequestContext(context);
+
+        foreach (var entry in context.ChangeTracker.Entries())
+        {
+            if (entry.Entity is AuditLog
+                || entry.State is not (EntityState.Added or EntityState.Modified or EntityState.Deleted)
+                || _excludedEntityTypes.Contains(entry.Entity.GetType().Name))
+            {
+                continue;
+            }
+
+            var (oldValues, newValues) = entry.State switch
+            {
+                EntityState.Added => (null, Serialize(entry, useCurrentValues: true)),
+                EntityState.Deleted => (Serialize(entry, useCurrentValues: false), null),
+                _ => (Serialize(entry, useCurrentValues: false), Serialize(entry, useCurrentValues: true)),
+            };
+
+            context.Add(new AuditLog
+            {
+                Id = 0,
+                EntityType = entry.Entity.GetType().Name,
+                EntityId = ReadPrimaryKey(entry),
+                Action = entry.State.ToString(),
+                ActorUserId = actorId,
+                OldValues = oldValues,
+                NewValues = newValues,
+                IpAddress = ip,
+                UserAgent = userAgent,
+                OccurredAt = occurredAt,
+            });
+        }
+    }
+
+    private static Guid ReadPrimaryKey(EntityEntry entry)
+    {
+        var keyProperty = entry.Properties.FirstOrDefault(p => p.Metadata.IsPrimaryKey());
+        return keyProperty?.CurrentValue is Guid id ? id : Guid.Empty;
+    }
+
+    private (Guid? ActorId, string? Ip, string? UserAgent) ResolveRequestContext(DbContext auditedContext)
+    {
+        // RequestServices, not Root: ICurrentUser is request-scoped and only registered by
+        // hosts that need it; when there is no HTTP request (workers) or the host does not
+        // register it, the change is attributed to no actor rather than guessed.
+        var requestServices = _httpContextAccessor?.HttpContext is { } http
+            ? http.RequestServices
+            : auditedContext.GetService<IServiceProvider>(); // falls back to null outside DI-scoped flows
+
+        var currentUser = requestServices?.GetService<ICurrentUser>();
+        var actor = currentUser is { IsAuthenticated: true } ? currentUser.UserId : (Guid?)null;
+
+        var http = _httpContextAccessor?.HttpContext;
+        var ip = http?.Connection.RemoteIpAddress?.ToString();
+        var userAgent = http?.Request.Headers.UserAgent.ToString();
+
+        // Column is capped at 512 -- truncate instead of throwing on an oversized header.
+        if (userAgent is { Length: > MaxUserAgentLength })
+        {
+            userAgent = userAgent[..MaxUserAgentLength];
+        }
+
+        return (actor, ip, userAgent);
+    }
+
+    private static string? Serialize(EntityEntry entry, bool useCurrentValues)
+    {
+        var node = new JsonObject();
+
+        foreach (var property in entry.Properties)
+        {
+            if (property.Metadata.IsPrimaryKey() || property.Metadata.IsShadowProperty())
+            {
+                continue;
+            }
+
+            if (SensitiveProperties.Contains(property.Metadata.Name))
+            {
+                node[property.Metadata.Name] = "[REDACTED]";
+                continue;
+            }
+
+            if (IgnoredProperties.Contains(property.Metadata.Name))
+            {
+                continue;
+            }
+
+            // Deleted/Modified entries keep their original values; Added entries have none.
+            var value = useCurrentValues ? property.CurrentValue : property.OriginalValue;
+
+            node[property.Metadata.Name] = value is null
+                ? null
+                : JsonSerializer.SerializeToNode(value, SerializerOptions);
+        }
+
+        return node.Count == 0 ? null : node.ToJsonString(SerializerOptions);
+    }
+}
