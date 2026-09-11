@@ -48,6 +48,7 @@ export class ShellComponent {
     { label: 'Administration', icon: 'admin_panel_settings', route: '/admin' },
     { label: 'Audit Logs', icon: 'history', route: '/audit-logs' },
     { label: 'Settings', icon: 'settings', route: '/settings' },
+    { label: 'Plugins', icon: 'extension', route: '/plugins' },
   ];
 
   protected async onLogout(): Promise<void> {

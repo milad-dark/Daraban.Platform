@@ -13,6 +13,7 @@ using Daraban.Modules.Discovery.Services;
 using Daraban.Modules.Reporting.Services;
 using Daraban.Modules.ServiceDesk.Services;
 using Daraban.Modules.Settings.Services;
+using Daraban.Modules.Plugins.Services;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Hosting;
 using Daraban.Platform.Hosting.Authorization;
@@ -58,7 +59,8 @@ builder.Services
     .AddReportingModule(builder.Configuration)
     .AddDiscoveryModule(builder.Configuration)
     .AddDashboardModule(builder.Configuration)
-    .AddSettingsModule(builder.Configuration);
+    .AddSettingsModule(builder.Configuration)
+    .AddPluginsModule(builder.Configuration);
 
 // ---- Controllers: every module's *.Api assembly must be added as an MVC
 // Application Part -- ASP.NET Core does NOT auto-discover controllers living in a
@@ -78,6 +80,7 @@ mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Reporting.Api.AssemblyMarke
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Discovery.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Dashboard.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Settings.Api.AssemblyMarker).Assembly);
+mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Plugins.Api.AssemblyMarker).Assembly);
 
 // ---- Auth (Task 2.3): validates JWTs issued directly by AuthService/JwtTokenService ---
 // Validation policy (issuer/audience/signing key) is owned by the Identity module's
@@ -192,6 +195,10 @@ app.MapControllers();
 // ---- Settings seed (Task 7.4): ensure core.system_settings exists + matches the catalog
 // before the first request. Idempotent; runs once at startup. ----
 await app.Services.UseSettingsSeederAsync();
+
+// ---- Plugins (Task 7.5): ensure core.plugins exists, then re-load every plugin the
+// registry marks enabled so a restart restores menu items and plugin services. ----
+await app.Services.UsePluginsSeederAsync();
 
 app.MapDarabanHealthCheckEndpoints();
 app.MapHub<Daraban.Host.Api.Hubs.AgentStatusHub>("/hubs/agent-status");
