@@ -57,6 +57,13 @@ export const routes: Routes = [
           ).then((m) => m.AuditLogBrowserComponent),
       },
       {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/settings/settings.component').then(
+            (m) => m.SettingsComponent
+          ),
+      },
+      {
         path: 'knowledge-base',
         loadChildren: () =>
           import('./features/knowledge-base/kb.routes').then((m) => m.KB_ROUTES),
