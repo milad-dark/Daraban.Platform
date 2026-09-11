@@ -47,7 +47,7 @@ public class TicketTaskService : ITicketTaskService
             Id = Guid.CreateVersion7(),
             TicketId = ticketId,
             UserId = actorUserId,
-            Content = request.Content,
+            Content = HtmlInputSanitizer.Sanitize(request.Content),
             Type = request.Type,
             TimeSpentMinutes = request.TimeSpentMinutes,
             IsPrivate = request.IsPrivate,

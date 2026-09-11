@@ -14,8 +14,9 @@ namespace Daraban.Host.Api.Hubs;
 ///   - FollowupAdded   — a followup (TicketTask) was posted; powers the live thread
 ///   - SlaBreach       — a ticket's due date passed without resolution
 ///
-/// Server-side Notify* methods are invoked by TicketService / workers via
-/// IHubContext&lt;TicketHub&gt;. Authentication: valid user JWT.
+/// Server-side pushes are issued by services/workers directly through
+/// IHubContext&lt;TicketHub&gt; (Clients.Group(...).SendAsync(...)); this hub exposes only
+/// subscribe/unsubscribe methods to clients. Authentication: valid user JWT.
 /// </summary>
 [Authorize]
 public class TicketHub(ILogger<TicketHub> logger) : Hub

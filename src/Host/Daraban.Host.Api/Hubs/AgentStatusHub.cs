@@ -16,6 +16,8 @@ namespace Daraban.Host.Api.Hubs;
 ///   - FleetSummaryUpdate  — periodic fleet summary refresh
 ///
 /// Authentication: valid user JWT (admin panel session).
+/// Server-side broadcasts are issued by server code via IHubContext&lt;AgentStatusHub&gt;;
+/// the methods below are client-facing queries/subscriptions only.
 /// </summary>
 [Authorize]
 public class AgentStatusHub(ILogger<AgentStatusHub> logger, IAgentService agentService) : Hub

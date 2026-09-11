@@ -29,6 +29,9 @@
     <!-- Validation -->
     <PackageVersion Include="FluentValidation" Version="11.11.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <!-- XSS: sanitizes user-supplied rich text (KB article content, ticket tasks/solutions)
+         before storage, since the Angular client renders those fields with [innerHTML]. -->
+    <PackageVersion Include="HtmlSanitizer" Version="9.2.1039" />
     <!-- Caching / messaging -->
     <PackageVersion Include="StackExchange.Redis" Version="3.0.17" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.11" />
