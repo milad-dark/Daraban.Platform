@@ -16,6 +16,8 @@ namespace Daraban.Host.Api.Hubs;
 ///   - FleetSummaryUpdate  — periodic fleet summary refresh
 ///
 /// Authentication: valid user JWT (admin panel session).
+/// Server-side broadcasts are issued by server code via IHubContext&lt;AgentStatusHub&gt;;
+/// the methods below are client-facing queries/subscriptions only.
 /// </summary>
 [Authorize]
 public class AgentStatusHub(ILogger<AgentStatusHub> logger, IAgentService agentService) : Hub
@@ -70,65 +72,5 @@ public class AgentStatusHub(ILogger<AgentStatusHub> logger, IAgentService agentS
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"agent:{agentId}");
         logger.LogDebug("Admin unsubscribed from agent {AgentId} updates", agentId);
-    }
-
-    // ---- Server-side push methods (called by other services, not by clients) ----
-
-    /// <summary>
-    /// Broadcast agent status change to all admin clients and agent-specific subscribers.
-    /// Called by AgentControlHub when an agent connects/disconnects, or by services
-    /// when agent status is updated.
-    /// </summary>
-    public async Task NotifyAgentStatusChanged(Guid agentId, string agentName, string newStatus, DateTimeOffset timestamp)
-    {
-        await Clients.Group("admins").SendAsync("AgentStatusChanged", new
-        {
-            agentId,
-            agentName,
-            status = newStatus,
-            timestamp,
-        });
-
-        await Clients.Group($"agent:{agentId}").SendAsync("AgentStatusChanged", new
-        {
-            agentId,
-            agentName,
-            status = newStatus,
-            timestamp,
-        });
-    }
-
-    /// <summary>
-    /// Broadcast agent heartbeat to admin clients. Keeps the dashboard alive indicator updated.
-    /// </summary>
-    public async Task NotifyAgentHeartbeat(Guid agentId, DateTimeOffset timestamp)
-    {
-        await Clients.Group("admins").SendAsync("AgentHeartbeat", new
-        {
-            agentId,
-            timestamp,
-        });
-    }
-
-    /// <summary>
-    /// Broadcast command completion to admin clients. Powers the CommandPanelComponent live output.
-    /// </summary>
-    public async Task NotifyCommandCompleted(Guid agentId, Guid commandId, string status, DateTimeOffset completedAt)
-    {
-        await Clients.Group("admins").SendAsync("CommandCompleted", new
-        {
-            agentId,
-            commandId,
-            status,
-            completedAt,
-        });
-
-        await Clients.Group($"agent:{agentId}").SendAsync("CommandCompleted", new
-        {
-            agentId,
-            commandId,
-            status,
-            completedAt,
-        });
     }
 }

@@ -20,6 +20,9 @@ namespace Daraban.Modules.Identity.Services.Hubs;
 /// The hub validates the "is_agent" claim and uses the "sub" claim as the agent identity.
 /// Group membership: each agent is automatically added to a group named by its agent ID,
 /// so the server can push to a specific agent via Clients.Group(agentId).
+/// All server-to-agent pushes are issued by server code through IHubContext&lt;AgentControlHub&gt;
+/// (the CommandDispatch worker sends ReceiveCommand directly); the methods below are
+/// agent-to-server calls only and cannot be used to reach other agents.
 /// </summary>
 [Authorize(Policy = "agent:scope:commands:submit")]
 public class AgentControlHub : Hub
@@ -99,8 +102,10 @@ public class AgentControlHub : Hub
             _logger.LogInformation("Agent {AgentId} reported command {CommandId}: {Status}",
                 agentId, commandId, response.Status);
 
-            // Notify all SignalR clients (Angular UI) of the command completion
-            await Clients.All.SendAsync("CommandCompleted", new
+            // Confirm to the reporting agent only. Any Angular UI broadcast belongs on
+            // AgentStatusHub via IHubContext, not on this agent hub where Clients.All
+            // would leak command results to every connected agent.
+            await Clients.Caller.SendAsync("CommandCompleted", new
             {
                 commandId,
                 agentId = agentId.Value,
@@ -113,15 +118,6 @@ public class AgentControlHub : Hub
             _logger.LogWarning("Agent {AgentId} reported unknown command {CommandId}: {Error}",
                 agentId, commandId, ex.Message);
         }
-    }
-
-    /// <summary>
-    /// Server pushes a command to a specific agent via SignalR.
-    /// Called by CommandDispatchWorker after picking up a queued command.
-    /// </summary>
-    public async Task SendCommandToAgent(Guid agentId, PendingCommandDto command)
-    {
-        await Clients.Group(agentId.ToString()).SendAsync("ReceiveCommand", command);
     }
 
     /// <summary>

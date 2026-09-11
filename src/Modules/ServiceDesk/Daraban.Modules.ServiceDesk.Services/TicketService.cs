@@ -79,7 +79,7 @@ public class TicketService : ITicketService
             Urgency = request.Urgency,
             CalculatedScore = CalculateScore(request.Priority, request.Impact, request.Urgency),
             Title = request.Title,
-            Description = request.Description,
+            Description = HtmlInputSanitizer.Sanitize(request.Description),
             OpenedAt = now,
             RequesterUserId = request.RequesterUserId,
             AssignedUserId = request.AssignedUserId,
@@ -145,7 +145,7 @@ public class TicketService : ITicketService
         ticket.Urgency = request.Urgency;
         ticket.CalculatedScore = CalculateScore(request.Priority, request.Impact, request.Urgency);
         ticket.Title = request.Title;
-        ticket.Description = request.Description;
+        ticket.Description = HtmlInputSanitizer.Sanitize(request.Description);
         ticket.AssignedUserId = request.AssignedUserId;
         ticket.AssignedGroupId = request.AssignedGroupId;
         ticket.ItilCategoryId = request.ItilCategoryId;
@@ -345,7 +345,7 @@ public class TicketService : ITicketService
         var previousStatus = ApplyStatus(ticket, TicketStatus.Solved, actorUserId);
 
         // Persisted on the ticket rather than discarded -- Ticket.Solution exists for exactly this.
-        ticket.Solution = solution.Trim();
+        ticket.Solution = HtmlInputSanitizer.Sanitize(solution).Trim();
 
         await _ticketRepository.UpdateAsync(ticket, ct);
         await _ticketRepository.AddHistoryAsync(TicketHistory.Record(

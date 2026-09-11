@@ -109,7 +109,7 @@ public class KbArticleService : IKbArticleService
             Id = articleId,
             EntityId = entityNodeId,
             Title = request.Title,
-            Content = request.Content,
+            Content = HtmlInputSanitizer.Sanitize(request.Content),
             Summary = request.Summary,
             CategoryId = request.CategoryId,
             // Always born as a Draft. Publishing is a separate, explicit transition so an
@@ -156,7 +156,7 @@ public class KbArticleService : IKbArticleService
         var now = DateTimeOffset.UtcNow;
 
         article.Title = request.Title;
-        article.Content = request.Content;
+        article.Content = HtmlInputSanitizer.Sanitize(request.Content);
         article.Summary = request.Summary;
         article.CategoryId = request.CategoryId;
         article.IsFaq = request.IsFaq;

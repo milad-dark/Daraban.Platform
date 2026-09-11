@@ -14,8 +14,9 @@ namespace Daraban.Host.Api.Hubs;
 ///   - FollowupAdded   — a followup (TicketTask) was posted; powers the live thread
 ///   - SlaBreach       — a ticket's due date passed without resolution
 ///
-/// Server-side Notify* methods are invoked by TicketService / workers via
-/// IHubContext&lt;TicketHub&gt;. Authentication: valid user JWT.
+/// Server-side pushes are issued by services/workers directly through
+/// IHubContext&lt;TicketHub&gt; (Clients.Group(...).SendAsync(...)); this hub exposes only
+/// subscribe/unsubscribe methods to clients. Authentication: valid user JWT.
 /// </summary>
 [Authorize]
 public class TicketHub(ILogger<TicketHub> logger) : Hub
@@ -43,29 +44,5 @@ public class TicketHub(ILogger<TicketHub> logger) : Hub
     public async Task UnsubscribeFromTicket(Guid ticketId)
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"ticket:{ticketId}");
-    }
-
-    // ---- Server-side push methods (called via IHubContext<TicketHub>) ----
-
-    public async Task NotifyTicketCreated(Guid ticketId, string title, DateTimeOffset timestamp)
-    {
-        await Clients.Group("tickets").SendAsync("TicketCreated", new { ticketId, title, timestamp });
-    }
-
-    public async Task NotifyTicketUpdated(Guid ticketId, string field, string? oldValue, string? newValue, DateTimeOffset timestamp)
-    {
-        await Clients.Group("tickets").SendAsync("TicketUpdated", new { ticketId, field, oldValue, newValue, timestamp });
-        await Clients.Group($"ticket:{ticketId}").SendAsync("TicketUpdated", new { ticketId, field, oldValue, newValue, timestamp });
-    }
-
-    public async Task NotifyFollowupAdded(Guid ticketId, Guid taskId, Guid userId, DateTimeOffset timestamp)
-    {
-        await Clients.Group("tickets").SendAsync("FollowupAdded", new { ticketId, taskId, userId, timestamp });
-        await Clients.Group($"ticket:{ticketId}").SendAsync("FollowupAdded", new { ticketId, taskId, userId, timestamp });
-    }
-
-    public async Task NotifySlaBreach(Guid ticketId, DateTimeOffset dueDate, DateTimeOffset timestamp)
-    {
-        await Clients.Group("tickets").SendAsync("SlaBreach", new { ticketId, dueDate, timestamp });
     }
 }
