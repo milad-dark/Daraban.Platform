@@ -18,7 +18,11 @@ frontend (Angular)  →  Hosts (Program.cs composition roots)  →  Modules  →
   as its only composition entry point. Three layers, strictly one-way:
   `*.Api (controllers) → *.Services (business logic) → *.Data (EF Core entities/repos)`.
   Modules never reference each other; cross-module communication goes through
-  `Daraban.Platform.Contracts` events on RabbitMQ.
+  `Daraban.Platform.Contracts` events on RabbitMQ. The Plugins module additionally
+  loads third-party extensions at runtime — see ADR-007.
+- **Plugin contracts** (`src/Shared/Daraban.Platform.Plugins`): the `IPlugin`,
+  `IPluginMigration`, `IPluginDbContext`, and `PluginMenuItem` types a plugin compiles
+  against. Kept contract-only (no implementations) so plugins never pull in host plumbing.
 - **Hosts** (`src/Host/*`): composition roots only. They wire modules, shared infrastructure,
   auth/authorization policy providers, CORS/rate limiting/SignalR endpoints. No business logic.
 - **Workers** (`src/Workers/*`): reference module Services and Shared — **never a Host project**
@@ -41,6 +45,8 @@ frontend (Angular)  →  Hosts (Program.cs composition roots)  →  Modules  →
 | Agent push channel (SignalR hub) | `Daraban.Modules.Identity.Services.Hubs.AgentControlHub` (module owns agent commands; host maps the endpoint) | AgentApi maps it; CommandDispatch pushes via `IHubContext<AgentControlHub>` |
 | HTTP error → user-facing message (frontend) | `frontend/src/app/core/utils/error.util.ts` `extractError` | feature stores |
 | Feature state (frontend) | per-feature `signalStore`; methods that call other store methods live in a **later** `withMethods` block (same-feature methods aren't visible on the store type) | feature components |
+| Plugin runtime (load/unload/isolation) | `Daraban.Modules.Plugins.Services.PluginManager` (collectible `AssemblyLoadContext`; the only writer of plugin registry state transitions) | Plugins module, seeder |
+| Plugin package intake (zip-slip/bomb gates) | `Daraban.Modules.Plugins.Services.PluginPackageManager.ExtractPackageAsync` — the only code path that writes under `/plugins/{id}/` | `PluginManager.InstallAsync` |
 
 ## Data flow (happy paths)
 
@@ -53,6 +59,13 @@ frontend (Angular)  →  Hosts (Program.cs composition roots)  →  Modules  →
 3. **Agent commands**: command row → `AgentCommandPublishedEvent` → CommandDispatch worker →
    `IHubContext<AgentControlHub>` push → agent reports result back over the hub or `/agent/` API.
 4. **Realtime**: SignalR hubs (`AgentControlHub` agent-side, `AgentStatusHub` browser-side).
+5. **Plugins**: admin uploads `.zip` → `POST /api/v1/plugins` → `PluginPackageManager`
+   extracts (zip-slip/bomb gates) → `PluginLoadContext` loads the DLL →
+   `PluginMigrationRunner` applies the plugin's migrations in `plugins_{id}` →
+   `IPlugin.ConfigureServices` registers plugin services into a restricted collection →
+   menu items surface at `GET /api/v1/plugins/menu-items` and the Angular
+   PluginManager. Uninstall reverses: unload ALC → drop `plugins_{id}` → delete files →
+   registry tombstone stays. Full rationale: ADR-007.
 
 ## Known inconsistencies (do not "fix" blindly)
 

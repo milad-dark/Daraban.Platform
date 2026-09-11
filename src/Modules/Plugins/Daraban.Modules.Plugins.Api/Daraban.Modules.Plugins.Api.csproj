@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Daraban.Modules.Plugins.Services\Daraban.Modules.Plugins.Services.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Hosting\Daraban.Platform.Hosting.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+</Project>

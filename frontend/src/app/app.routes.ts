@@ -64,6 +64,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'plugins',
+        loadComponent: () =>
+          import(
+            './features/plugins/plugin-manager/plugin-manager.component'
+          ).then((m) => m.PluginManagerComponent),
+      },
+      {
         path: 'knowledge-base',
         loadChildren: () =>
           import('./features/knowledge-base/kb.routes').then((m) => m.KB_ROUTES),

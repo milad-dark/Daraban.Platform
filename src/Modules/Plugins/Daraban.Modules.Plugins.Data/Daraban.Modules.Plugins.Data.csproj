@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Plugins\Daraban.Platform.Plugins.csproj" />
+  </ItemGroup>
+
+</Project>

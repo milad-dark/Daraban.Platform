@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Daraban.Modules.Plugins.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Daraban.Modules.Plugins.Data\Daraban.Modules.Plugins.Data.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Contracts\Daraban.Platform.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Plugins\Daraban.Platform.Plugins.csproj" />
+  </ItemGroup>
+
+</Project>
