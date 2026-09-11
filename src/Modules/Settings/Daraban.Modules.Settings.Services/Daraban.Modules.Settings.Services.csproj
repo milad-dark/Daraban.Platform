@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Daraban.Modules.Settings.Data\Daraban.Modules.Settings.Data.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

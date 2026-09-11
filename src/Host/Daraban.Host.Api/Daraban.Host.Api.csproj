@@ -34,5 +34,7 @@
     <ProjectReference Include="..\..\Shared\Daraban.Platform.Messaging\Daraban.Platform.Messaging.csproj" />
     <ProjectReference Include="..\..\Modules\Dashboard\Daraban.Modules.Dashboard.Api\Daraban.Modules.Dashboard.Api.csproj" />
     <ProjectReference Include="..\..\Modules\Dashboard\Daraban.Modules.Dashboard.Services\Daraban.Modules.Dashboard.Services.csproj" />
+    <ProjectReference Include="..\..\Modules\Settings\Daraban.Modules.Settings.Api\Daraban.Modules.Settings.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\Settings\Daraban.Modules.Settings.Services\Daraban.Modules.Settings.Services.csproj" />
   </ItemGroup>
 </Project>

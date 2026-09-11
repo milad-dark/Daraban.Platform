@@ -12,6 +12,7 @@ using Daraban.Modules.Notifications.Services;
 using Daraban.Modules.Discovery.Services;
 using Daraban.Modules.Reporting.Services;
 using Daraban.Modules.ServiceDesk.Services;
+using Daraban.Modules.Settings.Services;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Hosting;
 using Daraban.Platform.Hosting.Authorization;
@@ -56,7 +57,8 @@ builder.Services
     .AddNotificationsModule(builder.Configuration)
     .AddReportingModule(builder.Configuration)
     .AddDiscoveryModule(builder.Configuration)
-    .AddDashboardModule(builder.Configuration);
+    .AddDashboardModule(builder.Configuration)
+    .AddSettingsModule(builder.Configuration);
 
 // ---- Controllers: every module's *.Api assembly must be added as an MVC
 // Application Part -- ASP.NET Core does NOT auto-discover controllers living in a
@@ -75,6 +77,7 @@ mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Notifications.Api.AssemblyM
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Reporting.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Discovery.Api.AssemblyMarker).Assembly);
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Dashboard.Api.AssemblyMarker).Assembly);
+mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Settings.Api.AssemblyMarker).Assembly);
 
 // ---- Auth (Task 2.3): validates JWTs issued directly by AuthService/JwtTokenService ---
 // Validation policy (issuer/audience/signing key) is owned by the Identity module's
@@ -185,6 +188,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// ---- Settings seed (Task 7.4): ensure core.system_settings exists + matches the catalog
+// before the first request. Idempotent; runs once at startup. ----
+await app.Services.UseSettingsSeederAsync();
+
 app.MapDarabanHealthCheckEndpoints();
 app.MapHub<Daraban.Host.Api.Hubs.AgentStatusHub>("/hubs/agent-status");
 app.MapHub<Daraban.Host.Api.Hubs.TicketHub>("/hubs/tickets");
