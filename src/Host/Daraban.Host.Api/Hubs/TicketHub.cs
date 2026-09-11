@@ -45,4 +45,28 @@ public class TicketHub(ILogger<TicketHub> logger) : Hub
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"ticket:{ticketId}");
     }
+
+    // ---- Server-side push methods (called via IHubContext<TicketHub>) ----
+
+    public async Task NotifyTicketCreated(Guid ticketId, string title, DateTimeOffset timestamp)
+    {
+        await Clients.Group("tickets").SendAsync("TicketCreated", new { ticketId, title, timestamp });
+    }
+
+    public async Task NotifyTicketUpdated(Guid ticketId, string field, string? oldValue, string? newValue, DateTimeOffset timestamp)
+    {
+        await Clients.Group("tickets").SendAsync("TicketUpdated", new { ticketId, field, oldValue, newValue, timestamp });
+        await Clients.Group($"ticket:{ticketId}").SendAsync("TicketUpdated", new { ticketId, field, oldValue, newValue, timestamp });
+    }
+
+    public async Task NotifyFollowupAdded(Guid ticketId, Guid taskId, Guid userId, DateTimeOffset timestamp)
+    {
+        await Clients.Group("tickets").SendAsync("FollowupAdded", new { ticketId, taskId, userId, timestamp });
+        await Clients.Group($"ticket:{ticketId}").SendAsync("FollowupAdded", new { ticketId, taskId, userId, timestamp });
+    }
+
+    public async Task NotifySlaBreach(Guid ticketId, DateTimeOffset dueDate, DateTimeOffset timestamp)
+    {
+        await Clients.Group("tickets").SendAsync("SlaBreach", new { ticketId, dueDate, timestamp });
+    }
 }

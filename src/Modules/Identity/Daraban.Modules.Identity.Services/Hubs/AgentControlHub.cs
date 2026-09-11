@@ -72,7 +72,8 @@ public class AgentControlHub : Hub
     public async Task AcknowledgeCommand(Guid commandId)
     {
         var agentId = GetAgentId();
-        if (agentId is null) return;
+        if (agentId is null)
+            return;
 
         var ok = await _commandService.AcknowledgeCommandAsync(agentId.Value, commandId);
         _logger.LogInformation("Agent {AgentId} acknowledged command {CommandId}: {Ok}", agentId, commandId, ok ? "ok" : "not-found");
@@ -87,7 +88,8 @@ public class AgentControlHub : Hub
     public async Task ReportCommandResult(Guid commandId, bool success, string? resultPayload, string? errorMessage)
     {
         var agentId = GetAgentId();
-        if (agentId is null) return;
+        if (agentId is null)
+            return;
 
         var request = new CommandResultRequest(
             Success: success,
@@ -121,12 +123,22 @@ public class AgentControlHub : Hub
     }
 
     /// <summary>
+    /// Server pushes a command to a specific agent via SignalR.
+    /// Called by CommandDispatchWorker after picking up a queued command.
+    /// </summary>
+    public async Task SendCommandToAgent(Guid agentId, PendingCommandDto command)
+    {
+        await Clients.Group(agentId.ToString()).SendAsync("ReceiveCommand", command);
+    }
+
+    /// <summary>
     /// Agent sends a heartbeat. Server updates last-active timestamp.
     /// </summary>
     public async Task Heartbeat()
     {
         var agentId = GetAgentId();
-        if (agentId is null) return;
+        if (agentId is null)
+            return;
 
         await _agentService.TouchLastActiveAsync(agentId.Value);
         await Clients.Caller.SendAsync("HeartbeatAck", DateTimeOffset.UtcNow);
@@ -138,7 +150,8 @@ public class AgentControlHub : Hub
     private Guid? GetAgentId()
     {
         var isAgent = Context.User?.FindFirst("is_agent")?.Value;
-        if (isAgent != "true") return null;
+        if (isAgent != "true")
+            return null;
 
         var sub = Context.User?.FindFirst("sub")?.Value;
         return sub is not null ? Guid.Parse(sub) : null;
