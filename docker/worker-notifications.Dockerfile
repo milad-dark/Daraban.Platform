@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 #
 COPY Daraban.Platform.sln Directory.Packages.props ./
@@ -8,7 +8,7 @@ COPY Daraban.Platform.Messaging/ Daraban.Platform.Messaging/
 RUN dotnet restore src/Workers/Daraban.Worker.Notifications/Daraban.Worker.Notifications.csproj
 RUN dotnet publish src/Workers/Daraban.Worker.Notifications/Daraban.Worker.Notifications.csproj -c Release -o /app/publish --no-restore
 #
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 #
 COPY --from=build /app/publish .
