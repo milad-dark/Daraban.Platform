@@ -78,7 +78,7 @@ public sealed class AuthService : IAuthService
     public async Task<Result<AuthResult>> LoginAsync(LoginRequest request, string? ip, string? userAgent, CancellationToken ct = default)
     {
         var genericFailure = Result.Failure<AuthResult>(
-            new Error("IDENTITY.INVALID_CREDENTIALS", "Invalid username or password.", ErrorType.Validation));
+            new Error("IDENTITY.INVALID_CREDENTIALS", "Invalid username or password.", ErrorType.Unauthorized));
 
         var user = await _users.GetByUsernameOrEmailAsync(request.UsernameOrEmail, ct);
 

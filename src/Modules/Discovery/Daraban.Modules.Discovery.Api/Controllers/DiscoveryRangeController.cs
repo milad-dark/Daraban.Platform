@@ -1,3 +1,4 @@
+﻿using Daraban.Platform.Hosting.Authorization;
 using Daraban.Modules.Discovery.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ public class DiscoveryRangeController(IDiscoveryService discoveryService) : Cont
     /// Create a new discovery range.
     /// </summary>
     [HttpPost]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.write")]
     public async Task<IActionResult> CreateRange([FromBody] CreateRangeRequest request, CancellationToken ct)
     {
         try
@@ -36,6 +37,7 @@ public class DiscoveryRangeController(IDiscoveryService discoveryService) : Cont
     /// Get a specific discovery range by ID.
     /// </summary>
     [HttpGet("{id:guid}")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetRange(Guid id, CancellationToken ct)
     {
         var range = await discoveryService.GetRangeByIdAsync(id, ct);
@@ -46,6 +48,7 @@ public class DiscoveryRangeController(IDiscoveryService discoveryService) : Cont
     /// List all discovery ranges.
     /// </summary>
     [HttpGet]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetRanges(CancellationToken ct)
     {
         var ranges = await discoveryService.GetAllRangesAsync(ct);
@@ -56,7 +59,7 @@ public class DiscoveryRangeController(IDiscoveryService discoveryService) : Cont
     /// Update a discovery range.
     /// </summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.write")]
     public async Task<IActionResult> UpdateRange(Guid id, [FromBody] UpdateRangeRequest request, CancellationToken ct)
     {
         try
@@ -74,7 +77,7 @@ public class DiscoveryRangeController(IDiscoveryService discoveryService) : Cont
     /// Delete a discovery range.
     /// </summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.delete")]
     public async Task<IActionResult> DeleteRange(Guid id, CancellationToken ct)
     {
         await discoveryService.DeleteRangeAsync(id, ct);
@@ -85,7 +88,7 @@ public class DiscoveryRangeController(IDiscoveryService discoveryService) : Cont
     /// Start a scan on a discovery range.
     /// </summary>
     [HttpPost("{id:guid}/scan")]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.write")]
     [EnableRateLimiting("discovery-scan")]
     public async Task<IActionResult> StartScan(Guid id, [FromBody] StartScanRequest? request, CancellationToken ct)
     {

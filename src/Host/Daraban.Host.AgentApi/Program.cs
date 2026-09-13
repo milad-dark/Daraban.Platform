@@ -26,6 +26,10 @@ builder.Services.AddDarabanHealthChecks(builder.Configuration);
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddInventoryModule(builder.Configuration);
 
+// Backs PermissionResolver's cache (same rationale as Host.Api: in-process
+// IDistributedCache now, swap to Redis once confirmed reliably available).
+builder.Services.AddDistributedMemoryCache();
+
 var mvcBuilder = builder.Services.AddControllers();
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Inventory.Api.AssemblyMarker).Assembly);
 
@@ -67,3 +71,5 @@ app.MapDarabanHealthCheckEndpoints();
 app.MapHub<AgentControlHub>("/hubs/agent-control");
 
 app.Run();
+
+public partial class Program { }

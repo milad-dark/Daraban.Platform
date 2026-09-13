@@ -22,6 +22,10 @@ public class InventoryService(IInventoryRepository repo, IEventPublisher eventPu
         string? ipAddress,
         CancellationToken ct = default)
     {
+        // Normalize the agent-supplied timestamp once: STJ yields Kind=Local for
+        // offset-carrying payloads, and Npgsql's timestamptz rejects non-zero offsets.
+        var submittedAt = IInventoryService.NormalizeToUtc(envelope.TimestampUtc);
+
         // Compute idempotency hash
         var hash = IInventoryService.ComputeHash(agentId, envelope.DeviceId, envelope.TimestampUtc);
 
@@ -53,7 +57,7 @@ public class InventoryService(IInventoryRepository repo, IEventPublisher eventPu
             FullEnvelope = fullEnvelope,
             Status = SubmissionStatus.Pending,
             EntityId = entityId,
-            SubmittedAt = envelope.TimestampUtc,
+            SubmittedAt = submittedAt,
             ReceivedAt = DateTimeOffset.UtcNow,
             IpAddress = ipAddress,
         };

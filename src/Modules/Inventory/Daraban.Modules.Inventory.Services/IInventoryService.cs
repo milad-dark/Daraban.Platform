@@ -62,13 +62,32 @@ public interface IInventoryService
     Task MarkFailedAsync(long submissionId, string errorMessage, CancellationToken ct = default);
 
     /// <summary>
+    /// Normalizes an agent-supplied timestamp to a UTC DateTimeOffset (offset 0).
+    /// System.Text.Json deserializes offset-carrying JSON timestamps into Kind=Local
+    /// DateTimes (machine-adjusted wall clock), and Npgsql's timestamptz only accepts
+    /// offset 0. Kind=Unspecified (no offset in the payload) is treated as UTC per the
+    /// TimestampUtc contract.
+    /// </summary>
+    static DateTimeOffset NormalizeToUtc(DateTime timestamp)
+    {
+        var utc = timestamp.Kind == DateTimeKind.Local
+            ? timestamp.ToUniversalTime()
+            : DateTime.SpecifyKind(timestamp, DateTimeKind.Utc);
+        return new DateTimeOffset(utc, TimeSpan.Zero);
+    }
+
+    /// <summary>
     /// Generate the idempotency hash for a submission envelope.
     /// </summary>
     static string ComputeHash(Guid agentId, string deviceId, DateTime timestampUtc)
     {
+        // Normalize first: a Kind=Local input (see NormalizeToUtc) would truncate the
+        // machine-local wall clock to the minute, making the hash timezone-dependent.
+        var utc = NormalizeToUtc(timestampUtc).UtcDateTime;
+
         // Truncate timestamp to the minute to allow retries within the same minute
-        var minute = new DateTime(timestampUtc.Year, timestampUtc.Month, timestampUtc.Day,
-            timestampUtc.Hour, timestampUtc.Minute, 0, DateTimeKind.Utc);
+        var minute = new DateTime(utc.Year, utc.Month, utc.Day,
+            utc.Hour, utc.Minute, 0, DateTimeKind.Utc);
         var input = $"{agentId}:{deviceId}:{minute:O}";
         var bytes = System.Text.Encoding.UTF8.GetBytes(input);
         var hash = System.Security.Cryptography.SHA256.HashData(bytes);

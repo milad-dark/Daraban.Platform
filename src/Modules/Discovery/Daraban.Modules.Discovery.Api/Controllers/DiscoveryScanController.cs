@@ -1,3 +1,4 @@
+﻿using Daraban.Platform.Hosting.Authorization;
 using Daraban.Modules.Discovery.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ public class DiscoveryScanController(IDiscoveryService discoveryService) : Contr
     /// Get a specific scan by ID.
     /// </summary>
     [HttpGet("{id:guid}")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetScan(Guid id, CancellationToken ct)
     {
         var scan = await discoveryService.GetScanByIdAsync(id, ct);
@@ -27,6 +29,7 @@ public class DiscoveryScanController(IDiscoveryService discoveryService) : Contr
     /// List scans for a specific range (paginated).
     /// </summary>
     [HttpGet("range/{rangeId:guid}")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetScansByRange(Guid rangeId, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken ct = default)
     {
         var scans = await discoveryService.GetScansByRangeIdAsync(rangeId, page, pageSize, ct);
@@ -37,6 +40,7 @@ public class DiscoveryScanController(IDiscoveryService discoveryService) : Contr
     /// Get recent scans across all ranges.
     /// </summary>
     [HttpGet("recent")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetRecentScans([FromQuery] int count = 10, CancellationToken ct = default)
     {
         var scans = await discoveryService.GetRecentScansAsync(count, ct);
@@ -47,6 +51,7 @@ public class DiscoveryScanController(IDiscoveryService discoveryService) : Contr
     /// Get devices discovered by a specific scan.
     /// </summary>
     [HttpGet("{id:guid}/devices")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetDevicesByScan(Guid id, CancellationToken ct)
     {
         var devices = await discoveryService.GetDevicesByScanIdAsync(id, ct);

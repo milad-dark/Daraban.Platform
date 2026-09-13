@@ -22,6 +22,7 @@ public static class ErrorProblemDetailsExtensions
             ErrorType.Forbidden => StatusCodes.Status403Forbidden,
             ErrorType.BusinessRule => StatusCodes.Status422UnprocessableEntity,
             ErrorType.Validation => StatusCodes.Status400BadRequest,
+            ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
             _ => StatusCodes.Status400BadRequest,
         };
 

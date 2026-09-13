@@ -6,6 +6,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Daraban.Modules.Dashboard.Services;
 
@@ -48,7 +49,10 @@ public static class DashboardModuleServiceCollectionExtensions
         services.AddScoped<IWidgetDataProvider>(sp => sp.GetRequiredService<AgentStatusSummaryProvider>());
 
         // Widget tuning knobs (warranty horizon, SLA window) from "Dashboard" config section.
+        // Providers inject IWidgetOptions directly, so expose the bound instance as the
+        // interface too (Configure alone only registers IOptions<WidgetOptions>).
         services.Configure<WidgetOptions>(configuration.GetSection("Dashboard"));
+        services.AddScoped<IWidgetOptions>(sp => sp.GetRequiredService<IOptions<WidgetOptions>>().Value);
 
         return services;
     }

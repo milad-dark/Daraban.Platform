@@ -205,3 +205,5 @@ app.MapHub<Daraban.Host.Api.Hubs.AgentStatusHub>("/hubs/agent-status");
 app.MapHub<Daraban.Host.Api.Hubs.TicketHub>("/hubs/tickets");
 
 app.Run();
+
+public partial class Program { }

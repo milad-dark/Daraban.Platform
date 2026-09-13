@@ -1,3 +1,4 @@
+﻿using Daraban.Platform.Hosting.Authorization;
 using Daraban.Modules.Discovery.Data.Entities;
 using Daraban.Modules.Discovery.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -25,6 +26,7 @@ public class ImportRuleController : ControllerBase
     /// Get all import rules.
     /// </summary>
     [HttpGet]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetAllRules(CancellationToken ct)
     {
         var rules = await _importRuleService.GetAllRulesAsync(ct);
@@ -35,6 +37,7 @@ public class ImportRuleController : ControllerBase
     /// Get all active import rules.
     /// </summary>
     [HttpGet("active")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetActiveRules(CancellationToken ct)
     {
         var rules = await _importRuleService.GetActiveRulesAsync(ct);
@@ -45,6 +48,7 @@ public class ImportRuleController : ControllerBase
     /// Get an import rule by ID.
     /// </summary>
     [HttpGet("{id:guid}")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetRuleById(Guid id, CancellationToken ct)
     {
         var rule = await _importRuleService.GetRuleByIdAsync(id, ct);
@@ -55,7 +59,7 @@ public class ImportRuleController : ControllerBase
     /// Create a new import rule.
     /// </summary>
     [HttpPost]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.write")]
     public async Task<IActionResult> CreateRule([FromBody] CreateImportRuleRequest request, CancellationToken ct)
     {
         try
@@ -73,7 +77,7 @@ public class ImportRuleController : ControllerBase
     /// Update an import rule.
     /// </summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.write")]
     public async Task<IActionResult> UpdateRule(Guid id, [FromBody] UpdateImportRuleRequest request, CancellationToken ct)
     {
         try
@@ -91,7 +95,7 @@ public class ImportRuleController : ControllerBase
     /// Delete an import rule.
     /// </summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.delete")]
     public async Task<IActionResult> DeleteRule(Guid id, CancellationToken ct)
     {
         try
@@ -109,6 +113,7 @@ public class ImportRuleController : ControllerBase
     /// Evaluate a device against import rules.
     /// </summary>
     [HttpPost("evaluate")]
+    [RequirePermission("discovery.write")]
     public async Task<IActionResult> EvaluateDevice([FromBody] DeviceResponse device, CancellationToken ct)
     {
         var result = await _importRuleService.EvaluateDeviceAsync(device, ct);
@@ -119,6 +124,7 @@ public class ImportRuleController : ControllerBase
     /// Get available fields for import rule criteria.
     /// </summary>
     [HttpGet("fields")]
+    [RequirePermission("discovery.read")]
     public IActionResult GetAvailableFields()
     {
         return Ok(ImportRuleFields.All);
@@ -128,6 +134,7 @@ public class ImportRuleController : ControllerBase
     /// Get available operators for import rule criteria.
     /// </summary>
     [HttpGet("operators")]
+    [RequirePermission("discovery.read")]
     public IActionResult GetAvailableOperators()
     {
         return Ok(ImportRuleOperators.All);
@@ -137,6 +144,7 @@ public class ImportRuleController : ControllerBase
     /// Get available action types for import rule actions.
     /// </summary>
     [HttpGet("action-types")]
+    [RequirePermission("discovery.read")]
     public IActionResult GetAvailableActionTypes()
     {
         return Ok(ImportRuleActionTypes.All);

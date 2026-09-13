@@ -4,5 +4,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Daraban.Modules.Discovery.Services\Daraban.Modules.Discovery.Services.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Hosting\Daraban.Platform.Hosting.csproj" />
   </ItemGroup>
 </Project>

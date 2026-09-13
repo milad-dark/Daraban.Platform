@@ -1,14 +1,17 @@
-using Daraban.Modules.Financial.Services.Dtos;
+﻿using Daraban.Modules.Financial.Services.Dtos;
 using Daraban.Modules.Financial.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
 using Daraban.Platform.Hosting;
+using Daraban.Platform.Hosting.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Daraban.Modules.Financial.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class BudgetsController : ControllerBase
 {
@@ -22,6 +25,7 @@ public class BudgetsController : ControllerBase
     }
 
     [HttpGet]
+    [RequirePermission("financial.read")]
     public async Task<IActionResult> GetPaged(
         [FromQuery] Guid entityNodeId,
         [FromQuery] string? search = null,
@@ -38,6 +42,7 @@ public class BudgetsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [RequirePermission("financial.read")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var result = await _budgetService.GetByIdAsync(id, ct);
@@ -48,6 +53,7 @@ public class BudgetsController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("financial.write")]
     public async Task<IActionResult> Create([FromBody] CreateBudgetRequest request, CancellationToken ct)
     {
         var result = await _budgetService.CreateAsync(request, _currentUser.UserId, ct);
@@ -58,6 +64,7 @@ public class BudgetsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [RequirePermission("financial.write")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateBudgetRequest request, CancellationToken ct)
     {
         var result = await _budgetService.UpdateAsync(id, request, _currentUser.UserId, ct);
@@ -68,6 +75,7 @@ public class BudgetsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [RequirePermission("financial.delete")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var result = await _budgetService.DeleteAsync(id, _currentUser.UserId, ct);
@@ -78,6 +86,7 @@ public class BudgetsController : ControllerBase
     }
 
     [HttpGet("summary")]
+    [RequirePermission("financial.read")]
     public async Task<IActionResult> GetSummary([FromQuery] Guid entityNodeId, CancellationToken ct)
     {
         var result = await _budgetService.GetSummaryAsync(entityNodeId, ct);

@@ -1,3 +1,4 @@
+﻿using Daraban.Platform.Hosting.Authorization;
 using Daraban.Modules.Discovery.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ public class DiscoveryDashboardController(IDiscoveryService discoveryService) : 
     /// Get discovery dashboard summary.
     /// </summary>
     [HttpGet("dashboard")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetDashboard(CancellationToken ct)
     {
         var dashboard = await discoveryService.GetDashboardAsync(ct);
@@ -27,6 +29,7 @@ public class DiscoveryDashboardController(IDiscoveryService discoveryService) : 
     /// Get all discovered devices for a range.
     /// </summary>
     [HttpGet("ranges/{rangeId:guid}/devices")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetDevicesByRange(Guid rangeId, CancellationToken ct)
     {
         var devices = await discoveryService.GetDevicesByRangeIdAsync(rangeId, ct);
@@ -37,6 +40,7 @@ public class DiscoveryDashboardController(IDiscoveryService discoveryService) : 
     /// Get recent discovered devices.
     /// </summary>
     [HttpGet("devices/recent")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetRecentDevices([FromQuery] int count = 10, CancellationToken ct = default)
     {
         var devices = await discoveryService.GetRecentDevicesAsync(count, ct);
