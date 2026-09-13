@@ -3,7 +3,7 @@
 # =============================================================================
 services:
    postgres:
-     image: postgres:16-alpine
+     image: postgres:latest
      container_name: daraban-postgres
      restart: unless-stopped
      environment:
@@ -22,7 +22,7 @@ services:
        - daraban-net
  
    redis:
-     image: redis:7-alpine
+     image: redis
      container_name: daraban-redis
      restart: unless-stopped
      command: redis-server --appendonly yes
@@ -37,7 +37,7 @@ services:
        - daraban-net
  
    rabbitmq:
-     image: rabbitmq:3-management-alpine
+     image: rabbitmq:management-alpine
      container_name: daraban-rabbitmq
      restart: unless-stopped
      environment:

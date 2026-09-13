@@ -1,15 +1,18 @@
-using Daraban.Modules.Financial.Data.Entities;
+﻿using Daraban.Modules.Financial.Data.Entities;
 using Daraban.Modules.Financial.Services.Dtos;
 using Daraban.Modules.Financial.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
 using Daraban.Platform.Hosting;
+using Daraban.Platform.Hosting.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Daraban.Modules.Financial.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class SuppliersController : ControllerBase
 {
@@ -23,6 +26,7 @@ public class SuppliersController : ControllerBase
     }
 
     [HttpGet]
+    [RequirePermission("financial.read")]
     public async Task<IActionResult> GetPaged(
         [FromQuery] Guid entityNodeId,
         [FromQuery] string? search = null,
@@ -40,6 +44,7 @@ public class SuppliersController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [RequirePermission("financial.read")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var result = await _supplierService.GetByIdAsync(id, ct);
@@ -50,6 +55,7 @@ public class SuppliersController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("financial.write")]
     public async Task<IActionResult> Create([FromBody] CreateSupplierRequest request, CancellationToken ct)
     {
         var result = await _supplierService.CreateAsync(request, _currentUser.UserId, ct);
@@ -60,6 +66,7 @@ public class SuppliersController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [RequirePermission("financial.write")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSupplierRequest request, CancellationToken ct)
     {
         var result = await _supplierService.UpdateAsync(id, request, _currentUser.UserId, ct);
@@ -70,6 +77,7 @@ public class SuppliersController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [RequirePermission("financial.delete")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var result = await _supplierService.DeleteAsync(id, _currentUser.UserId, ct);

@@ -1,3 +1,4 @@
+﻿using Daraban.Platform.Hosting.Authorization;
 using Daraban.Modules.Discovery.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ public class DiscoveryRuleController(IDiscoveryService discoveryService) : Contr
     /// Create a new discovery rule.
     /// </summary>
     [HttpPost]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.write")]
     public async Task<IActionResult> CreateRule([FromBody] CreateRuleRequest request, CancellationToken ct)
     {
         try
@@ -35,6 +36,7 @@ public class DiscoveryRuleController(IDiscoveryService discoveryService) : Contr
     /// Get a specific rule by ID.
     /// </summary>
     [HttpGet("{id:guid}")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetRule(Guid id, CancellationToken ct)
     {
         var rule = await discoveryService.GetRuleByIdAsync(id, ct);
@@ -45,6 +47,7 @@ public class DiscoveryRuleController(IDiscoveryService discoveryService) : Contr
     /// List all discovery rules.
     /// </summary>
     [HttpGet]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetRules(CancellationToken ct)
     {
         var rules = await discoveryService.GetAllRulesAsync(ct);
@@ -55,7 +58,7 @@ public class DiscoveryRuleController(IDiscoveryService discoveryService) : Contr
     /// Update a discovery rule.
     /// </summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.write")]
     public async Task<IActionResult> UpdateRule(Guid id, [FromBody] UpdateRuleRequest request, CancellationToken ct)
     {
         try
@@ -73,7 +76,7 @@ public class DiscoveryRuleController(IDiscoveryService discoveryService) : Contr
     /// Delete a discovery rule.
     /// </summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.delete")]
     public async Task<IActionResult> DeleteRule(Guid id, CancellationToken ct)
     {
         await discoveryService.DeleteRuleAsync(id, ct);

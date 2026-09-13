@@ -28,6 +28,7 @@ public sealed class ReportsController(
     /// <summary>All reportable datasets with their columns and supported filters.</summary>
     /// <remarks>GET /api/v1/reports/definitions</remarks>
     [HttpGet("definitions")]
+    [RequirePermission("reports.read")]
     public IActionResult GetCatalog()
     {
         var result = reportingService.GetCatalog();
@@ -42,6 +43,7 @@ public sealed class ReportsController(
     /// <summary>The caller's entity's saved report definitions.</summary>
     /// <remarks>GET /api/v1/reports/my</remarks>
     [HttpGet("my")]
+    [RequirePermission("reports.read")]
     public async Task<IActionResult> ListDefinitions(CancellationToken ct)
     {
         var result = await reportingService.ListDefinitionsAsync(currentUser.ActiveEntityId, ct);
@@ -72,6 +74,7 @@ public sealed class ReportsController(
     /// Pending SavedReport; the worker renders asynchronously. Poll GET runs / download.</summary>
     /// <remarks>POST /api/v1/reports/{id}/generate</remarks>
     [HttpPost("{id:guid}/generate")]
+    [RequirePermission("reports.manage")]
     public async Task<IActionResult> Generate(Guid id, CancellationToken ct)
     {
         var result = await reportingService.GenerateAsync(
@@ -85,6 +88,7 @@ public sealed class ReportsController(
     /// <summary>Generation history (latest 20 runs) for one definition.</summary>
     /// <remarks>GET /api/v1/reports/{id}/runs</remarks>
     [HttpGet("{id:guid}/runs")]
+    [RequirePermission("reports.read")]
     public async Task<IActionResult> ListRuns(Guid id, CancellationToken ct)
     {
         var result = await reportingService.ListRunsAsync(id, currentUser.ActiveEntityId, ct);
@@ -99,6 +103,7 @@ public sealed class ReportsController(
     /// error, never a partial file.</summary>
     /// <remarks>GET /api/v1/reports/{id}/download</remarks>
     [HttpGet("{id:guid}/download")]
+    [RequirePermission("reports.read")]
     [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> Download(Guid id, CancellationToken ct)
     {

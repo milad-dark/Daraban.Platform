@@ -1,9 +1,10 @@
-using Daraban.Modules.Dashboard.Services.Dtos;
+﻿using Daraban.Modules.Dashboard.Services.Dtos;
 using Daraban.Modules.Dashboard.Services.Interfaces;
 using Daraban.Modules.Dashboard.Services.Widgets;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
 using Daraban.Platform.Hosting;
+using Daraban.Platform.Hosting.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +27,7 @@ public sealed class DashboardController(
     /// <summary>All available widget types with display metadata.</summary>
     /// <remarks>GET /api/v1/dashboard/widgets</remarks>
     [HttpGet("widgets")]
+    [RequirePermission("dashboard.read")]
     public IActionResult GetWidgets()
     {
         var result = dashboardService.GetWidgetCatalog();
@@ -40,6 +42,7 @@ public sealed class DashboardController(
     /// <summary>The calling user's saved dashboard layout (empty when none saved yet).</summary>
     /// <remarks>GET /api/v1/dashboard/layout</remarks>
     [HttpGet("layout")]
+    [RequirePermission("dashboard.read")]
     public async Task<IActionResult> GetLayout(CancellationToken ct)
     {
         var result = await dashboardService.GetLayoutAsync(currentUser.UserId, ct);
@@ -53,6 +56,7 @@ public sealed class DashboardController(
     /// comes from the JWT, never from the request body (OWASP A01 -- no IDOR surface).</summary>
     /// <remarks>PUT /api/v1/dashboard/layout</remarks>
     [HttpPut("layout")]
+    [RequirePermission("dashboard.write")]
     public async Task<IActionResult> SaveLayout([FromBody] SaveLayoutRequest request, CancellationToken ct)
     {
         var result = await dashboardService.SaveLayoutAsync(currentUser.UserId, request, ct);
@@ -70,6 +74,7 @@ public sealed class DashboardController(
     /// </summary>
     /// <remarks>GET /api/v1/dashboard/data/{widgetType}</remarks>
     [HttpGet("data/{widgetType}")]
+    [RequirePermission("dashboard.read")]
     public async Task<IActionResult> GetWidgetData(string widgetType, CancellationToken ct)
     {
         if (!WidgetCatalog.TryParse(widgetType, out var type))

@@ -1,15 +1,18 @@
-using Daraban.Modules.Financial.Data.Entities;
+﻿using Daraban.Modules.Financial.Data.Entities;
 using Daraban.Modules.Financial.Services.Dtos;
 using Daraban.Modules.Financial.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
 using Daraban.Platform.Hosting;
+using Daraban.Platform.Hosting.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Daraban.Modules.Financial.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class ContractsController : ControllerBase
 {
@@ -23,6 +26,7 @@ public class ContractsController : ControllerBase
     }
 
     [HttpGet]
+    [RequirePermission("financial.read")]
     public async Task<IActionResult> GetPaged(
         [FromQuery] Guid entityNodeId,
         [FromQuery] string? search = null,
@@ -41,6 +45,7 @@ public class ContractsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [RequirePermission("financial.read")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var result = await _contractService.GetByIdAsync(id, ct);
@@ -51,6 +56,7 @@ public class ContractsController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("financial.write")]
     public async Task<IActionResult> Create([FromBody] CreateContractRequest request, CancellationToken ct)
     {
         var result = await _contractService.CreateAsync(request, _currentUser.UserId, ct);
@@ -61,6 +67,7 @@ public class ContractsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [RequirePermission("financial.write")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateContractRequest request, CancellationToken ct)
     {
         var result = await _contractService.UpdateAsync(id, request, _currentUser.UserId, ct);
@@ -71,6 +78,7 @@ public class ContractsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [RequirePermission("financial.delete")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var result = await _contractService.DeleteAsync(id, _currentUser.UserId, ct);
@@ -81,6 +89,7 @@ public class ContractsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/status")]
+    [RequirePermission("financial.write")]
     public async Task<IActionResult> ChangeStatus(Guid id, [FromBody] ContractStatus newStatus, CancellationToken ct)
     {
         var result = await _contractService.ChangeStatusAsync(id, newStatus, _currentUser.UserId, ct);

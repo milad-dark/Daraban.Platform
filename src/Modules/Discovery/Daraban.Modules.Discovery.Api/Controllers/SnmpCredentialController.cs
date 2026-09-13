@@ -1,3 +1,4 @@
+﻿using Daraban.Platform.Hosting.Authorization;
 using Daraban.Modules.Discovery.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ public class SNMPCredentialController(IDiscoveryService discoveryService) : Cont
     /// Create a new SNMP credential.
     /// </summary>
     [HttpPost]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.write")]
     public async Task<IActionResult> CreateCredential([FromBody] CreateCredentialRequest request, CancellationToken ct)
     {
         try
@@ -35,6 +36,7 @@ public class SNMPCredentialController(IDiscoveryService discoveryService) : Cont
     /// Get a specific credential by ID.
     /// </summary>
     [HttpGet("{id:guid}")]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetCredential(Guid id, CancellationToken ct)
     {
         var credential = await discoveryService.GetCredentialByIdAsync(id, ct);
@@ -45,6 +47,7 @@ public class SNMPCredentialController(IDiscoveryService discoveryService) : Cont
     /// List all SNMP credentials.
     /// </summary>
     [HttpGet]
+    [RequirePermission("discovery.read")]
     public async Task<IActionResult> GetCredentials(CancellationToken ct)
     {
         var credentials = await discoveryService.GetAllCredentialsAsync(ct);
@@ -55,7 +58,7 @@ public class SNMPCredentialController(IDiscoveryService discoveryService) : Cont
     /// Update an SNMP credential.
     /// </summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.write")]
     public async Task<IActionResult> UpdateCredential(Guid id, [FromBody] UpdateCredentialRequest request, CancellationToken ct)
     {
         try
@@ -73,7 +76,7 @@ public class SNMPCredentialController(IDiscoveryService discoveryService) : Cont
     /// Delete an SNMP credential.
     /// </summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Policy = "admin:write")]
+    [RequirePermission("discovery.delete")]
     public async Task<IActionResult> DeleteCredential(Guid id, CancellationToken ct)
     {
         await discoveryService.DeleteCredentialAsync(id, ct);

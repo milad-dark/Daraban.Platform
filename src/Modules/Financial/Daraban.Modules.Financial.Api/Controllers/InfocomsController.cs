@@ -1,14 +1,17 @@
-using Daraban.Modules.Financial.Services.Dtos;
+﻿using Daraban.Modules.Financial.Services.Dtos;
 using Daraban.Modules.Financial.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
 using Daraban.Platform.Hosting;
+using Daraban.Platform.Hosting.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Daraban.Modules.Financial.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class InfocomsController : ControllerBase
 {
@@ -22,6 +25,7 @@ public class InfocomsController : ControllerBase
     }
 
     [HttpGet]
+    [RequirePermission("financial.read")]
     public async Task<IActionResult> GetPaged(
         [FromQuery] Guid entityNodeId,
         [FromQuery] string? search = null,
@@ -39,6 +43,7 @@ public class InfocomsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [RequirePermission("financial.read")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var result = await _infocomService.GetByIdAsync(id, ct);
@@ -49,6 +54,7 @@ public class InfocomsController : ControllerBase
     }
 
     [HttpGet("asset/{assetId:guid}")]
+    [RequirePermission("financial.read")]
     public async Task<IActionResult> GetByAssetId(Guid assetId, CancellationToken ct)
     {
         var result = await _infocomService.GetByAssetIdAsync(assetId, ct);
@@ -59,6 +65,7 @@ public class InfocomsController : ControllerBase
     }
 
     [HttpPost]
+    [RequirePermission("financial.write")]
     public async Task<IActionResult> Create([FromBody] CreateInfocomRequest request, CancellationToken ct)
     {
         var result = await _infocomService.CreateAsync(request, _currentUser.UserId, ct);
@@ -69,6 +76,7 @@ public class InfocomsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [RequirePermission("financial.write")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateInfocomRequest request, CancellationToken ct)
     {
         var result = await _infocomService.UpdateAsync(id, request, _currentUser.UserId, ct);
@@ -79,6 +87,7 @@ public class InfocomsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [RequirePermission("financial.delete")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var result = await _infocomService.DeleteAsync(id, _currentUser.UserId, ct);
@@ -89,6 +98,7 @@ public class InfocomsController : ControllerBase
     }
 
     [HttpGet("{id:guid}/depreciation")]
+    [RequirePermission("financial.read")]
     public async Task<IActionResult> CalculateDepreciation(Guid id, CancellationToken ct)
     {
         var result = await _infocomService.CalculateDepreciationAsync(id, ct);

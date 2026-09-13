@@ -1,4 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
@@ -6,6 +9,47 @@
     <PackageReference Include="NetArchTest.Rules" />
   </ItemGroup>
   <ItemGroup>
-    
+    <ProjectReference Include="..\..\..\src\Modules\Assets\Daraban.Modules.Assets.Api\Daraban.Modules.Assets.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Assets\Daraban.Modules.Assets.Services\Daraban.Modules.Assets.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Assets\Daraban.Modules.Assets.Data\Daraban.Modules.Assets.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Automation\Daraban.Modules.Automation.Api\Daraban.Modules.Automation.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Automation\Daraban.Modules.Automation.Services\Daraban.Modules.Automation.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Automation\Daraban.Modules.Automation.Data\Daraban.Modules.Automation.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Dashboard\Daraban.Modules.Dashboard.Api\Daraban.Modules.Dashboard.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Dashboard\Daraban.Modules.Dashboard.Services\Daraban.Modules.Dashboard.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Dashboard\Daraban.Modules.Dashboard.Data\Daraban.Modules.Dashboard.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Discovery\Daraban.Modules.Discovery.Api\Daraban.Modules.Discovery.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Discovery\Daraban.Modules.Discovery.Services\Daraban.Modules.Discovery.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Discovery\Daraban.Modules.Discovery.Data\Daraban.Modules.Discovery.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Financial\Daraban.Modules.Financial.Api\Daraban.Modules.Financial.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Financial\Daraban.Modules.Financial.Services\Daraban.Modules.Financial.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Financial\Daraban.Modules.Financial.Data\Daraban.Modules.Financial.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Identity\Daraban.Modules.Identity.Api\Daraban.Modules.Identity.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Identity\Daraban.Modules.Identity.Services\Daraban.Modules.Identity.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Identity\Daraban.Modules.Identity.Data\Daraban.Modules.Identity.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Inventory\Daraban.Modules.Inventory.Api\Daraban.Modules.Inventory.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Inventory\Daraban.Modules.Inventory.Services\Daraban.Modules.Inventory.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Inventory\Daraban.Modules.Inventory.Data\Daraban.Modules.Inventory.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Knowledge\Daraban.Modules.Knowledge.Api\Daraban.Modules.Knowledge.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Knowledge\Daraban.Modules.Knowledge.Services\Daraban.Modules.Knowledge.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Knowledge\Daraban.Modules.Knowledge.Data\Daraban.Modules.Knowledge.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Notifications\Daraban.Modules.Notifications.Api\Daraban.Modules.Notifications.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Notifications\Daraban.Modules.Notifications.Services\Daraban.Modules.Notifications.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Notifications\Daraban.Modules.Notifications.Data\Daraban.Modules.Notifications.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Plugins\Daraban.Modules.Plugins.Api\Daraban.Modules.Plugins.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Plugins\Daraban.Modules.Plugins.Services\Daraban.Modules.Plugins.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Plugins\Daraban.Modules.Plugins.Data\Daraban.Modules.Plugins.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Reporting\Daraban.Modules.Reporting.Api\Daraban.Modules.Reporting.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Reporting\Daraban.Modules.Reporting.Services\Daraban.Modules.Reporting.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Reporting\Daraban.Modules.Reporting.Data\Daraban.Modules.Reporting.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\ServiceDesk\Daraban.Modules.ServiceDesk.Api\Daraban.Modules.ServiceDesk.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\ServiceDesk\Daraban.Modules.ServiceDesk.Services\Daraban.Modules.ServiceDesk.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\ServiceDesk\Daraban.Modules.ServiceDesk.Data\Daraban.Modules.ServiceDesk.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Settings\Daraban.Modules.Settings.Api\Daraban.Modules.Settings.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Settings\Daraban.Modules.Settings.Services\Daraban.Modules.Settings.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Settings\Daraban.Modules.Settings.Data\Daraban.Modules.Settings.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Software\Daraban.Modules.Software.Api\Daraban.Modules.Software.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Software\Daraban.Modules.Software.Services\Daraban.Modules.Software.Services.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Software\Daraban.Modules.Software.Data\Daraban.Modules.Software.Data.csproj" />
   </ItemGroup>
 </Project>

@@ -138,7 +138,7 @@ public static class SettingCatalog
         sb.AppendLine("CREATE UNIQUE INDEX IF NOT EXISTS uq_system_settings_key ON core.system_settings (key);");
         sb.AppendLine("CREATE INDEX IF NOT EXISTS ix_system_settings_category ON core.system_settings (category);");
         sb.AppendLine("INSERT INTO core.system_settings (id, key, value, value_type, category, description, is_secret, created_at, updated_at)");
-        sb.AppendLine("SELECT v.id, v.key, v.value, v.value_type, v.category, v.description, v.is_secret, now(), now()");
+        sb.AppendLine("SELECT v.id::uuid, v.key, v.value, v.value_type, v.category, v.description, v.is_secret, now(), now()");
         sb.AppendLine("FROM (VALUES");
         for (var i = 0; i < All.Length; i++)
         {

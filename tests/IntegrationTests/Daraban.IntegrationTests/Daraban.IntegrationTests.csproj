@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="SSH.NET" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="Testcontainers.Redis" />
+    <PackageReference Include="Testcontainers.RabbitMQ" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Hosts under test (WebApplicationFactory entry points). Both hosts declare a
+         global-namespace 'Program' (top-level statements), so the AgentApi reference
+         gets an extern alias to disambiguate the two entry-point classes. -->
+    <ProjectReference Include="..\..\..\src\Host\Daraban.Host.Api\Daraban.Host.Api.csproj" />
+    <ProjectReference Include="..\..\..\src\Host\Daraban.Host.AgentApi\Daraban.Host.AgentApi.csproj">
+      <Aliases>AgentApiHost</Aliases>
+    </ProjectReference>
+    <!-- Direct DbContext access for seeding/verification (bypasses the API surface) -->
+    <ProjectReference Include="..\..\..\src\Modules\Identity\Daraban.Modules.Identity.Data\Daraban.Modules.Identity.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Modules\Inventory\Daraban.Modules.Inventory.Data\Daraban.Modules.Inventory.Data.csproj" />
+  </ItemGroup>
+
+</Project>

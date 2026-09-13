@@ -34,4 +34,4 @@ public sealed class Result<T> : Result
 /// <summary>errorCode follows the MODULE.SCREAMING_SNAKE_CASE convention from Task 1.4 SS6.</summary>
 public sealed record Error(string Code, string Message, ErrorType Type);
 
-public enum ErrorType { Validation, NotFound, Conflict, BusinessRule, Forbidden }
+public enum ErrorType { Validation, NotFound, Conflict, BusinessRule, Forbidden, Unauthorized }
