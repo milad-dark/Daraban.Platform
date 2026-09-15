@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Daraban.Modules.Dashboard.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="FluentValidation" />

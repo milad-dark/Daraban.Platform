@@ -13,6 +13,18 @@ public interface IAssetRepository
         int page,
         int pageSize,
         CancellationToken ct = default);
+    /// <summary>
+    /// Task 8.2: unbounded streaming read for exports. Enumerate-and-write instead of
+    /// buffering the whole result set (the old pageSize: int.MaxValue trick).
+    /// </summary>
+    IAsyncEnumerable<Asset> StreamAllAsync(
+        Guid entityNodeId,
+        AssetStatus? status,
+        Guid? assetTypeId,
+        Guid? locationId,
+        string? search,
+        CancellationToken ct = default);
+
     Task AddAsync(Asset asset, CancellationToken ct = default);
     Task UpdateAsync(Asset asset, CancellationToken ct = default);
     Task<bool> ExistsAsync(Guid id, CancellationToken ct = default);

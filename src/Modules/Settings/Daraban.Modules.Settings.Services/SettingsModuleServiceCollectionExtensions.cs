@@ -28,7 +28,9 @@ public static class SettingsModuleServiceCollectionExtensions
 
         services.AddScoped<ISystemSettingRepository, SystemSettingRepository>();
         services.AddSingleton<SystemSettingCache>();
-        services.AddScoped<IConnectivityTester, ConnectivityTester>();
+                services.Configure<SystemSettingCacheOptions>(
+                    configuration.GetSection(SystemSettingCacheOptions.SectionName));
+                services.AddScoped<IConnectivityTester, ConnectivityTester>();
         services.AddScoped<ISettingsService, SettingsService>();
 
         return services;

@@ -512,4 +512,58 @@ public class AssetImportExportServiceTests
         // Header only -- an export with no matches is still a valid file, not a failure.
         Assert.Contains("Name", text);
     }
+
+    // ---- Streaming CSV (Task 8.2) --------------------------------------------------------------
+
+    private static async IAsyncEnumerable<Asset> StreamingAsync(params Asset[] assets)
+    {
+        foreach (var asset in assets)
+            yield return asset;
+        await Task.CompletedTask;
+    }
+
+    [Fact]
+    public async Task WriteCsvAsync_Streams_Header_And_Rows_Into_The_Output()
+    {
+        _assets.Setup(r => r.StreamAllAsync(
+                EntityId, null, null, null, null, It.IsAny<CancellationToken>()))
+            .Returns(StreamingAsync(ExportableAsset("First"), ExportableAsset("Second")));
+
+        var output = new MemoryStream();
+        await CreateExportSut().WriteCsvAsync(EntityId, output, null, null, null, null);
+
+        var text = Encoding.UTF8.GetString(output.ToArray());
+        Assert.Contains("Name", text);
+        Assert.Contains("First", text);
+        Assert.Contains("Second", text);
+    }
+
+    [Fact]
+    public async Task WriteCsvAsync_Parses_The_Status_Filter_Like_The_List_Endpoint()
+    {
+        _assets.Setup(r => r.StreamAllAsync(
+                EntityId, AssetStatus.Retired, null, null, null, It.IsAny<CancellationToken>()))
+            .Returns(StreamingAsync());
+
+        var output = new MemoryStream();
+        await CreateExportSut().WriteCsvAsync(EntityId, output, "retired", null, null, null);
+
+        Assert.True(output.Length > 0);
+        _assets.Verify(r => r.StreamAllAsync(
+            EntityId, AssetStatus.Retired, null, null, null, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task WriteCsvAsync_Leaves_The_Output_Stream_Open()
+    {
+        _assets.Setup(r => r.StreamAllAsync(
+                EntityId, null, null, null, null, It.IsAny<CancellationToken>()))
+            .Returns(StreamingAsync(ExportableAsset()));
+
+        var output = new MemoryStream();
+        await CreateExportSut().WriteCsvAsync(EntityId, output, null, null, null, null);
+
+        // The response body belongs to ASP.NET Core -- the writer must not close it.
+        Assert.True(output.CanWrite);
+    }
 }

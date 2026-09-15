@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Daraban.Modules.Knowledge.Data.Entities;
 using Daraban.Modules.Knowledge.Data.Repositories;
 using Daraban.Modules.Knowledge.Services.Dtos;
@@ -5,6 +6,8 @@ using Daraban.Modules.Knowledge.Services.Interfaces;
 using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
 using Daraban.Platform.Contracts.Knowledge;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 
 namespace Daraban.Modules.Knowledge.Services;
 
@@ -14,17 +17,29 @@ public class KbArticleService : IKbArticleService
     private readonly IKbCategoryRepository _categories;
     private readonly IKbFeedbackRepository _feedback;
     private readonly IEventPublisher _events;
+    private readonly IMemoryCache? _cache;
+    private readonly KbCacheOptions _cacheOptions;
+
+    // Task 8.2: per-entity generation tokens. IMemoryCache cannot enumerate keys by prefix,
+    // so a mutation bumps the entity's generation and every previously cached read-model key
+    // for that entity becomes unreachable at once. Orphaned entries still carry their TTL and
+    // are reclaimed by the cache itself.
+    private static readonly ConcurrentDictionary<Guid, long> Generations = new();
 
     public KbArticleService(
         IKbArticleRepository articles,
         IKbCategoryRepository categories,
         IKbFeedbackRepository feedback,
-        IEventPublisher events)
+        IEventPublisher events,
+        IMemoryCache? cache = null,
+        IOptions<KbCacheOptions>? cacheOptions = null)
     {
         _articles = articles;
         _categories = categories;
         _feedback = feedback;
         _events = events;
+        _cache = cache;
+        _cacheOptions = cacheOptions?.Value ?? new KbCacheOptions();
     }
 
     public async Task<Result<KbArticlePagedResult>> GetPagedAsync(
@@ -40,12 +55,19 @@ public class KbArticleService : IKbArticleService
     {
         var (normalizedPage, normalizedPageSize) = NormalizePaging(page, pageSize);
 
+        var cacheKey = $"kb:list:{Part(entityNodeId)}:{Part(categoryId)}|{Part(status)}|{Part(isFaq)}|{Part(authorUserId)}|{Part(titleContains)}|{normalizedPage}|{normalizedPageSize}#{Generation(entityNodeId)}";
+
+        if (_cache is not null && _cache.TryGetValue(cacheKey, out KbArticlePagedResult? cached) && cached is not null)
+            return Result.Success(cached);
+
         var (items, totalCount) = await _articles.GetPagedAsync(
             entityNodeId, categoryId, status, isFaq, authorUserId, titleContains,
             normalizedPage, normalizedPageSize, ct);
 
         var dtos = items.Select(MapToListDto).ToList();
-        return Result.Success(new KbArticlePagedResult(dtos, totalCount, normalizedPage, normalizedPageSize));
+        var result = new KbArticlePagedResult(dtos, totalCount, normalizedPage, normalizedPageSize);
+        Store(cacheKey, result);
+        return Result.Success(result);
     }
 
     public async Task<Result<KbArticleDto>> GetByIdAsync(
@@ -82,12 +104,19 @@ public class KbArticleService : IKbArticleService
         var (normalizedPage, normalizedPageSize) = NormalizePaging(page, pageSize);
         var trimmed = query.Trim();
 
+        var cacheKey = $"kb:search:{Part(entityNodeId)}:{Part(categoryId)}|{Part(status)}|{trimmed}|{normalizedPage}|{normalizedPageSize}#{Generation(entityNodeId)}";
+
+        if (_cache is not null && _cache.TryGetValue(cacheKey, out KbArticleSearchResult? cached) && cached is not null)
+            return Result.Success(cached);
+
         var (hits, totalCount) = await _articles.SearchAsync(
             entityNodeId, trimmed, categoryId, status, normalizedPage, normalizedPageSize, ct);
 
         var dtos = hits.Select(h => new KbArticleSearchHitDto(MapToListDto(h.Article), h.Rank)).ToList();
-        return Result.Success(new KbArticleSearchResult(
-            dtos, totalCount, normalizedPage, normalizedPageSize, trimmed));
+        var result = new KbArticleSearchResult(
+            dtos, totalCount, normalizedPage, normalizedPageSize, trimmed);
+        Store(cacheKey, result);
+        return Result.Success(result);
     }
 
     public async Task<Result<KbArticleDto>> CreateAsync(
@@ -127,6 +156,7 @@ public class KbArticleService : IKbArticleService
 
         await _articles.AddAsync(article, ct);
         await _articles.SaveChangesAsync(ct);
+        Invalidate(entityNodeId);
 
         var categoryName = await ResolveCategoryNameAsync(article.CategoryId, ct);
         return Result.Success(MapToDto(article, categoryName));
@@ -172,6 +202,7 @@ public class KbArticleService : IKbArticleService
                 id, BuildTargets(id, request.Targets, actorUserId, now), ct);
 
         await _articles.SaveChangesAsync(ct);
+        Invalidate(article.EntityId);
 
         var refreshed = await _articles.GetByIdWithDetailsAsync(id, ct);
         return Result.Success(MapToDto(refreshed ?? article));
@@ -215,6 +246,7 @@ public class KbArticleService : IKbArticleService
 
         _articles.Update(article);
         await _articles.SaveChangesAsync(ct);
+        Invalidate(article.EntityId);
 
         // Publish after the commit -- the database row is the source of truth, and emitting
         // first would let a failed save leave subscribers believing in an article that isn't live.
@@ -249,6 +281,7 @@ public class KbArticleService : IKbArticleService
 
         _articles.Update(article);
         await _articles.SaveChangesAsync(ct);
+        Invalidate(article.EntityId);
 
         // A soft-deleted article disappears from the portal exactly like an unpublished one, so
         // downstream consumers need the same signal.
@@ -320,6 +353,8 @@ public class KbArticleService : IKbArticleService
         article.UpdatedAt = now;
         _articles.Update(article);
         await _articles.SaveChangesAsync(ct);
+        // Feedback reshuffles the helpfulness counters the list read-models display.
+        Invalidate(article.EntityId);
 
         return Result.Success(new KbFeedbackSummaryDto(
             articleId, helpful, notHelpful, MapToFeedbackDto(entry)));
@@ -334,6 +369,29 @@ public class KbArticleService : IKbArticleService
         var entries = await _feedback.GetByArticleAsync(articleId, ct);
         var dtos = entries.Select(MapToFeedbackDto).ToList();
         return Result.Success<IReadOnlyList<KbFeedbackDto>>(dtos);
+    }
+
+    // ---- cache helpers --------------------------------------------------------------------
+
+    private static string Part(object? value) => value?.ToString() ?? "-";
+
+    private static long Generation(Guid entityId)
+        => Generations.TryGetValue(entityId, out var gen) ? gen : 0;
+
+    private static void Invalidate(Guid entityId)
+        => Generations.AddOrUpdate(entityId, 1, (_, current) => current + 1);
+
+    private void Store(string key, object value)
+    {
+        if (_cache is null)
+            return;
+
+        // Size is mandatory because the cache is registered with a SizeLimit.
+        _cache.Set(key, value, new MemoryCacheEntryOptions
+        {
+            SlidingExpiration = TimeSpan.FromSeconds(Math.Clamp(_cacheOptions.TtlSeconds, 5, 600)),
+            Size = 1,
+        });
     }
 
     // ---- validation helpers ---------------------------------------------------------------

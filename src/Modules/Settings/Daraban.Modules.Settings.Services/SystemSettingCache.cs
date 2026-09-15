@@ -64,44 +64,44 @@ public class SystemSettingCache(
         Array.Find(_snapshot, s => s.Key == key);
 
     /// <summary>
-        /// Makes the snapshot current: a no-op while the local copy is still within the freshness
-        /// window, otherwise a Redis revalidation, and failing that a full reload from the database.
-        /// Virtual for tests.
-        /// </summary>
-        public virtual async Task EnsureLoadedAsync(CancellationToken ct = default)
+    /// Makes the snapshot current: a no-op while the local copy is still within the freshness
+    /// window, otherwise a Redis revalidation, and failing that a full reload from the database.
+    /// Virtual for tests.
+    /// </summary>
+    public virtual async Task EnsureLoadedAsync(CancellationToken ct = default)
+    {
+        if (IsSnapshotCurrent())
         {
+            return;
+        }
+
+        await _refreshLock.WaitAsync(ct);
+        try
+        {
+            // Re-check under the lock: several callers can queue up behind a single refresh.
             if (IsSnapshotCurrent())
             {
                 return;
             }
 
-            await _refreshLock.WaitAsync(ct);
-            try
+            var published = await TryReadFromRedisAsync(ct);
+            if (published is { Length: > 0 })
             {
-                // Re-check under the lock: several callers can queue up behind one refresh.
-                if (IsSnapshotCurrent())
-                {
-                    return;
-                }
-
-                var published = await TryReadFromRedisAsync(ct);
-                if (published is { Length: > 0 })
-                {
-                    _snapshot = published;
-                    ConfirmSnapshot();
-                    return;
-                }
-
-                var settings = await GetAllFromDbAsync(ct);
-                _snapshot = settings;
+                _snapshot = published;
                 ConfirmSnapshot();
-                await PublishToRedisAsync(settings, ct);
+                return;
             }
-            finally
-            {
-                _refreshLock.Release();
-            }
+
+            var settings = await GetAllFromDbAsync(ct);
+            _snapshot = settings;
+            ConfirmSnapshot();
+            await PublishToRedisAsync(settings, ct);
         }
+        finally
+        {
+            _refreshLock.Release();
+        }
+    }
 
     /// <summary>
     /// Persists a new value and refreshes both cache layers. Runs in its own scope because
@@ -130,105 +130,113 @@ public class SystemSettingCache(
 
             var settings = await repository.GetAllAsync(ct);
             _snapshot = settings.ToArray();
-                        // The writer is immediately consistent, and this also stops the next read from
-                        // re-reading the value it just published.
-                        ConfirmSnapshot();
-                        await PublishToRedisAsync(settings, ct);
-                    }
-                    finally
-                    {
-                        _refreshLock.Release();
-                    }
-                }
 
-                private bool IsSnapshotCurrent()
-                {
-                    var confirmedAt = Interlocked.Read(ref _snapshotConfirmedAtTick);
-                    if (confirmedAt == long.MinValue)
-                    {
-                        return false;
-                    }
-
-                    return Environment.TickCount64 - confirmedAt < (long)_freshnessWindow.TotalMilliseconds;
-                }
-
-                private void ConfirmSnapshot() =>
-                    Interlocked.Exchange(ref _snapshotConfirmedAtTick, Environment.TickCount64);
-
-                private async Task<SystemSetting[]> GetAllFromDbAsync(CancellationToken ct)
-                {
-                    using var scope = scopeFactory.CreateScope();
-                    var repository = scope.ServiceProvider.GetRequiredService<ISystemSettingRepository>();
-                    var settings = await repository.GetAllAsync(ct);
-                    return settings.ToArray();
+            // The writer stays immediately consistent, and confirming here also stops the next
+            // settings read from re-reading the value this instance just published.
+            ConfirmSnapshot();
+            await PublishToRedisAsync(settings, ct);
+        }
+        finally
+        {
+            _refreshLock.Release();
+        }
     }
 
-                /// <summary>Reads the peer-published snapshot. Returns null -- never throws -- when Redis is
-                /// unreachable, holds nothing, or holds a snapshot from a different catalog version.</summary>
-                private async Task<SystemSetting[]?> TryReadFromRedisAsync(CancellationToken ct)
-                {
-                    try
-                    {
-                        var payload = await redis.GetStringAsync(RedisKey, ct);
-                        if (string.IsNullOrEmpty(payload))
-                        {
-                            return null;
-                        }
+    private bool IsSnapshotCurrent()
+    {
+        var confirmedAt = Interlocked.Read(ref _snapshotConfirmedAtTick);
+        if (confirmedAt == long.MinValue)
+        {
+            return false;
+        }
 
-                        var published = JsonSerializer.Deserialize<PublishedSnapshot>(payload, SerializerOptions);
-                        if (published is null || !string.Equals(published.ProcessVersion, CatalogFingerprint, StringComparison.Ordinal))
-                        {
-                            logger.LogWarning(
-                                "Discarded the settings snapshot in Redis: it was published by a different catalog version.");
-                            return null;
-                        }
+        return Environment.TickCount64 - confirmedAt < (long)_freshnessWindow.TotalMilliseconds;
+    }
 
-                        return published.Settings.Select(ToEntity).ToArray();
-                    }
-                    catch (Exception ex) when (ex is not OperationCanceledException)
-                    {
-                        logger.LogWarning(ex, "Settings snapshot could not be read from Redis; falling back to the database.");
-                        return null;
-                    }
-                }
+    private void ConfirmSnapshot() =>
+        Interlocked.Exchange(ref _snapshotConfirmedAtTick, Environment.TickCount64);
 
-                /// <summary>Serializes and publishes the current table to Redis. Failures are logged,
-                /// never thrown -- Redis being down must not fail a settings update.</summary>
-                private async Task PublishToRedisAsync(IReadOnlyList<SystemSetting> settings, CancellationToken ct)
-                {
-                    try
-                    {
-                        var payload = JsonSerializer.Serialize(
-                            new PublishedSnapshot(CatalogFingerprint, settings.Select(ToSnapshot).ToArray()),
-                            SerializerOptions);
-                        await redis.SetStringAsync(RedisKey, payload,
-                            new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24) }, ct);
-                    }
-                    catch (Exception ex) when (ex is not OperationCanceledException)
-                    {
-                        logger.LogWarning(ex, "Settings snapshot could not be written to Redis; this instance serves from local memory only.");
-                    }
-                }
+    private async Task<SystemSetting[]> GetAllFromDbAsync(CancellationToken ct)
+    {
+        using var scope = scopeFactory.CreateScope();
+        var repository = scope.ServiceProvider.GetRequiredService<ISystemSettingRepository>();
+        var settings = await repository.GetAllAsync(ct);
+        return settings.ToArray();
+    }
 
-                internal sealed record PublishedSnapshot(string ProcessVersion, SettingSnapshot[] Settings);
-
-                internal sealed record SettingSnapshot(
-                    Guid Id, string Key, string Value, string ValueType, string Category,
-                    string Description, bool IsSecret, DateTimeOffset CreatedAt, DateTimeOffset UpdatedAt);
-
-                private static SettingSnapshot ToSnapshot(SystemSetting s) =>
-                    new(s.Id, s.Key, s.Value, s.ValueType, s.Category, s.Description, s.IsSecret, s.CreatedAt, s.UpdatedAt);
-
-                private static SystemSetting ToEntity(SettingSnapshot s) => new()
-                {
-                    Id = s.Id,
-                    Key = s.Key,
-                    Value = s.Value,
-                    ValueType = s.ValueType,
-                    Category = s.Category,
-                    Description = s.Description,
-                    IsSecret = s.IsSecret,
-                    CreatedAt = s.CreatedAt,
-                    UpdatedAt = s.UpdatedAt,
-                };
+    /// <summary>Reads the snapshot a peer instance published. Returns null -- never throws -- when
+    /// Redis is unreachable, holds nothing, or holds a snapshot from a different catalog version.</summary>
+    private async Task<SystemSetting[]?> TryReadFromRedisAsync(CancellationToken ct)
+    {
+        try
+        {
+            var payload = await redis.GetStringAsync(RedisKey, ct);
+            if (string.IsNullOrEmpty(payload))
+            {
+                return null;
             }
+
+            var published = JsonSerializer.Deserialize<PublishedSnapshot>(payload, SerializerOptions);
+            if (published is null || !string.Equals(published.ProcessVersion, CatalogFingerprint, StringComparison.Ordinal))
+            {
+                logger.LogWarning(
+                    "Discarded the settings snapshot in Redis: it was published by a different catalog version.");
+                return null;
+            }
+
+            return published.Settings.Select(ToEntity).ToArray();
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogWarning(ex, "Settings snapshot could not be read from Redis; falling back to the database.");
+            return null;
+        }
+    }
+
+    /// <summary>Serializes the current table and publishes it for peer instances. Failures are
+    /// logged, never thrown -- Redis being down must not fail a settings update.</summary>
+    private async Task PublishToRedisAsync(IReadOnlyList<SystemSetting> settings, CancellationToken ct)
+    {
+        try
+        {
+            var payload = JsonSerializer.Serialize(
+                new PublishedSnapshot(CatalogFingerprint, settings.Select(ToSnapshot).ToArray()),
+                SerializerOptions);
+
+            await redis.SetStringAsync(RedisKey, payload,
+                new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24) }, ct);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            logger.LogWarning(ex, "Settings snapshot could not be written to Redis; this instance serves from local memory only.");
+        }
+    }
+
+    /// <summary>Wire form of the published snapshot. <paramref name="ProcessVersion"/> is the
+    /// catalog fingerprint of the publisher.</summary>
+    internal sealed record PublishedSnapshot(string ProcessVersion, SettingSnapshot[] Settings);
+
+    internal sealed record SettingSnapshot(
+        Guid Id, string Key, string Value, string ValueType, string Category, string Description,
+        bool IsSecret, DateTimeOffset CreatedAt, DateTimeOffset UpdatedAt,
+        Guid? CreatedById, Guid? UpdatedById);
+
+    private static SettingSnapshot ToSnapshot(SystemSetting s) =>
+        new(s.Id, s.Key, s.Value, s.ValueType, s.Category, s.Description, s.IsSecret,
+            s.CreatedAt, s.UpdatedAt, s.CreatedById, s.UpdatedById);
+
+    private static SystemSetting ToEntity(SettingSnapshot s) => new()
+    {
+        Id = s.Id,
+        Key = s.Key,
+        Value = s.Value,
+        ValueType = s.ValueType,
+        Category = s.Category,
+        Description = s.Description,
+        IsSecret = s.IsSecret,
+        CreatedAt = s.CreatedAt,
+        UpdatedAt = s.UpdatedAt,
+        CreatedById = s.CreatedById,
+        UpdatedById = s.UpdatedById,
+    };
+}

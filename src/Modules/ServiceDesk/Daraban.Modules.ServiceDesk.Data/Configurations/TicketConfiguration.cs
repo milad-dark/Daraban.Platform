@@ -69,6 +69,15 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
         builder.HasIndex(t => t.Type).HasDatabaseName("ix_tickets_type");
         builder.HasIndex(t => t.IsEscalated).HasDatabaseName("ix_tickets_is_escalated");
 
+        // Composite indexes (Task 8.2). Column order mirrors the predicate order of the hot
+        // list queries in TicketRepository: EntityId is always filtered first (tenant scoping),
+        // then the optional equality filters, then the sort column. These supersede the
+        // single-column ones for those queries; Postgres cannot cheaply merge two bitmap
+        // indexes for "entity_id = X AND status = Y" on a busy queue.
+        builder.HasIndex(t => new { t.EntityId, t.Status }).HasDatabaseName("ix_tickets_entity_status");
+        builder.HasIndex(t => new { t.EntityId, t.CreatedAt }).HasDatabaseName("ix_tickets_entity_created");
+        builder.HasIndex(t => new { t.AssignedUserId, t.Status }).HasDatabaseName("ix_tickets_assignee_status");
+
         // Filter for soft delete
         builder.HasQueryFilter(t => !t.IsDeleted);
 

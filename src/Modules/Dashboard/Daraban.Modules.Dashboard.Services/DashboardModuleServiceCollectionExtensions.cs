@@ -24,8 +24,14 @@ public static class DashboardModuleServiceCollectionExtensions
         // Repositories
         services.AddScoped<IDashboardLayoutRepository, DashboardLayoutRepository>();
 
-        // Services
-        services.AddScoped<IDashboardService, DashboardService>();
+                // Widget payload cache (Task 8.2): bounded in-process cache so a dashboard render with
+                // eight widgets does not fan out eight aggregation queries on every refresh. SizeLimit
+                // is set because IMemoryCache is otherwise unbounded -- an attacker cycling entity ids
+                // could grow it without limit.
+                services.AddMemoryCache(memory => memory.SizeLimit = 2_048);
+
+                // Services
+                services.AddScoped<IDashboardService, DashboardService>();
 
         // Widget providers -- concrete registrations + one IWidgetDataProvider alias each.
         // The aliases feed DashboardService's IEnumerable<IWidgetDataProvider>; adding a new
@@ -48,9 +54,9 @@ public static class DashboardModuleServiceCollectionExtensions
         services.AddScoped<IWidgetDataProvider>(sp => sp.GetRequiredService<SlaComplianceRateProvider>());
         services.AddScoped<IWidgetDataProvider>(sp => sp.GetRequiredService<AgentStatusSummaryProvider>());
 
-        // Widget tuning knobs (warranty horizon, SLA window) from "Dashboard" config section.
-        // Providers inject IWidgetOptions directly, so expose the bound instance as the
-        // interface too (Configure alone only registers IOptions<WidgetOptions>).
+        // Widget tuning knobs (warranty horizon, SLA window, payload cache TTL) from the "Dashboard"
+                // config section. Providers inject IWidgetOptions directly, so expose the bound instance
+                // as the interface too (Configure alone only registers IOptions<WidgetOptions>).
         services.Configure<WidgetOptions>(configuration.GetSection("Dashboard"));
         services.AddScoped<IWidgetOptions>(sp => sp.GetRequiredService<IOptions<WidgetOptions>>().Value);
 

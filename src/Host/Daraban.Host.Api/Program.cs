@@ -134,6 +134,9 @@ builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler
 // ConnectionStrings:Redis is configured -- see AddDarabanDistributedCache.
 builder.Services.AddDarabanDistributedCache(builder.Configuration);
 
+// Task 8.2: gzip/brotli compression for JSON/CSV/XLSX responses (hubs + health excluded).
+builder.Services.AddDarabanResponseCompression();
+
 builder.Services.AddAuthorization();
 
 // ---- Rate limiting (Task 2.3): auth endpoints are the classic brute-force/credential-
@@ -182,6 +185,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Task 8.2: must run before anything that writes a body (Swagger UI, HTTPS redirect's
+// 307s are too small to matter, but ordering keeps the middleware outermost over MVC).
+app.UseResponseCompression();
 
 app.UseHttpsRedirection();
 app.UseCors("Frontend");
