@@ -210,6 +210,9 @@ public sealed class IntegrationTestFixture : IAsyncLifetime
     private void ApplyContainerSettings(IWebHostBuilder builder)
     {
         builder.UseSetting("ConnectionStrings:Postgres", PostgresConnectionString);
+        // Keep the report file store out of /var/daraban (unwritable for a non-root CI user on
+        // Linux): the shared hosts bind ReportStore:RootPath to that path via appsettings.json.
+        builder.UseSetting("ReportStore:RootPath", Path.Combine(Path.GetTempPath(), $"daraban-itests-reports-{Guid.NewGuid():N}"));
         builder.UseSetting("ConnectionStrings:Redis", $"{_redis.Hostname}:{_redis.GetMappedPublicPort(6379)}");
         builder.UseSetting("RabbitMq:Host", _rabbitMq.Hostname);
         builder.UseSetting("RabbitMq:Port", _rabbitMq.GetMappedPublicPort(5672).ToString());

@@ -13,6 +13,7 @@
 | ۵ | اقرارنامه | [05-Declaration.md](05-Declaration.md) | الزامی |
 | ۶ | قابلیت‌های پیاده‌سازی‌نشده | [06-Not-Implemented.md](06-Not-Implemented.md) | پیوست |
 | ۷ | کارنامه عملکرد (Task 8.2) | [07-Performance.md](07-Performance.md) | پیوست فنی |
+| ۸ | پایپ‌لاین CI/CD (Task 8.3) | [08-CICD.md](08-CICD.md) | پیوست فنی |
 
 > یادداشت فنی: تصمیم‌های معماری (به زبان انگلیسی) در پوشه `docs/decisions/` (ADR-001 تا
 > ADR-006) ثبت شده‌اند و نقشه ساختاری سامانه در `ARCHITECTURE.md` موجود است.

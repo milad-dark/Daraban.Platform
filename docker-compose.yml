@@ -57,6 +57,7 @@ services:
    # ── Backend Hosts ──────────────────────────────────────────────────────────
  
    host-api:
+     image: ${DOCKERHUB_USERNAME:-local}/daraban-api:${DARABAN_TAG:-latest}
      build:
        context: .
        dockerfile: docker/host-api.Dockerfile
@@ -76,6 +77,8 @@ services:
        - Jwt__Audience=${JWT__Audience:-daraban-api}
      volumes:
        - ./certs:/app/certs:ro
+       # API only reads report artifacts for GET /reports/{id}/download -- mounted read-only.
+       - report-artifacts:/var/daraban/reports:ro
      depends_on:
        postgres:
          condition: service_healthy
@@ -93,6 +96,7 @@ services:
        - daraban-net
  
    host-agentapi:
+     image: ${DOCKERHUB_USERNAME:-local}/daraban-agentapi:${DARABAN_TAG:-latest}
      build:
        context: .
        dockerfile: docker/host-agentapi.Dockerfile
@@ -131,6 +135,7 @@ services:
    # ── Workers ────────────────────────────────────────────────────────────────
  
    worker-automation:
+     image: ${DOCKERHUB_USERNAME:-local}/daraban-worker-automation:${DARABAN_TAG:-latest}
      build:
        context: .
        dockerfile: docker/worker-automation.Dockerfile
@@ -155,6 +160,7 @@ services:
        - daraban-net
  
    worker-notifications:
+     image: ${DOCKERHUB_USERNAME:-local}/daraban-worker-notifications:${DARABAN_TAG:-latest}
      build:
        context: .
        dockerfile: docker/worker-notifications.Dockerfile
@@ -179,6 +185,7 @@ services:
        - daraban-net
  
    worker-reporting:
+     image: ${DOCKERHUB_USERNAME:-local}/daraban-worker-reporting:${DARABAN_TAG:-latest}
      build:
        context: .
        dockerfile: docker/worker-reporting.Dockerfile
@@ -203,6 +210,7 @@ services:
        - daraban-net
 
    worker-reports:
+     image: ${DOCKERHUB_USERNAME:-local}/daraban-worker-reporting:${DARABAN_TAG:-latest}
      build:
        context: .
        dockerfile: docker/worker-reporting.Dockerfile
@@ -228,6 +236,7 @@ services:
    # ── Frontend ───────────────────────────────────────────────────────────────
  
    frontend:
+     image: ${DOCKERHUB_USERNAME:-local}/daraban-frontend:${DARABAN_TAG:-latest}
      build:
        context: ./frontend
        dockerfile: ../docker/frontend.Dockerfile

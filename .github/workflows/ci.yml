@@ -1,0 +1,93 @@
+# =============================================================================
+# CI — every push (any branch) and every PR to master
+#   1. build-and-test     native dotnet restore/build + unit & architecture tests
+#   2. container-tests    docker build --target test (unit tests inside image build)
+#   3. integration-tests  Testcontainers (real Postgres/Redis/RabbitMQ) on runner Docker
+# No images are pushed from PRs — publishing happens only in cd.yml on master.
+# =============================================================================
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [master]
+
+env:
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  # Unit/architecture tests only; integration suite runs in its own job.
+  TEST_FILTER: 'FullyQualifiedName!~Daraban.IntegrationTests'
+
+jobs:
+  build-and-test:
+    name: Build & unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore Daraban.Platform.sln
+
+      - name: Build
+        run: dotnet build Daraban.Platform.sln -c Release --no-restore
+
+      - name: Unit & architecture tests
+        run: >
+          dotnet test Daraban.Platform.sln -c Release --no-build
+          --filter "$env:TEST_FILTER"
+
+  container-tests:
+    name: Container build (${{ matrix.image }})
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { image: daraban-api,             dockerfile: docker/host-api.Dockerfile,             target: test }
+          - { image: daraban-agentapi,        dockerfile: docker/host-agentapi.Dockerfile,        target: test }
+          - { image: daraban-worker-automation,    dockerfile: docker/worker-automation.Dockerfile,    target: test }
+          - { image: daraban-worker-notifications, dockerfile: docker/worker-notifications.Dockerfile, target: test }
+          - { image: daraban-worker-reporting,     dockerfile: docker/worker-reporting.Dockerfile,     target: test }
+          - { image: daraban-frontend,        dockerfile: docker/frontend.Dockerfile,             target: build }
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: docker build --target ${{ matrix.target }}
+        uses: docker/build-push-action@v7
+        with:
+          context: ${{ matrix.image == 'daraban-frontend' && './frontend' || '.' }}
+          file: ${{ matrix.dockerfile }}
+          target: ${{ matrix.target }}
+          push: false
+          tags: local/${{ matrix.image }}:${{ github.sha }}
+
+  integration-tests:
+    name: Integration tests (Testcontainers)
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore Daraban.Platform.sln
+
+      - name: Build
+        run: dotnet build Daraban.Platform.sln -c Release --no-restore
+
+      - name: Integration tests
+        run: >
+          dotnet test tests/IntegrationTests/Daraban.IntegrationTests/Daraban.IntegrationTests.csproj
+          -c Release --no-build
+          --filter "FullyQualifiedName~Daraban.IntegrationTests"

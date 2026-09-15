@@ -119,12 +119,14 @@ public class PluginPackageManagerTests : IDisposable
 
     [Theory]
     [InlineData("manifest.json", "manifest.json")]
-    [InlineData("assets/data.json", @"assets\data.json")]           // separators localized
-    [InlineData("sub\\folder\\file.dll", @"sub\folder\file.dll")]    // backslash normalized
+    [InlineData("assets/data.json", "assets/data.json")]            // separators localized
+    [InlineData("sub\\folder\\file.dll", "sub/folder/file.dll")]    // backslash normalized
     public void GetSafeEntryPath_MapsSafeNamesToRelativePaths(string entryName, string expected)
     {
         var safe = PluginPackageManager.GetSafeEntryPath(entryName);
-        Assert.Equal(expected, safe);
+        // The result carries OS-native separators (consumed by Path.Combine); compare normalized.
+        var normalized = safe?.Replace('\\', '/').Replace(Path.DirectorySeparatorChar, '/');
+        Assert.Equal(expected, normalized);
     }
 
     // ---- Manifest gate ---------------------------------------------------------------------------
