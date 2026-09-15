@@ -1,5 +1,7 @@
 using Daraban.Modules.Identity.Data.Entities;
 using Daraban.Modules.Identity.Data.Repositories;
+using Daraban.Modules.Identity.Services.Authorization;
+using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
 
 namespace Daraban.Modules.Identity.Services.Users;
@@ -27,7 +29,18 @@ public interface IUserService
 public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
-    public UserService(IUserRepository repository) => _repository = repository;
+    private readonly IPermissionResolver _permissions;
+
+    /// <summary>
+    /// <paramref name="permissions"/> is optional so existing constructions -- notably the unit
+    /// tests -- keep compiling, and a caller that genuinely has no cache to bust (a one-off
+    /// script) can pass null. In every host the DI graph supplies the real resolver.
+    /// </summary>
+    public UserService(IUserRepository repository, IPermissionResolver? permissions = null)
+    {
+        _repository = repository;
+        _permissions = permissions ?? NullPermissionResolver.Instance;
+    }
 
     public async Task<Result<PagedList<UserResponse>>> SearchAsync(
         Guid? entityId, string? q, int page, int pageSize, CancellationToken ct = default)
@@ -133,6 +146,15 @@ public class UserService : IUserService
         }
 
         await _repository.SaveChangesAsync(ct);
+
+        if (!isActive)
+        {
+            // The permission set was cached before the account was disabled. TokenVersion revokes
+            // the access tokens, but a still-cached permission set is a second, independent copy of
+            // the right to act -- drop it rather than waiting out the TTL (Task 8.2).
+            await _permissions.InvalidateUserAsync(user.Id, ct);
+        }
+
         return Result.Success(ToResponse(user));
     }
 
@@ -153,6 +175,10 @@ public class UserService : IUserService
         user.UpdatedAt = now;
 
         await _repository.SaveChangesAsync(ct);
+
+        // Same reasoning as SetActiveAsync: a deleted account's cached permissions must not
+        // outlive the tokens that were just revoked.
+        await _permissions.InvalidateUserAsync(user.Id, ct);
         return Result.Success();
     }
 

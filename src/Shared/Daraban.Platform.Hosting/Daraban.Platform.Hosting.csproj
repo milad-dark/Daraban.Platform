@@ -10,6 +10,9 @@
 		<PackageReference Include="AspNetCore.HealthChecks.Redis" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+		<!-- Task 8.2: AddStackExchangeRedisCache. Kept in Shared so modules never take a
+		             direct dependency on Redis; they only see IDistributedCache. -->
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
 		<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
 		<PackageReference Include="Serilog" />
 		<PackageReference Include="Serilog.AspNetCore" />

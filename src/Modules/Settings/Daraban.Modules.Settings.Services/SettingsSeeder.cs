@@ -60,14 +60,24 @@ public class SettingsSeeder(
         logger.LogInformation("Removed {Count} orphaned setting(s): {Keys}", orphans.Length, string.Join(", ", orphans));
     }
 
-    /// <summary>Stable fingerprint of the catalog definition set -- usable by hosts to
-    /// distinguish a cache written by a different process version from a current one.</summary>
-    internal static string ComputeFingerprint()
-    {
-        var payload = JsonSerializer.Serialize(
-            SettingCatalog.All.Select(d => new { d.Key, d.Default, Type = d.Type.ToString(), d.Category, d.IsSecret }));
+    /// <summary>Stable fingerprint of the catalog definition set -- lets a host distinguish a
+        /// cache entry written by a different process version from a current one. Built from an
+        /// explicit, ordered projection so the digest depends only on catalog content, never on
+        /// reflection or serialization order.</summary>
+        internal static string ComputeFingerprint()
+        {
+            var builder = new System.Text.StringBuilder();
+            foreach (var definition in SettingCatalog.All)
+            {
+                builder.Append(definition.Key).Append('\u001f')
+                    .Append(definition.Default).Append('\u001f')
+                    .Append(definition.Type).Append('\u001f')
+                    .Append(definition.Category).Append('\u001f')
+                    .Append(definition.IsSecret ? '1' : '0').Append('\u001e');
+            }
 
-        var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(payload));
-        return Convert.ToHexString(hash);
-    }
+            var hash = System.Security.Cryptography.SHA256.HashData(
+                System.Text.Encoding.UTF8.GetBytes(builder.ToString()));
+            return Convert.ToHexString(hash);
+        }
 }
