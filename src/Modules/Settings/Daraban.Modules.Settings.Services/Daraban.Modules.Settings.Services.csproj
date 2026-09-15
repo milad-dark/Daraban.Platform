@@ -18,6 +18,7 @@
     <ProjectReference Include="..\Daraban.Modules.Settings.Data\Daraban.Modules.Settings.Data.csproj" />
     <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Common\Daraban.Platform.Common.csproj" />
     <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Abstractions\Daraban.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Daraban.Platform.Hosting\Daraban.Platform.Hosting.csproj" />
   </ItemGroup>
 
 </Project>

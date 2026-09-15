@@ -319,4 +319,65 @@ public class PermissionResolverTests : IDisposable
     {
         await CreateSut().InvalidateAsync(UserId, RootEntityId);
     }
+
+    [Fact]
+    public async Task InvalidateUserAsync_Drops_Every_Entity_Entry_For_That_User()
+    {
+        var profileId = await SeedProfileAsync(("assets", "read"));
+        await GrantAsync(UserId, profileId, RootEntityId);
+        await GrantAsync(UserId, profileId, ChildEntityId);
+
+        var sut = CreateSut();
+        await sut.ResolveAsync(UserId, RootEntityId);
+        await sut.ResolveAsync(UserId, ChildEntityId);
+
+        await sut.InvalidateUserAsync(UserId);
+
+        // This is the path SetActiveAsync/DeleteAsync take: a disabled account has no single
+        // entity in hand, so every cached answer for it has to go.
+        Assert.Null(await _cache.GetStringAsync($"perms:{UserId}:{RootEntityId}"));
+        Assert.Null(await _cache.GetStringAsync($"perms:{UserId}:{ChildEntityId}"));
+    }
+
+    [Fact]
+    public async Task InvalidateUserAsync_Leaves_Other_Users_Entries_Alone()
+    {
+        var profileId = await SeedProfileAsync(("assets", "read"));
+        await GrantAsync(UserId, profileId, RootEntityId);
+        await GrantAsync(OtherUserId, profileId, RootEntityId);
+
+        var sut = CreateSut();
+        await sut.ResolveAsync(UserId, RootEntityId);
+        await sut.ResolveAsync(OtherUserId, RootEntityId);
+
+        await sut.InvalidateUserAsync(UserId);
+
+        // Evicting a different tenant's entry here would be a cross-tenant denial of service, and
+        // the key is user-scoped precisely so this cannot happen.
+        Assert.Null(await _cache.GetStringAsync($"perms:{UserId}:{RootEntityId}"));
+        Assert.NotNull(await _cache.GetStringAsync($"perms:{OtherUserId}:{RootEntityId}"));
+    }
+
+    [Fact]
+    public async Task InvalidateUserAsync_Is_Safe_When_The_User_Has_No_Grants()
+    {
+        await CreateSut().InvalidateUserAsync(UserId);
+    }
+
+    [Fact]
+    public async Task InvalidateUserAsync_Reaches_A_Recursive_Grants_Target_Entity()
+    {
+        var profileId = await SeedProfileAsync(("assets", "read"));
+        await GrantAsync(UserId, profileId, RootEntityId, isRecursive: true);
+
+        var sut = CreateSut();
+        await sut.ResolveAsync(UserId, ChildEntityId);
+
+        await sut.InvalidateUserAsync(UserId);
+
+        // The cache entry is keyed by the *target* entity, which is not the entity the grant row
+        // names. A naive implementation that only evicted the grant's own EntityId would leave this
+        // entry behind -- the exact shape of cache bug that keeps a revoked right alive.
+        Assert.Null(await _cache.GetStringAsync($"perms:{UserId}:{ChildEntityId}"));
+    }
 }

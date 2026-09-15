@@ -29,6 +29,18 @@ public class AssetsExportController(IAssetExportService exportService, ICurrentU
         [FromQuery] string? search = null,
         CancellationToken ct = default)
     {
+        // Task 8.2: CSV responses stream row-by-row into the response body (no full-result buffering).
+        // XLSX stays buffered — ClosedXML must build the whole workbook in memory before saving.
+        if (!format.Equals("xlsx", StringComparison.OrdinalIgnoreCase))
+        {
+            Response.ContentType = "text/csv";
+            Response.Headers.ContentDisposition =
+                $"attachment; filename=assets-{DateTime.UtcNow:yyyyMMdd-HHmm}.csv";
+            await exportService.WriteCsvAsync(
+                currentUser.ActiveEntityId, Response.Body, status, assetTypeId, locationId, search, ct);
+            return new EmptyResult();
+        }
+
         var result = await exportService.ExportAsync(
             currentUser.ActiveEntityId, format, status, assetTypeId, locationId, search, ct);
 

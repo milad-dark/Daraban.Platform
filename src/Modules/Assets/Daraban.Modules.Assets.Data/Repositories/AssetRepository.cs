@@ -24,6 +24,7 @@ public class AssetRepository : IAssetRepository
         CancellationToken ct = default)
     {
         var query = _db.Assets
+            .AsNoTracking() // Task 8.2: list page is mapped to DTOs, never mutated/saved.
             .Where(a => a.EntityNodeId == entityNodeId);
 
         if (status is not null)
@@ -50,6 +51,41 @@ public class AssetRepository : IAssetRepository
             .ToListAsync(ct)).AsReadOnly();
 
         return (items, total);
+    }
+
+    public IAsyncEnumerable<Asset> StreamAllAsync(
+        Guid entityNodeId,
+        AssetStatus? status,
+        Guid? assetTypeId,
+        Guid? locationId,
+        string? search,
+        CancellationToken ct = default)
+    {
+        var query = _db.Assets
+            .AsNoTracking()
+            .Where(a => a.EntityNodeId == entityNodeId);
+
+        if (status is not null)
+            query = query.Where(a => a.Status == status);
+
+        if (assetTypeId is not null)
+            query = query.Where(a => a.AssetTypeId == assetTypeId);
+
+        if (locationId is not null)
+            query = query.Where(a => a.LocationId == locationId);
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(a =>
+                a.Name.Contains(search) ||
+                (a.AssetTag != null && a.AssetTag.Contains(search)) ||
+                (a.SerialNumber != null && a.SerialNumber.Contains(search)));
+
+        // ToAsyncEnumerable keeps Npgsql in server-side cursor mode: rows are written to the
+        // export as they arrive instead of materialising the entire table into memory.
+        return query
+            .Include(a => a.AssetType)
+            .OrderByDescending(a => a.CreatedAt)
+            .ToAsyncEnumerable();
     }
 
     public async Task AddAsync(Asset asset, CancellationToken ct = default)

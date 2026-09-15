@@ -129,11 +129,13 @@ builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, DynamicPermissionPolicyProvider>();
 builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
-// Backs PermissionResolver's cache. AddDistributedMemoryCache() is a free, zero-dependency,
-// in-process IDistributedCache implementation -- swap to AddStackExchangeRedisCache() once
-// Redis is confirmed reliably available (Task 1.3's original plan); nothing else changes,
-// PermissionResolver only depends on the IDistributedCache interface.
-builder.Services.AddDistributedMemoryCache();
+// Backs PermissionResolver's cache, and (Task 8.2) the dashboard widget cache plus the
+// settings snapshot. Redis in every deployed environment, in-process memory when no
+// ConnectionStrings:Redis is configured -- see AddDarabanDistributedCache.
+builder.Services.AddDarabanDistributedCache(builder.Configuration);
+
+// Task 8.2: gzip/brotli compression for JSON/CSV/XLSX responses (hubs + health excluded).
+builder.Services.AddDarabanResponseCompression();
 
 builder.Services.AddAuthorization();
 
@@ -183,6 +185,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Task 8.2: must run before anything that writes a body (Swagger UI, HTTPS redirect's
+// 307s are too small to matter, but ordering keeps the middleware outermost over MVC).
+app.UseResponseCompression();
 
 app.UseHttpsRedirection();
 app.UseCors("Frontend");

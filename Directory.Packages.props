@@ -36,6 +36,11 @@
     <!-- Caching / messaging -->
     <PackageVersion Include="StackExchange.Redis" Version="3.0.17" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.11" />
+        <!-- Task 8.2: AddStackExchangeRedisCache, the production IDistributedCache
+                 implementation. StackExchange.Redis alone only gives the low-level client; this
+                 package wires it into the IDistributedCache abstraction the modules are written
+                 against. -->
+            <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.11" />
     <PackageVersion Include="RabbitMQ.Client" Version="7.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.10" />

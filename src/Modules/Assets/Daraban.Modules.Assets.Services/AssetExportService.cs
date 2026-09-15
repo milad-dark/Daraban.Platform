@@ -37,6 +37,27 @@ public class AssetExportService : IAssetExportService
         return Result.Success((ExportToCsv(items), "text/csv", "assets.csv"));
     }
 
+    public async Task WriteCsvAsync(Guid entityNodeId, Stream output, string? status, Guid? assetTypeId, Guid? locationId, string? search, CancellationToken ct = default)
+    {
+        AssetStatus? parsedStatus = null;
+        if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<AssetStatus>(status, true, out var s))
+            parsedStatus = s;
+
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            HasHeaderRecord = true,
+        };
+        // leaveOpen: the response stream belongs to ASP.NET Core, not us.
+        await using var textWriter = new StreamWriter(output, new UTF8Encoding(false), leaveOpen: true);
+        await using var writer = new CsvWriter(textWriter, config);
+        writer.Context.RegisterClassMap<AssetExportMap>();
+
+        // Rows hit the wire as Npgsql's reader yields them; peak memory is one row,
+        // unlike ExportAsync which materialises the whole result set first.
+        await writer.WriteRecordsAsync(_assetRepository.StreamAllAsync(entityNodeId, parsedStatus, assetTypeId, locationId, search, ct));
+        await writer.FlushAsync();
+    }
+
     private static Stream ExportToCsv(IReadOnlyList<Asset> assets)
     {
         var ms = new MemoryStream();

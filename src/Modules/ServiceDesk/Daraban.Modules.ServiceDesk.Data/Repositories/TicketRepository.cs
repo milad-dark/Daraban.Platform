@@ -40,6 +40,7 @@ public class TicketRepository : ITicketRepository
         CancellationToken ct = default)
     {
         var query = _context.Tickets
+            .AsNoTracking() // Task 8.2: list page is mapped to DTOs, never mutated/saved.
             .Where(t => t.EntityId == entityNodeId);
 
         if (type.HasValue)

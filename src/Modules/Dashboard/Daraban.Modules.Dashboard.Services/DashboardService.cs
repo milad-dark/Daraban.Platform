@@ -6,6 +6,7 @@ using Daraban.Modules.Dashboard.Services.Widgets;
 using Daraban.Platform.Common;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace Daraban.Modules.Dashboard.Services;
@@ -14,15 +15,28 @@ namespace Daraban.Modules.Dashboard.Services;
 /// Dashboard feature implementation (Task 7.1). Layout persistence is per-user; widget data
 /// comes from per-widget <see cref="IWidgetDataProvider"/> implementations resolved from DI.
 /// All expected failures return <see cref="Result{T}"/> -- no exceptions for control flow.
+///
+/// Widget payloads are cached per (widget, entity) for <see cref="IWidgetOptions.CacheDuration"/>
+/// (Task 8.2). The cache is in-process rather than shared: a dashboard read is a pure aggregation
+/// over the caller's own entity, so there is nothing to coordinate across instances, and keeping
+/// the DTOs in memory avoids the JSON round-trip a distributed cache would impose on
+/// <c>WidgetDataDto.Items</c> (which is <c>IReadOnlyList&lt;object&gt;</c>).
 /// </summary>
 public sealed class DashboardService(
     IDashboardLayoutRepository layoutRepository,
     IValidator<SaveLayoutRequest> layoutValidator,
     IEnumerable<IWidgetDataProvider> widgetProviders,
+    IWidgetOptions options,
+    IMemoryCache widgetCache,
     ILogger<DashboardService> logger) : IDashboardService
 {
     private readonly Dictionary<string, IWidgetDataProvider> _providers =
         widgetProviders.ToDictionary(p => WidgetCatalog.ToApiName(p.Type), StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>Only successes are cached, so a widget that is failing right now is retried on the
+    /// next request instead of being frozen as an empty payload for a whole TTL.</summary>
+    internal static string WidgetCacheKey(WidgetType type, Guid entityId) =>
+        $"dashboard:widget:{WidgetCatalog.ToApiName(type)}:{entityId:N}";
 
     public Result<IReadOnlyList<WidgetCatalog.WidgetDefinition>> GetWidgetCatalog() =>
         Result.Success<IReadOnlyList<WidgetCatalog.WidgetDefinition>>(WidgetCatalog.All);
@@ -93,9 +107,29 @@ public sealed class DashboardService(
                 new Error("DASHBOARD.WIDGET_NOT_FOUND", $"No provider registered for widget '{type}'.", ErrorType.NotFound));
         }
 
+        var cacheKey = WidgetCacheKey(type, entityId);
+        var cacheable = options.CacheDuration > TimeSpan.Zero;
+
+        if (cacheable && widgetCache.TryGetValue(cacheKey, out WidgetDataDto? cached) && cached is not null)
+        {
+            return Result.Success(cached);
+        }
+
         try
         {
-            return Result.Success(await provider.GetDataAsync(entityId, ct));
+            var data = await provider.GetDataAsync(entityId, ct);
+
+            if (cacheable)
+            {
+                // Size is mandatory here because the module registers the cache with a SizeLimit.
+                widgetCache.Set(cacheKey, data, new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = options.CacheDuration,
+                    Size = 1,
+                });
+            }
+
+            return Result.Success(data);
         }
         catch (OperationCanceledException)
         {
@@ -104,7 +138,8 @@ public sealed class DashboardService(
         catch (Exception ex)
         {
             // Widget data is auxiliary: a broken provider must degrade to an empty widget,
-            // not fail the whole dashboard. Logged at error for observability.
+            // not fail the whole dashboard. Logged at error for observability. Deliberately
+            // NOT cached, so the next request retries rather than serving a stale empty payload.
             logger.LogError(ex, "Widget data provider for {WidgetType} failed", type);
             return Result.Success(new WidgetDataDto(WidgetCatalog.ToApiName(type), [], null));
         }

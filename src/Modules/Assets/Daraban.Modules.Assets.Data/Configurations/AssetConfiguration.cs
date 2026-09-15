@@ -24,6 +24,10 @@ public class AssetConfiguration : IEntityTypeConfiguration<Asset>
         builder.HasIndex(x => x.SerialNumber);
         builder.HasIndex(x => x.Status);
         builder.HasIndex(x => x.EntityNodeId);
+        // Task 8.2: the asset grid filters tenant + (optionally) status and sorts by created_at;
+        // a composite lets Postgres satisfy the whole predicate+order in one index scan.
+        builder.HasIndex(x => new { x.EntityNodeId, x.Status });
+        builder.HasIndex(x => new { x.EntityNodeId, x.CreatedAt });
         builder.HasOne(x => x.AssetType)
             .WithMany(x => x.Assets)
             .HasForeignKey(x => x.AssetTypeId)

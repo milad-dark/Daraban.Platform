@@ -1,0 +1,16 @@
+# Daraban pgBouncer auth file — placeholder only, NEVER commit real secrets.
+#
+# Format:  "username" "secret"
+#
+# Generate the real SCRAM-SHA-256 secret at deploy time (pgBouncer >= 1.14
+# accepts the same format Postgres stores in pg_shadow):
+#
+#   # connect to Postgres DIRECTLY (port 5432) as superuser:
+#   SELECT usename, passwd FROM pg_shadow WHERE usename = 'daraban';
+#
+# Copy the $2$... hash into the line below, mount this file as a Docker
+# secret (do not bake it into the image), then:
+#
+#   docker exec daraban-pgbouncer pgbouncer -RELOAD /etc/pgbouncer/pgbouncer.ini
+#
+"daraban" "$2b$$CHANGE_ME_GENERATE_FROM_PG_SHADOW"

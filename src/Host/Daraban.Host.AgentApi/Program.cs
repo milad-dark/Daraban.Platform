@@ -26,9 +26,12 @@ builder.Services.AddDarabanHealthChecks(builder.Configuration);
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddInventoryModule(builder.Configuration);
 
-// Backs PermissionResolver's cache (same rationale as Host.Api: in-process
-// IDistributedCache now, swap to Redis once confirmed reliably available).
-builder.Services.AddDistributedMemoryCache();
+// Backs PermissionResolver's cache (Task 8.2: Redis when ConnectionStrings:Redis is set).
+// Agent submissions are high-volume, so this host benefits from a shared cache too.
+builder.Services.AddDarabanDistributedCache(builder.Configuration);
+
+// Task 8.2: agent check-ins and inventory payloads are JSON-heavy; compress them too.
+builder.Services.AddDarabanResponseCompression();
 
 var mvcBuilder = builder.Services.AddControllers();
 mvcBuilder.AddApplicationPart(typeof(Daraban.Modules.Inventory.Api.AssemblyMarker).Assembly);
@@ -61,6 +64,8 @@ builder.Services.AddCors(options => options.AddPolicy("Agents", policy =>
 var app = builder.Build();
 
 app.UseExceptionHandler();
+
+app.UseResponseCompression();
 
 app.UseHttpsRedirection();
 app.UseCors("Agents");

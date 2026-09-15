@@ -24,6 +24,12 @@ public static class KnowledgeModuleServiceCollectionExtensions
 
         services.AddValidatorsFromAssembly(typeof(KnowledgeModuleServiceCollectionExtensions).Assembly);
 
+        // Task 8.2: shared memory cache for KbArticleService read-model caching. Deliberately no
+        // SizeLimit here -- MemoryCacheOptions is host-wide and Dashboard already sets one; every
+        // cached entry reports Size=1 so a limit (when present) stays consistent.
+        services.AddMemoryCache();
+        services.Configure<KbCacheOptions>(configuration.GetSection(KbCacheOptions.SectionName));
+
         // ---- Repositories (Task 6.4) ----
         services.AddScoped<IKbCategoryRepository, KbCategoryRepository>();
         services.AddScoped<IKbArticleRepository, KbArticleRepository>();

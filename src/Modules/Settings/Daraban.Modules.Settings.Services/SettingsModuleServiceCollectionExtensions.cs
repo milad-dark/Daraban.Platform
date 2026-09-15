@@ -1,6 +1,7 @@
 using Daraban.Modules.Settings.Data;
 using Daraban.Modules.Settings.Data.Repositories;
 using Daraban.Modules.Settings.Services;
+using Daraban.Platform.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
@@ -18,14 +19,18 @@ public static class SettingsModuleServiceCollectionExtensions
         services.AddDbContext<SettingsDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("Postgres")));
 
-        // The settings cache uses the same IDistributedCache the platform already registers
-        // (AddDistributedMemoryCache today, AddStackExchangeRedisCache when Redis lands);
-        // swapping the backend stays a host-level, one-line change.
-        services.AddDistributedMemoryCache();
+        // The settings cache uses the host's IDistributedCache (Task 8.2: Redis in every
+                // deployed environment, in-process memory locally). Registering it here too makes the
+                // module self-sufficient for its own integration tests; AddDarabanDistributedCache is
+                // idempotent, so whichever registration runs first wins and the host's configuration
+                // is never overridden by this call.
+                services.AddDarabanDistributedCache(configuration);
 
         services.AddScoped<ISystemSettingRepository, SystemSettingRepository>();
         services.AddSingleton<SystemSettingCache>();
-        services.AddScoped<IConnectivityTester, ConnectivityTester>();
+                services.Configure<SystemSettingCacheOptions>(
+                    configuration.GetSection(SystemSettingCacheOptions.SectionName));
+                services.AddScoped<IConnectivityTester, ConnectivityTester>();
         services.AddScoped<ISettingsService, SettingsService>();
 
         return services;

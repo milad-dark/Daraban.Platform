@@ -64,12 +64,12 @@ services:
      restart: unless-stopped
      environment:
        - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
-       - ASPNETCORE_URLS=http:// :8080
-       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DefaultConnection}
+       - ASPNETCORE_URLS=http://0.0.0.0:8080
+       - ConnectionStrings__Postgres=${CONNECTIONSTRINGS__Postgres}
        - ConnectionStrings__Redis=${CONNECTIONSTRINGS__Redis}
-       - RabbitMq__HostName=${RABBITMQ__HostName:-rabbitmq}
+       - RabbitMq__Host=${RABBITMQ__Host:-rabbitmq}
        - RabbitMq__Port=${RABBITMQ__Port:-5672}
-       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Username=${RABBITMQ__Username:-daraban}
        - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
        - Jwt__SigningKeyPemPath=${JWT__SigningKeyPemPath:-/app/certs/jwt-signing-key.pem}
        - Jwt__Issuer=${JWT__Issuer:-https://daraban.local}
@@ -100,12 +100,12 @@ services:
      restart: unless-stopped
      environment:
        - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
-       - ASPNETCORE_URLS=http:// :8081
-       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DefaultConnection}
+       - ASPNETCORE_URLS=http://0.0.0.0:8081
+       - ConnectionStrings__Postgres=${CONNECTIONSTRINGS__Postgres}
        - ConnectionStrings__Redis=${CONNECTIONSTRINGS__Redis}
-       - RabbitMq__HostName=${RABBITMQ__HostName:-rabbitmq}
+       - RabbitMq__Host=${RABBITMQ__Host:-rabbitmq}
        - RabbitMq__Port=${RABBITMQ__Port:-5672}
-       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Username=${RABBITMQ__Username:-daraban}
        - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
        - Jwt__SigningKeyPemPath=${JWT__SigningKeyPemPath:-/app/certs/jwt-signing-key.pem}
        - Jwt__Issuer=${JWT__Issuer:-https://daraban.local}
@@ -138,11 +138,11 @@ services:
      restart: unless-stopped
      environment:
        - DOTNET_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
-       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DefaultConnection}
+       - ConnectionStrings__Postgres=${CONNECTIONSTRINGS__Postgres}
        - ConnectionStrings__Redis=${CONNECTIONSTRINGS__Redis}
-       - RabbitMq__HostName=${RABBITMQ__HostName:-rabbitmq}
+       - RabbitMq__Host=${RABBITMQ__Host:-rabbitmq}
        - RabbitMq__Port=${RABBITMQ__Port:-5672}
-       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Username=${RABBITMQ__Username:-daraban}
        - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
      depends_on:
        postgres:
@@ -162,11 +162,11 @@ services:
      restart: unless-stopped
      environment:
        - DOTNET_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
-       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DefaultConnection}
+       - ConnectionStrings__Postgres=${CONNECTIONSTRINGS__Postgres}
        - ConnectionStrings__Redis=${CONNECTIONSTRINGS__Redis}
-       - RabbitMq__HostName=${RABBITMQ__HostName:-rabbitmq}
+       - RabbitMq__Host=${RABBITMQ__Host:-rabbitmq}
        - RabbitMq__Port=${RABBITMQ__Port:-5672}
-       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Username=${RABBITMQ__Username:-daraban}
        - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
      depends_on:
        postgres:
@@ -186,11 +186,11 @@ services:
      restart: unless-stopped
      environment:
        - DOTNET_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
-       - ConnectionStrings__DefaultConnection=${CONNECTIONSTRINGS__DefaultConnection}
+       - ConnectionStrings__Postgres=${CONNECTIONSTRINGS__Postgres}
        - ConnectionStrings__Redis=${CONNECTIONSTRINGS__Redis}
-       - RabbitMq__HostName=${RABBITMQ__HostName:-rabbitmq}
+       - RabbitMq__Host=${RABBITMQ__Host:-rabbitmq}
        - RabbitMq__Port=${RABBITMQ__Port:-5672}
-       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Username=${RABBITMQ__Username:-daraban}
        - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
      depends_on:
        postgres:
@@ -212,7 +212,7 @@ services:
        - DOTNET_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
        - ConnectionStrings__Postgres=${CONNECTIONSTRINGS__Postgres}
        - RabbitMq__Host=${RABBITMQ__Host:-rabbitmq}
-       - RabbitMq__UserName=${RABBITMQ__UserName:-daraban}
+       - RabbitMq__Username=${RABBITMQ__Username:-daraban}
        - RabbitMq__Password=${RABBITMQ__Password:-change_me_in_production}
        - ReportStore__RootPath=/var/daraban/reports
      volumes:

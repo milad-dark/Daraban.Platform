@@ -59,6 +59,11 @@ public static class IdentityModuleServiceCollectionExtensions
         services.AddScoped<IEntityScopeAccessor, EntityScopeAccessor>();
         services.AddScoped<IPermissionResolver, PermissionResolver>();
 
+                // Task 8.2: the permission cache window is configurable per environment instead of the
+                        // hard-coded five minutes. Defaults live on the options type, so an environment that
+                        // configures nothing keeps the previous behaviour exactly.
+                        services.Configure<PermissionCacheOptions>(configuration.GetSection(PermissionCacheOptions.SectionName));
+
         // ---- Agent services (Task 4.1/4.4: agent auth, fleet management, remote commands) ----
         // Registered here, not in each host's Program.cs, so every host that loads the
         // Identity module (Host.Api and Host.AgentApi both) gets a working agent service

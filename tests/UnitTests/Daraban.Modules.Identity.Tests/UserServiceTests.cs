@@ -1,6 +1,7 @@
 using Daraban.Modules.Identity.Data.Entities;
 using Daraban.Modules.Identity.Data.Repositories;
 using Daraban.Modules.Identity.Services.Users;
+using Daraban.Platform.Abstractions;
 using Daraban.Platform.Common;
 using Moq;
 using Xunit;
@@ -9,14 +10,25 @@ namespace Daraban.Modules.Identity.Tests;
 
 /// <summary>
 /// UserService: admin-side account management. The behaviours worth pinning are that a
-/// disable/delete actually kills live sessions (via TokenVersion) and that duplicate
+/// disable/delete actually kills live sessions (via TokenVersion), that the cached permission
+/// set for that user is dropped at the same time (Task 8.2), and that duplicate
 /// username/email return a conflict instead of letting the unique index throw.
 /// </summary>
 public class UserServiceTests
 {
     private readonly Mock<IUserRepository> _users = new(MockBehavior.Strict);
+    private readonly Mock<IPermissionResolver> _permissions = new(MockBehavior.Loose);
 
-    private UserService CreateSut() => new(_users.Object);
+    public UserServiceTests()
+    {
+        // Loose rather than strict: most tests never touch the resolver, and a strict mock would
+        // force every one of them to stub a call they do not care about.
+        _permissions
+            .Setup(p => p.InvalidateUserAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+    }
+
+    private UserService CreateSut() => new(_users.Object, _permissions.Object);
 
     private static User UserWith(bool isActive = true, int tokenVersion = 0) => new()
     {
@@ -243,6 +255,36 @@ public class UserServiceTests
     }
 
     [Fact]
+    public async Task SetActiveAsync_Disabling_Drops_The_Cached_Permission_Set()
+    {
+        var user = UserWith(isActive: true);
+        _users.Setup(r => r.GetByIdAsync(user.Id, It.IsAny<CancellationToken>())).ReturnsAsync(user);
+        _users.Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+        await CreateSut().SetActiveAsync(user.Id, isActive: false);
+
+        // TokenVersion revokes the tokens, but the resolved permission set lives in Redis with its
+        // own TTL. If it is not dropped here, a disabled user's rights stay cached (Task 8.2).
+        _permissions.Verify(
+            p => p.InvalidateUserAsync(user.Id, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task SetActiveAsync_Enabling_Leaves_The_Permission_Cache_Alone()
+    {
+        var user = UserWith(isActive: false, tokenVersion: 4);
+        _users.Setup(r => r.GetByIdAsync(user.Id, It.IsAny<CancellationToken>())).ReturnsAsync(user);
+        _users.Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+        await CreateSut().SetActiveAsync(user.Id, isActive: true);
+
+        // Nothing was revoked, so there is nothing to invalidate -- and the common case is a
+        // freshly enabled user who has no cache entry yet anyway.
+        _permissions.Verify(
+            p => p.InvalidateUserAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
     public async Task SetActiveAsync_Enabling_Does_Not_Bump_TokenVersion()
     {
         var user = UserWith(isActive: false, tokenVersion: 4);
@@ -306,6 +348,21 @@ public class UserServiceTests
         // token would otherwise keep working right up to its expiry.
         Assert.False(user.IsActive);
         Assert.Equal(3, user.TokenVersion);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_Drops_The_Cached_Permission_Set()
+    {
+        var user = UserWith(isActive: true);
+        _users.Setup(r => r.GetByIdAsync(user.Id, It.IsAny<CancellationToken>())).ReturnsAsync(user);
+        _users.Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+        await CreateSut().DeleteAsync(user.Id);
+
+        // Same reasoning as SetActiveAsync: the tokens are revoked, so the cached rights must not
+        // be left to expire on their own.
+        _permissions.Verify(
+            p => p.InvalidateUserAsync(user.Id, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
