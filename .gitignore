@@ -75,6 +75,7 @@ StyleCopReport.xml
 # Files built by Visual Studio
 .env
 .env.*
+!.env.example
 *_i.c
 *_p.c
 *_h.h

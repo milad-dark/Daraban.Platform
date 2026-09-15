@@ -1,0 +1,27 @@
+# Build artifacts
+**/bin/
+**/obj/
+**/TestResults/
+**/node_modules/
+**/dist/
+**/.angular/
+
+# VCS / IDE
+.git/
+.vs/
+.vscode/
+*.user
+
+# Secrets and local config — never ship into images
+.env
+.env.*
+!.env.example
+certs/
+*.pem
+*.key
+
+# Docker/docs noise
+logs/
+playwright-report/
+test-results/
+docs/
