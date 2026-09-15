@@ -49,8 +49,11 @@ public sealed class LocalReportFileStore : IReportFileStore
         _root = Path.IsPathRooted(root) ? root : Path.GetFullPath(Path.Combine(env.ContentRootPath, root));
         _maxFileBytes = options.Value.MaxFileBytes;
         _logger = logger;
-
-        Directory.CreateDirectory(_root);
+        // No eager Directory.CreateDirectory here: this singleton is resolved during controller
+        // activation in the API host, which only ever *reads* artifacts -- and the API container
+        // (or a non-root CI user on Linux) may legitimately lack permission to create the root.
+        // The writer (reporting worker) creates the directory lazily in WriteAsync, where the
+        // bucketed path's parent chain (including the root) is made on first use.
     }
 
     public async Task<string> WriteAsync(Guid savedReportId, string format, byte[] content, CancellationToken ct = default)

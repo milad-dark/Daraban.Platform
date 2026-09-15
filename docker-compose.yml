@@ -77,6 +77,8 @@ services:
        - Jwt__Audience=${JWT__Audience:-daraban-api}
      volumes:
        - ./certs:/app/certs:ro
+       # API only reads report artifacts for GET /reports/{id}/download -- mounted read-only.
+       - report-artifacts:/var/daraban/reports:ro
      depends_on:
        postgres:
          condition: service_healthy
