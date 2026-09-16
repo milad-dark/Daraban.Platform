@@ -5,8 +5,10 @@
 #                 rolling `up -d --no-deps`, health gate, rollback on failure
 #
 # Required repository secrets:
-#   DOCKERHUB_USERNAME, DOCKERHUB_TOKEN,
-#   DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY   (and optional DEPLOY_PATH, default /opt/daraban)
+#   DOCKERHUB_USERNAME, DOCKERHUB_TOKEN
+# Deploy job additionally needs DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY
+#   (optional DEPLOY_PATH, default /opt/daraban) AND repository variable DEPLOY_ENABLED=true;
+#   without them the deploy job is skipped (images still publish to Docker Hub).
 # =============================================================================
 name: CD
 
@@ -66,6 +68,10 @@ jobs:
     name: Deploy to production
     runs-on: ubuntu-latest
     needs: build-images
+    # Skipped until a production server exists: enable with
+    #   gh variable set DEPLOY_ENABLED --body true
+    # (job-level `if` cannot read secrets, hence the variable gate + DEPLOY_* secrets).
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
     steps:
       - name: SSH deploy (rolling update with rollback)
         uses: appleboy/ssh-action@v1
@@ -76,7 +82,6 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           envs: DEPLOY_PATH,GITHUB_SHA
-          script_stop: true
           script: |
             set -e
             cd "${DEPLOY_PATH:-/opt/daraban}"

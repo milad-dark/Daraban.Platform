@@ -30,6 +30,11 @@ flowchart LR
 | `DEPLOY_SSH_KEY` | cd.yml | Private key (corresponding public key in `authorized_keys`) |
 | `DEPLOY_PATH` *(optional)* | cd.yml | Checkout dir on the server; default `/opt/daraban` |
 
+**No server yet?** The `deploy` job is gated behind the repository *variable*
+`DEPLOY_ENABLED` — until you run `gh variable set DEPLOY_ENABLED --body true`
+(and provide the `DEPLOY_*` secrets above), pushes to `master` still build and
+publish all six images to Docker Hub, and the deploy step is cleanly skipped.
+
 CI needs no secrets: unit/architecture/integration tests and container *builds*
 are self-contained (Testcontainers pulls public postgres/redis/rabbitmq images).
 
