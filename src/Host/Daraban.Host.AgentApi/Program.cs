@@ -65,6 +65,10 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 
+// Task 8.4: same Prometheus HTTP metrics as Host.Api -- scraped as a separate target
+// (host-agentapi:8081) so per-service request/error rates stay distinguishable.
+app.UseDarabanHttpMetrics();
+
 app.UseResponseCompression();
 
 app.UseHttpsRedirection();
@@ -73,6 +77,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapDarabanHealthCheckEndpoints();
+app.MapDarabanMetrics();
 app.MapHub<AgentControlHub>("/hubs/agent-control");
 
 app.Run();

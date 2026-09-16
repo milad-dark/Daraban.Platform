@@ -1,0 +1,59 @@
+# =============================================================================
+# Prometheus scrape configuration (Task 8.4). Mounted read-only into the
+# prometheus service by docker-compose.prod.yml.
+#
+# Every target lives on the same compose network and is addressed by container
+# DNS name -- no host ports involved, so nothing here is reachable from outside
+# the deployment. Scrape interval 15s keeps cardinality and disk use modest on
+# a single host (30-day retention is set on the prometheus command line).
+# =============================================================================
+
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+
+# Alert rules live next to this file (deploy/monitoring/rules.yml) and are
+# evaluated inside Prometheus itself. There is deliberately no Alertmanager in
+# this stack: firing alerts are visible in the Prometheus/Grafana UI, and SMTP
+# paging is a documented follow-up, not a half-wired integration.
+rule_files:
+  - /etc/prometheus/rules.yml
+
+scrape_configs:
+  # Both ASP.NET hosts expose /metrics via MapDarabanMetrics (anonymous by
+  # design -- Prometheus cannot present a JWT; the edge never routes /metrics).
+  - job_name: daraban-host-api
+    static_configs:
+      - targets: ["host-api:8080"]
+
+  - job_name: daraban-host-agentapi
+    static_configs:
+      - targets: ["host-agentapi:8081"]
+
+  # Background workers expose a standalone MetricServer on the shared internal
+  # port (AddDarabanWorkerMetrics). Same port in every container is fine --
+  # each has its own network namespace; DNS names keep them distinct.
+  - job_name: daraban-workers
+    static_configs:
+      - targets:
+          - "worker-automation:9102"
+          - "worker-notifications:9102"
+          - "worker-reporting:9102"
+          - "worker-reports:9102"
+
+  # RabbitMQ's built-in plugin (enabled via deploy/rabbitmq/enabled_plugins).
+  # Source of the queue-depth panels and the queue-backup alert.
+  - job_name: rabbitmq
+    static_configs:
+      - targets: ["rabbitmq:15692"]
+
+  # Node-level CPU/memory/disk for the memory-pressure and disk-space alerts.
+  - job_name: node
+    static_configs:
+      - targets: ["node-exporter:9100"]
+
+  # Postgres internals (connections, locks, bloat-adjacent stats).
+  - job_name: postgres
+    static_configs:
+      - targets: ["postgres-exporter:9187"]

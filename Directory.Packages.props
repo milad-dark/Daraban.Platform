@@ -33,6 +33,7 @@
     <!-- XSS: sanitizes user-supplied rich text (KB article content, ticket tasks/solutions)
          before storage, since the Angular client renders those fields with [innerHTML]. -->
     <PackageVersion Include="HtmlSanitizer" Version="9.2.1039" />
+    <PackageVersion Include="prometheus-net.AspNetCore" Version="8.2.1" />
     <!-- Caching / messaging -->
     <PackageVersion Include="StackExchange.Redis" Version="3.0.17" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.11" />

@@ -9,6 +9,10 @@ builder.Configuration.AddEnvironmentVariables(prefix: "DARABAN_");
 // Shared Serilog setup (console + rolling file) owned by Daraban.Platform.Hosting.
 builder.UseDarabanSerilog(applicationName: "Daraban.Workers.CommandDispatch");
 
+// Task 8.4: standalone /metrics scrape endpoint (port 9102, internal network only --
+// same trust-boundary reasoning as the hosts; see PrometheusMetricsExtensions).
+builder.AddDarabanWorkerMetrics();
+
 // Identity module (provides IAgentCommandService + IAgentCommandRepository + IdentityDbContext)
 builder.Services.AddIdentityModule(builder.Configuration);
 
