@@ -267,6 +267,18 @@ UpgradeLog*.htm
 ServiceFabricBackup/
 *.rptproj.bak
 
+# Task 8.4: the Visual Studio "Backup*/" rule above also matches deploy/backup/,
+# which holds the backup RUNBOOK SCRIPT (not VS conversion output) -- un-ignore it.
+# Encrypted backup blobs (*.enc) must still never be committed: they are useless
+# without the passphrase and an attractive nuisance with it.
+!deploy/backup/
+!deploy/backup/**
+*.enc
+# Live TLS material and ACME challenge litter are created on the server by
+# init-letsencrypt.sh / certbot -- committing them would publish private keys.
+deploy/nginx/certs/
+deploy/nginx/certbot-webroot/
+
 # SQL Server files
 *.mdf
 *.ldf

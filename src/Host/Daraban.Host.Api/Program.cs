@@ -180,6 +180,10 @@ var app = builder.Build();
 // it isn't protected by it.
 app.UseExceptionHandler();
 
+// Task 8.4: HTTP request metrics (count/duration/in-flight) for Prometheus. Immediately
+// inside the exception handler so rejected requests (401/429) are counted too.
+app.UseDarabanHttpMetrics();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -207,6 +211,7 @@ await app.Services.UseSettingsSeederAsync();
 await app.Services.UsePluginsSeederAsync();
 
 app.MapDarabanHealthCheckEndpoints();
+app.MapDarabanMetrics();
 app.MapHub<Daraban.Host.Api.Hubs.AgentStatusHub>("/hubs/agent-status");
 app.MapHub<Daraban.Host.Api.Hubs.TicketHub>("/hubs/tickets");
 

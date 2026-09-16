@@ -1,0 +1,150 @@
+# =============================================================================
+# Daraban Platform — PRODUCTION overlay (Task 8.4).
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Everything in this file is production-only infrastructure. The base file stays
+# dev-friendly; this overlay adds TLS termination, the monitoring stack, hardened
+# persistence, and the RabbitMQ metrics plugin. Monitoring UIs expose NO ports to
+# the host -- reach Grafana/Prometheus/Uptime Kuma over SSH tunnels (see
+# docs/10-Backup-Restore-Runbook.md). Only :80 (ACME + redirect) and :443 are
+# ever published.
+#
+# Third-party image pins below were verified against Docker Hub on 2026-09-16
+# (newest stable at the time; -rc/-nightly/-slim-experimental lines excluded).
+# Bump them deliberately, never to :latest.
+# =============================================================================
+
+services:
+  nginx:
+    ports: !override
+      - "${NGINX_HTTP_PORT:-80}:80"
+      - "${NGINX_HTTPS_PORT:-443}:443"
+    volumes: !override
+      # Replaces the dev conf mount (same container path wins the merge).
+      - ./deploy/nginx/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
+      # Certificates written by certbot/init-letsencrypt.sh. The "live/current"
+      # symlink inside is what nginx.prod.conf points at.
+      - ./deploy/nginx/certs:/etc/letsencrypt:ro
+      # ACME HTTP-01 challenge webroot, shared with the certbot service.
+      - ./deploy/nginx/certbot-webroot:/var/www/certbot:ro
+
+  # One-shot certificate manager. No ports, no restart policy: it only runs via
+  # `docker compose run` (init-letsencrypt.sh) and host cron (`certbot renew`).
+  # Long syntax for volumes is used so the read/write mode is explicit per mount.
+  certbot:
+    image: certbot/certbot:v5.8.0
+    container_name: daraban-certbot
+    volumes:
+      - type: bind
+        source: ./deploy/nginx/certs
+        target: /etc/letsencrypt
+      - type: bind
+        source: ./deploy/nginx/certbot-webroot
+        target: /var/www/certbot
+    networks:
+      - daraban-net
+
+  redis:
+    # Replaces the base command (scalar: last file wins, no merge). Keeps AOF and
+    # adds RDB snapshots: 900s/1 change, 300s/10 changes, 60s/10000 changes. The
+    # RDB file is what deploy/backup/backup.sh copies into the backup set.
+    command: !override redis-server --appendonly yes --save "900 1" --save "300 10" --save "60 10000"
+
+  rabbitmq:
+    volumes:
+      # Enables the built-in Prometheus plugin alongside management. This REPLACES
+      # nothing (new mount target, merged additively): [rabbitmq_management,
+      # rabbitmq_prometheus] must BOTH be listed, because mounting this file
+      # overrides the image variant's own default plugin list.
+      - ./deploy/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+
+  # ---- Monitoring stack (internal network only -- no published ports) ----
+
+  prometheus:
+    image: prom/prometheus:v3.13.3
+    container_name: daraban-prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=30d"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./deploy/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./deploy/monitoring/rules.yml:/etc/prometheus/rules.yml:ro
+      - prometheusdata:/prometheus
+    networks:
+      - daraban-net
+
+  grafana:
+    image: grafana/grafana:13.0-slim
+    container_name: daraban-grafana
+    restart: unless-stopped
+    environment:
+      # First-run admin credentials. Change immediately in the UI; afterwards
+      # these are ignored (Grafana keeps its own sqlite user store).
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_AUTH_DISABLE_LOGIN_FORM=false
+    volumes:
+      - ./deploy/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafanadata:/var/lib/grafana
+    networks:
+      - daraban-net
+
+  node-exporter:
+    image: prom/node-exporter:v1.12.1
+    container_name: daraban-node-exporter
+    restart: unless-stopped
+    command:
+      # Only the root filesystem and standard collectors: netstat/nfs/samba-style
+      # collectors are disabled to keep cardinality (and attack surface) down.
+      - "--path.rootfs=/host"
+      - "--collector.disable-defaults"
+      - "--collector.cpu"
+      - "--collector.meminfo"
+      - "--collector.filesystem"
+      - "--collector.diskstats"
+      - "--collector.loadavg"
+      - "--collector.netdev"
+      - "--collector.uname"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/host:ro,rslave
+    networks:
+      - daraban-net
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.20.1
+    container_name: daraban-postgres-exporter
+    restart: unless-stopped
+    environment:
+      # Built from the same POSTGRES_* variables as the database service. If the
+      # password contains URI-significant characters (@ / : ? #), URL-encode them
+      # or the exporter fails to parse the DSN at startup (loud failure, logged).
+      - DATA_SOURCE_NAME=postgresql://${POSTGRES_USER:-daraban}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-daraban_platform}?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - daraban-net
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:2.5.4
+    container_name: daraban-uptime-kuma
+    restart: unless-stopped
+    volumes:
+      - uptimedata:/app/data
+    networks:
+      - daraban-net
+    # First visit (over the SSH tunnel, see runbook) creates the admin account.
+    # Monitors to configure there: https://<DOMAIN>/health/ready (keyword "Healthy"),
+    # host-api /health/live, host-agentapi /health/live.
+
+volumes:
+  prometheusdata:
+  grafanadata:
+  uptimedata:

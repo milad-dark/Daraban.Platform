@@ -1,0 +1,14 @@
+# Grafana dashboard provisioning (Task 8.4). Dashboards/*.json below are loaded
+# automatically; edits made in the UI are overwritten on restart by design --
+# the JSON files in git are the source of truth. To change a panel, edit the
+# JSON, recommit, redeploy.
+apiVersion: 1
+
+providers:
+  - name: daraban
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: false
+    options:
+      path: /var/lib/grafana/dashboards

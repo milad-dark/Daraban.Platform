@@ -15,6 +15,7 @@
 | ۷ | کارنامه عملکرد (Task 8.2) | [07-Performance.md](07-Performance.md) | پیوست فنی |
 | ۸ | پایپ‌لاین CI/CD (Task 8.3) | [08-CICD.md](08-CICD.md) | پیوست فنی |
 | ۹ | راهنمای استقرار (متغیرها، GitHub Secrets/Variables، سرور) | [09-Deployment-Guide.md](09-Deployment-Guide.md) | پیوست فنی |
+| ۱۰ | راهنمای بکاپ و بازیابی (Task 8.4) | [10-Backup-Restore-Runbook.md](10-Backup-Restore-Runbook.md) | پیوست فنی |
 
 > یادداشت فنی: تصمیم‌های معماری (به زبان انگلیسی) در پوشه `docs/decisions/` (ADR-001 تا
 > ADR-006) ثبت شده‌اند و نقشه ساختاری سامانه در `ARCHITECTURE.md` موجود است.
