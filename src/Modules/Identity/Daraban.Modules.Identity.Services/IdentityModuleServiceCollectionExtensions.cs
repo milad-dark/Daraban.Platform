@@ -76,8 +76,27 @@ public static class IdentityModuleServiceCollectionExtensions
         services.AddScoped<IAgentCommandRepository, AgentCommandRepository>();
         services.AddScoped<IAgentCommandService, AgentCommandService>();
 
-        // TODO: register remaining Identity resources (Groups) as they're built out, same shape as above.
+        // ---- Seed data (default users/roles/permissions on a fresh database) ---------
+        // Scoped: it consumes IdentityDbContext; UseIdentitySeederAsync resolves it
+        // inside a fresh scope at host startup.
+        services.AddScoped<IdentitySeeder>();
+
+        // TODO: register remaining Identity resources (Groups) as built out, same shape as above.
 
         return services;
+    }
+
+    /// <summary>Runs <see cref="IdentitySeeder.SeedAsync"/> once at Host.Api startup, before
+    /// the first request: root entity, the two seed profiles (Super-Admin / Standard User),
+    /// and — Development only — the default admin/user accounts. Call as
+    /// <c>await app.Services.UseIdentitySeederAsync();</c> after the settings/plugins seeders.
+    /// Safe to call from any host; user creation is Development-gated inside the seeder.</summary>
+    public static async Task UseIdentitySeederAsync(this IServiceProvider rootServices, CancellationToken ct = default)
+    {
+        var scope = rootServices.CreateScope();
+        using (scope)
+        {
+            await scope.ServiceProvider.GetRequiredService<IdentitySeeder>().SeedAsync(ct);
+        }
     }
 }

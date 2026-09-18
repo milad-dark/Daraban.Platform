@@ -209,6 +209,10 @@ await app.Services.UseSettingsSeederAsync();
 // registry marks enabled so a restart restores menu items and plugin services. ----
 await app.Services.UsePluginsSeederAsync();
 
+// ---- Identity seed: root entity, Super-Admin/Standard-User profiles + rights, and in
+// Development the default admin/user accounts (see IdentitySeeder doc header). ----
+await app.Services.UseIdentitySeederAsync();
+
 app.MapDarabanHealthCheckEndpoints();
 app.MapDarabanMetrics();
 app.MapHub<Daraban.Host.Api.Hubs.AgentStatusHub>("/hubs/agent-status");

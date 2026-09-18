@@ -21,6 +21,10 @@ dotnet run --project tools/Daraban.Tools.DbBootstrap -- \
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 # 4. Backend (hosts both API hosts; modules are wired in via Program.cs)
+#    On first start the API seeds: root entity, Super-Admin/Standard-User profiles with
+#    all [RequirePermission] rights, and (Development only) two default users:
+#      admin / Chang3Me!LocalOnly   (override: DARABAN_SEED_ADMIN_PASSWORD)
+#      user  / Chang3Me!LocalOnly   (override: DARABAN_SEED_USER_PASSWORD)
 dotnet run --project src/Host/Daraban.Host.Api          # main API  -> http://localhost:8080
 dotnet run --project src/Host/Daraban.Host.AgentApi     # agent API -> http://localhost:8081
 
