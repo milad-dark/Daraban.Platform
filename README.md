@@ -9,14 +9,21 @@ Angular frontend.
 ## Quick Start
 
 ```bash
-# 1. Infrastructure (PostgreSQL, Redis, RabbitMQ)
+# 1. Infrastructure — Postgres (5432), Redis (6379), RabbitMQ (5672, UI 15672) on localhost
 docker compose up -d postgres redis rabbitmq
 
-# 2. Backend (hosts both API hosts; modules are wired in via Program.cs)
+# 2. Create the dev database — compose seeds "daraban_platform" but the API connection
+#    string expects "daraban" (safe to re-run; ignore "already exists")
+docker exec daraban-postgres psql -U daraban -d daraban_platform -c "CREATE DATABASE daraban"
+
+# 3. Verify the port bindings are published (expect 0.0.0.0:5432->5432, 6379, 5672)
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+# 4. Backend (hosts both API hosts; modules are wired in via Program.cs)
 dotnet run --project src/Host/Daraban.Host.Api          # main API  -> http://localhost:8080
 dotnet run --project src/Host/Daraban.Host.AgentApi     # agent API -> http://localhost:8081
 
-# 3. Frontend (dev server proxies /api to the backend)
+# 5. Frontend (dev server proxies /api to the backend)
 cd frontend && npm install && npm start                 # -> http://localhost:4200
 ```
 
@@ -33,6 +40,17 @@ Production deployment is a single `docker compose up` (see `docker-compose.yml`;
 | `cd frontend && npm run build` | Production frontend build |
 | `cd frontend && npx ng test` | Frontend tests (Karma/Jasmine) |
 | `docker compose up` | Full production stack (Nginx → APIs → workers → Postgres/Redis/RabbitMQ) |
+
+### Troubleshooting
+
+- **`The container name ... is already in use`** — a container from an older compose run
+  blocks recreation. Remove it (data volumes are preserved) and start again:
+  `docker rm -f daraban-postgres daraban-redis daraban-rabbitmq` then repeat Quick Start step 1.
+- **Container restarts in a loop / port never binds** — check `docker logs daraban-postgres`.
+  Do not swap `postgres:17` for `latest`: PG 18+ images changed the data-directory layout and
+  refuse to start with the `pgdata` volume mounted at `/var/lib/postgresql/data`.
+- Ports are overridable via `.env`: `POSTGRES_PORT`, `REDIS_PORT`, `RABBITMQ_PORT`,
+  `RABBITMQ_MGMT_PORT`.
 
 ## Architecture
 

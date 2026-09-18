@@ -3,7 +3,9 @@
 # =============================================================================
 services:
    postgres:
-     image: postgres:latest
+     # Pinned major version: PG18+ images changed the data-dir layout and will not
+     # start with the pgdata volume mounted at /var/lib/postgresql/data.
+     image: postgres:17
      container_name: daraban-postgres
      restart: unless-stopped
      environment:
@@ -12,6 +14,8 @@ services:
        POSTGRES_DB: ${POSTGRES_DB:-daraban_platform}
      volumes:
        - pgdata:/var/lib/postgresql/data
+     ports:
+       - "${POSTGRES_PORT:-5432}:5432"
      healthcheck:
        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-daraban} -d ${POSTGRES_DB:-daraban_platform}"]
        interval: 10s
@@ -28,6 +32,8 @@ services:
      command: redis-server --appendonly yes
      volumes:
        - redisdata:/data
+     ports:
+       - "${REDIS_PORT:-6379}:6379"
      healthcheck:
        test: ["CMD", "redis-cli", "ping"]
        interval: 10s
@@ -45,6 +51,9 @@ services:
        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-change_me_in_production}
      volumes:
        - rabbitmqdata:/var/lib/rabbitmq
+     ports:
+       - "${RABBITMQ_PORT:-5672}:5672"
+       - "${RABBITMQ_MGMT_PORT:-15672}:15672"
      healthcheck:
        test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
        interval: 15s
