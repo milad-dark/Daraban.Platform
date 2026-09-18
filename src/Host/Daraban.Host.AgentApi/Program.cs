@@ -57,6 +57,9 @@ builder.Services.AddRabbitMqMessaging(builder.Configuration);
 
 builder.Services.AddSignalR(); // AgentControlHub -- server -> agent push (Task 1.1 SS2.3)
 
+// ---- Swagger / OpenAPI: shared JWT Bearer scheme so the UI has an Authorize button ----
+builder.Services.AddDarabanSwagger();
+
 // ---- CORS: permissive for agent-to-agent API calls (agents are machines, not browsers) --
 builder.Services.AddCors(options => options.AddPolicy("Agents", policy =>
     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
@@ -68,6 +71,11 @@ app.UseExceptionHandler();
 // Task 8.4: same Prometheus HTTP metrics as Host.Api -- scraped as a separate target
 // (host-agentapi:8081) so per-service request/error rates stay distinguishable.
 app.UseDarabanHttpMetrics();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDarabanSwagger();
+}
 
 app.UseResponseCompression();
 

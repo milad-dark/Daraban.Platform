@@ -19,6 +19,8 @@
 		<PackageReference Include="prometheus-net.AspNetCore" />
 		<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
 		<PackageReference Include="Serilog" />
+		<!-- SwaggerExtensions: shared OpenAPI setup with the JWT Bearer security scheme. -->
+		<PackageReference Include="Swashbuckle.AspNetCore" />
 		<PackageReference Include="Serilog.AspNetCore" />
 		<PackageReference Include="Serilog.Enrichers.Environment" />
 		<PackageReference Include="Serilog.Enrichers.Process" />

@@ -12,9 +12,10 @@ Angular frontend.
 # 1. Infrastructure — Postgres (5432), Redis (6379), RabbitMQ (5672, UI 15672) on localhost
 docker compose up -d postgres redis rabbitmq
 
-# 2. Create the dev database — compose seeds "daraban_platform" but the API connection
-#    string expects "daraban" (safe to re-run; ignore "already exists")
-docker exec daraban-postgres psql -U daraban -d daraban_platform -c "CREATE DATABASE daraban"
+# 2. Bootstrap the database — creates the database itself, all 15 module schemas,
+#    and every module's tables (idempotent; safe to re-run on an existing DB)
+dotnet run --project tools/Daraban.Tools.DbBootstrap -- \
+  "Host=localhost;Port=5432;Database=daraban;Username=daraban;Password=change_me_in_production"
 
 # 3. Verify the port bindings are published (expect 0.0.0.0:5432->5432, 6379, 5672)
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
@@ -37,9 +38,11 @@ Production deployment is a single `docker compose up` (see `docker-compose.yml`;
 | `dotnet build Daraban.Platform.sln` | Build all backend projects |
 | `dotnet test Daraban.Platform.sln` | Run all backend tests (xUnit) |
 | `cd frontend && npm start` | Start the Angular dev server |
+| `scripts/dev-api start` / `stop` / `status` / `logs` | Run the Host API in the background on fixed port `http://localhost:8080` (`--no-launch-settings`), orphan-proof start/stop |
 | `cd frontend && npm run build` | Production frontend build |
 | `cd frontend && npx ng test` | Frontend tests (Karma/Jasmine) |
 | `docker compose up` | Full production stack (Nginx → APIs → workers → Postgres/Redis/RabbitMQ) |
+| `dotnet run --project tools/Daraban.Tools.DbBootstrap -- "<connection string>"` | Create database + all module schemas/tables on a fresh PostgreSQL instance |
 
 ### Troubleshooting
 
@@ -51,6 +54,11 @@ Production deployment is a single `docker compose up` (see `docker-compose.yml`;
   refuse to start with the `pgdata` volume mounted at `/var/lib/postgresql/data`.
 - Ports are overridable via `.env`: `POSTGRES_PORT`, `REDIS_PORT`, `RABBITMQ_PORT`,
   `RABBITMQ_MGMT_PORT`.
+- **`Failed to bind ... address already in use`** when starting the API — an orphaned
+  previous instance holds the port. Diagnose with `netstat -ano | findstr :<port>` and
+  `taskkill /F /PID <pid>`, or just use the helper: `scripts/dev-api start` reports the
+  blocking process and `scripts/dev-api stop` frees the port (it kills only processes
+  verified to be `Daraban.Host.Api.exe`).
 
 ## Architecture
 

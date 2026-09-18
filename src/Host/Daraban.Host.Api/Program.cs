@@ -171,8 +171,8 @@ builder.Services.AddCors(options => options.AddPolicy("Frontend", policy =>
 builder.Services.AddSignalR();
 
 // ---- Swagger / OpenAPI (also the source for Angular's generated HTTP client) --
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Shared setup adds the JWT Bearer security scheme (Authorize button in the UI).
+builder.Services.AddDarabanSwagger();
 
 var app = builder.Build();
 
@@ -186,8 +186,7 @@ app.UseDarabanHttpMetrics();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseDarabanSwagger();
 }
 
 // Task 8.2: must run before anything that writes a body (Swagger UI, HTTPS redirect's

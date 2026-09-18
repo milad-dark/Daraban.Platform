@@ -31,6 +31,12 @@ public class SettingsSeeder(
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync(ct);
 
+        // The module owns its objects in the shared "core" schema; create it first so a
+        // fresh database works without manual steps (same as PluginsSeeder).
+        await using var schemaCommand = connection.CreateCommand();
+        schemaCommand.CommandText = "CREATE SCHEMA IF NOT EXISTS core";
+        await schemaCommand.ExecuteNonQueryAsync(ct);
+
         await using var seedCommand = connection.CreateCommand();
         seedCommand.CommandText = SettingCatalog.BuildSeedSql();
         await seedCommand.ExecuteNonQueryAsync(ct);

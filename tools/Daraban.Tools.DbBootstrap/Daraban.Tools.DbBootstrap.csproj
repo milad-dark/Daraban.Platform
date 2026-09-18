@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <Description>One-shot local/dev database bootstrap: creates the database, all module schemas, and every module's EF create script in dependency order.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Modules\Assets\Daraban.Modules.Assets.Data\Daraban.Modules.Assets.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Automation\Daraban.Modules.Automation.Data\Daraban.Modules.Automation.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Dashboard\Daraban.Modules.Dashboard.Data\Daraban.Modules.Dashboard.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Discovery\Daraban.Modules.Discovery.Data\Daraban.Modules.Discovery.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Financial\Daraban.Modules.Financial.Data\Daraban.Modules.Financial.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Identity\Daraban.Modules.Identity.Data\Daraban.Modules.Identity.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Inventory\Daraban.Modules.Inventory.Data\Daraban.Modules.Inventory.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Knowledge\Daraban.Modules.Knowledge.Data\Daraban.Modules.Knowledge.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Notifications\Daraban.Modules.Notifications.Data\Daraban.Modules.Notifications.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Plugins\Daraban.Modules.Plugins.Data\Daraban.Modules.Plugins.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Reporting\Daraban.Modules.Reporting.Data\Daraban.Modules.Reporting.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\ServiceDesk\Daraban.Modules.ServiceDesk.Data\Daraban.Modules.ServiceDesk.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Settings\Daraban.Modules.Settings.Data\Daraban.Modules.Settings.Data.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Software\Daraban.Modules.Software.Data\Daraban.Modules.Software.Data.csproj" />
+  </ItemGroup>
+
+</Project>

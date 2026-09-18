@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Daraban Platform — local dev helper for the Host API
+#
+# Runs Daraban.Host.Api on a FIXED port (default http://localhost:8080) by
+# building the project and executing the compiled apphost directly, with
+# ASPNETCORE_URLS set. launchSettings.json (ports 18191/18193) is never
+# consulted, so it can never block startup, and the process we track IS the
+# API exe -- 'stop' can never leave an orphan holding the port.
+#
+# Usage:
+#   scripts/dev-api start    build + run in background, wait until listening
+#   scripts/dev-api stop     kill the tracked process tree, free the port
+#   scripts/dev-api status   is it running? which PID/port?
+#   scripts/dev-api logs     follow the log file (Ctrl+C to exit)
+#
+# State files: scripts/daraban-api.pid (git-ignored), scripts/daraban-api.log
+# Overridables: DARABAN_API_HTTP_PORT, DARABAN_API_LOG, DARABAN_API_START_TIMEOUT
+# =============================================================================
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PROJECT="src/Host/Daraban.Host.Api/Daraban.Host.Api.csproj"
+EXE="src/Host/Daraban.Host.Api/bin/Debug/net10.0/Daraban.Host.Api.exe"
+PID_FILE="$ROOT/scripts/daraban-api.pid"
+LOG_FILE="${DARABAN_API_LOG:-$ROOT/scripts/daraban-api.log}"
+HTTP_PORT="${DARABAN_API_HTTP_PORT:-8080}"
+START_TIMEOUT="${DARABAN_API_START_TIMEOUT:-180}" # seconds to wait for the port to bind
+
+image_of_pid() { # executable image name of a PID; empty when the PID is gone
+  tasklist //FI "PID eq $1" //FO CSV //NH 2>/dev/null | head -1 | cut -d'"' -f2
+}
+
+pids_on_port() { # PIDs in LISTENING state bound to TCP port $1
+  netstat -ano 2>/dev/null \
+    | awk -v p=":$1" 'toupper($4)=="LISTENING" && $2 ~ p"$" {print $5}' \
+    | sort -u
+}
+
+is_our_api_pid() { # true when the PID is (still) the API executable
+  [[ "$(image_of_pid "$1")" == "Daraban.Host.Api.exe" ]]
+}
+
+tracked_pid() { [[ -f "$PID_FILE" ]] && cat "$PID_FILE" || true; }
+
+cmd_start() {
+  local old_pid
+  old_pid="$(tracked_pid)"
+  if [[ -n "$old_pid" ]] && is_our_api_pid "$old_pid"; then
+    echo "Already running (pid $old_pid) on http://localhost:$HTTP_PORT."
+    echo "Use 'scripts/dev-api stop' first, or 'scripts/dev-api logs' to follow output."
+    exit 0
+  fi
+  if [[ -n "$old_pid" ]]; then
+    echo "Removing stale pidfile (pid $old_pid is gone)."
+    rm -f "$PID_FILE"
+  fi
+
+  local blockers p img
+  blockers="$(pids_on_port "$HTTP_PORT")"
+  if [[ -n "$blockers" ]]; then
+    echo "ERROR: port $HTTP_PORT is already in use:" >&2
+    for p in $blockers; do
+      img="$(image_of_pid "$p")"
+      echo "  pid $p (${img:-unknown image})" >&2
+    done
+    echo "Stop that process first ('scripts/dev-api stop' if it is a previous instance)." >&2
+    exit 1
+  fi
+
+  echo "Building $PROJECT ..."
+  if ! dotnet build "$PROJECT" -v q --nologo > "$LOG_FILE" 2>&1; then
+    echo "ERROR: build failed. Log:" >&2
+    tail -n 30 "$LOG_FILE" >&2
+    exit 1
+  fi
+
+  echo "Starting on http://localhost:$HTTP_PORT (log: $LOG_FILE) ..."
+  (
+    cd "$ROOT/src/Host/Daraban.Host.Api"
+    export ASPNETCORE_ENVIRONMENT=Development
+    export ASPNETCORE_URLS="http://localhost:$HTTP_PORT"
+    "bin/Debug/net10.0/Daraban.Host.Api.exe" >> "$LOG_FILE" 2>&1 &
+    echo $! > "$PID_FILE"
+  )
+
+  # Wait for the port to bind; the tracked PID is the app itself, so if it dies
+  # before the port opens the log tells us why.
+  local waited=0 port_pid=""
+  while (( waited < START_TIMEOUT )); do
+    port_pid="$(pids_on_port "$HTTP_PORT" | head -1)"
+    if [[ -n "$port_pid" ]]; then
+      break
+    fi
+    local pid
+    pid="$(cat "$PID_FILE")"
+    if ! kill -0 "$pid" 2>/dev/null; then
+      echo "ERROR: API exited before binding port $HTTP_PORT. Last log lines:" >&2
+      tail -n 30 "$LOG_FILE" >&2 || true
+      rm -f "$PID_FILE"
+      exit 1
+    fi
+    sleep 2
+    waited=$((waited + 2))
+  done
+
+  if [[ -n "$port_pid" ]]; then
+    # Prefer the socket owner as source of truth for the PID file.
+    echo "$port_pid" > "$PID_FILE"
+    echo "Ready: http://localhost:$HTTP_PORT (pid $port_pid)"
+    echo "Stop: 'scripts/dev-api stop'   Follow output: 'scripts/dev-api logs'"
+  else
+    echo "ERROR: port $HTTP_PORT not listening after ${START_TIMEOUT}s. Last log lines:" >&2
+    tail -n 30 "$LOG_FILE" >&2 || true
+    local pid
+    pid="$(cat "$PID_FILE")"
+    kill "$pid" 2>/dev/null || true
+    rm -f "$PID_FILE"
+    exit 1
+  fi
+}
+
+cmd_stop() {
+  local pid img
+  pid="$(tracked_pid)"
+  if [[ -z "$pid" ]]; then
+    echo "No pidfile — nothing tracked by this helper."
+    echo "(Something else on port $HTTP_PORT? Check: netstat -ano | findstr :$HTTP_PORT)"
+    exit 0
+  fi
+  if ! is_our_api_pid "$pid"; then
+    img="$(image_of_pid "$pid")"
+    echo "Pidfile stale: pid $pid is '${img:-<gone>}', not the API — removing pidfile only."
+    rm -f "$PID_FILE"
+    exit 0
+  fi
+  echo "Stopping Daraban.Host.Api (pid $pid) ..."
+  taskkill //F //T //PID "$pid" > /dev/null 2>&1 || true
+  rm -f "$PID_FILE"
+  sleep 1
+  if [[ -n "$(pids_on_port "$HTTP_PORT")" ]]; then
+    echo "WARNING: port $HTTP_PORT still busy after kill — check 'netstat -ano | findstr :$HTTP_PORT'." >&2
+    exit 1
+  fi
+  echo "Stopped; port $HTTP_PORT is free."
+}
+
+cmd_status() {
+  local pid blockers
+  pid="$(tracked_pid)"
+  if [[ -n "$pid" ]] && is_our_api_pid "$pid"; then
+    echo "Running: pid $pid on http://localhost:$HTTP_PORT (log: $LOG_FILE)"
+    exit 0
+  fi
+  blockers="$(pids_on_port "$HTTP_PORT")"
+  if [[ -n "$blockers" ]];  then
+    echo "Not tracked, but port $HTTP_PORT is bound by pid(s): $(echo "$blockers" | tr '\n' ' ')"
+  else
+    echo "Not running."
+  fi
+}
+
+cmd_logs() {
+  if [[ ! -f "$LOG_FILE" ]]; then
+    echo "No log file yet — start first."
+    exit 0
+  fi
+  tail -n 100 -f "$LOG_FILE"
+}
+
+case "${1:-}" in
+  start) cmd_start ;;
+  stop) cmd_stop ;;
+  status) cmd_status ;;
+  logs) cmd_logs ;;
+  *) echo "Usage: scripts/dev-api {start|stop|status|logs}"; exit 2 ;;
+esac
