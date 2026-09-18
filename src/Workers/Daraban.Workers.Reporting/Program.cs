@@ -9,6 +9,10 @@ builder.Configuration.AddEnvironmentVariables(prefix: "DARABAN_");
 // Shared Serilog setup (console + rolling file) owned by Daraban.Platform.Hosting.
 builder.UseDarabanSerilog(applicationName: "Daraban.Workers.Reporting");
 
+// Task 8.4: standalone /metrics scrape endpoint (port 9102, internal network only --
+// same trust-boundary reasoning as the hosts; see PrometheusMetricsExtensions).
+builder.AddDarabanWorkerMetrics();
+
 // Publisher + connection provider: this worker only consumes, but keeping AddRabbitMqMessaging
 // is harmless and leaves the door open for progress events without a second registration line.
 builder.Services.AddRabbitMqMessaging(builder.Configuration);

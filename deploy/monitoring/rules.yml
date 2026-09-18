@@ -1,0 +1,98 @@
+# =============================================================================
+# Prometheus alerting rules (Task 8.4). Loaded by Prometheus via rule_files in
+# prometheus.yml; firing alerts are visible in the Prometheus and Grafana UIs.
+#
+# Threshold rationale (single small host, interactive ITSM workload):
+#   - ErrorSpike: >5% 5xx over 5m on either API. Normal operation is near-zero
+#     5xx (validation failures are 4xx by design), so 5% means something is
+#     genuinely broken, not just user error.
+#   - QueueBackup: >1000 ready messages for 10m. Workers drain continuously, so
+#     a standing backlog means a consumer is stuck or down.
+#   - DiskSpaceLow: <15% free on the data volume. Postgres stops the world when
+#     the disk fills; 15% is the last safe moment to page a human.
+#   - MemoryPressure: host memory >90% for 10m. Sustained, not spiky --
+#     container restarts and GC pauses briefly spike without danger.
+#   - TargetDown: any scrape target unreachable for 2m. The canary for "is
+#     monitoring itself blind" -- if Prometheus can't see a service, every
+#     other alert for that service is suspect too.
+#
+# Metric-name grounding: http_requests_received_total{code, method} is what
+# prometheus-net's UseHttpMetrics emits -- proven by a live Kestrel scrape in
+# Daraban.Platform.Hosting.Tests, not by documentation; rabbitmq_queue_messages_ready
+# comes from the built-in plugin (deploy/rabbitmq/enabled_plugins);
+# node_filesystem_*/node_memory_* from node-exporter. After any client/exporter
+# upgrade, re-run the Hosting tests and confirm each name in Prometheus' /graph
+# label browser -- upgrades rename series without asking.
+# =============================================================================
+
+groups:
+  - name: daraban-service-health
+    interval: 30s
+    rules:
+      - alert: DarabanErrorSpike
+        expr: |
+          sum by (job) (
+            rate(http_requests_received_total{code=~"5.."}[5m])
+          )
+          /
+          sum by (job) (
+            rate(http_requests_received_total[5m])
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High 5xx rate on {{ $labels.job }}"
+          description: "More than 5% of responses are server errors over the last 5 minutes."
+
+      - alert: DarabanTargetDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Scrape target down: {{ $labels.job }}/{{ $labels.instance }}"
+          description: "Prometheus has not been able to scrape this target for 2 minutes. All other alerts for it are suspect."
+
+  - name: daraban-queue
+    interval: 30s
+    rules:
+      - alert: DarabanQueueBackup
+        expr: sum(rabbitmq_queue_messages_ready) > 1000
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "RabbitMQ backlog above 1000 ready messages"
+          description: "Workers are not draining: a consumer is stuck, slow, or down. Check worker logs and the RabbitMQ management UI."
+
+  - name: daraban-host
+    interval: 30s
+    rules:
+      - alert: DarabanDiskSpaceLow
+        expr: |
+          (
+            node_filesystem_avail_bytes{mountpoint="/", fstype!~"tmpfs|overlay"}
+            /
+            node_filesystem_size_bytes{mountpoint="/", fstype!~"tmpfs|overlay"}
+          ) < 0.15
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Root disk below 15% free on {{ $labels.instance }}"
+          description: "Postgres stops the world on a full disk. Prune backups/docker images or grow the volume now."
+
+      - alert: DarabanMemoryPressure
+        expr: |
+          1 - (
+            node_memory_MemAvailable_bytes
+            /
+            node_memory_MemTotal_bytes
+          ) > 0.90
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Host memory above 90% on {{ $labels.instance }}"
+          description: "Sustained pressure (not a spike): check container memory, Postgres shared_buffers, and Grafana memory panel."

@@ -1,0 +1,10 @@
+# RabbitMQ additional plugins for the production overlay (Task 8.4).
+#
+# Mounted at /etc/rabbitmq/enabled_plugins by docker-compose.prod.yml. This file
+# REPLACES the image variant's own default list, so rabbitmq_management (which the
+# management-alpine variant pre-enables) must be listed here too -- otherwise the
+# management UI and its healthcheck (rabbitmq-diagnostics) would silently vanish.
+#
+# rabbitmq_prometheus exposes :15692/metrics, scraped by Prometheus for the
+# "queue backup" alert family. No extra exporter container needed.
+[rabbitmq_management,rabbitmq_prometheus].

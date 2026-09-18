@@ -13,6 +13,10 @@
 		<!-- Task 8.2: AddStackExchangeRedisCache. Kept in Shared so modules never take a
 		             direct dependency on Redis; they only see IDistributedCache. -->
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
+		<!-- Task 8.4: /metrics exposition (UseHttpMetrics plus MapMetrics live in the
+		     AspNetCore split package). Kept in Shared so both hosts get identical metric
+		     naming without each taking a direct dependency on the client library. -->
+		<PackageReference Include="prometheus-net.AspNetCore" />
 		<PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
 		<PackageReference Include="Serilog" />
 		<PackageReference Include="Serilog.AspNetCore" />

@@ -1,0 +1,14 @@
+# Grafana datasource provisioning (Task 8.4). Read once at Grafana startup;
+# the Prometheus service name resolves over the compose network.
+apiVersion: 1
+
+datasources:
+  # Fixed uid so dashboard JSON can reference it deterministically. Without this,
+  # Grafana auto-generates a uid per install and every panel's datasource link breaks.
+  - name: Prometheus
+    uid: daraban-prom
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
