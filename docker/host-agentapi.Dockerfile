@@ -1,11 +1,12 @@
 # =============================================================================
-# Daraban.Host.AgentApi — CI unit tests: docker build --target test -f docker/host-agentapi.Dockerfile .
+# Daraban.Host.AgentApi ï¿½ CI unit tests: docker build --target test -f docker/host-agentapi.Dockerfile .
 # =============================================================================
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS base
 WORKDIR /src
 COPY Daraban.Platform.sln Directory.Build.props Directory.Packages.props ./
 COPY src/ src/
 COPY tests/ tests/
+COPY tools/ tools/
 
 FROM base AS restore
 RUN dotnet restore Daraban.Platform.sln

@@ -7,6 +7,7 @@ WORKDIR /src
 COPY Daraban.Platform.sln Directory.Build.props Directory.Packages.props ./
 COPY src/ src/
 COPY tests/ tests/
+COPY tools/ tools/
 
 FROM base AS restore
 RUN dotnet restore Daraban.Platform.sln
