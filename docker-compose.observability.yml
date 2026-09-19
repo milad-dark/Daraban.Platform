@@ -1,0 +1,123 @@
+# =============================================================================
+# Observability stack (Task 8.4) — self-contained overlay for Prometheus +
+# Grafana + alerting + uptime monitors. Activated with:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml -f
+#     docker-compose.observability.yml up -d [service_name]
+# =============================================================================
+name: daraban-observability
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.console.libraries=/etc/prometheus/consoles'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.enable-lifecycle'
+    ports:
+      - '127.0.0.1:9090:9090'  # Only bind localhost — no public scraping
+    volumes:
+      - ./deploy/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+      - prometheus-rules:/etc/prometheus/rules:ro
+    networks:
+      - daraban-net
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=
+    ports:
+      - '127.0.0.1:3000:3000'
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./deploy/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - daraban-net
+    depends_on:
+      - prometheus
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    ports:
+      - '127.0.0.1:9093:9093'
+    volumes:
+      - ./deploy/monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    networks:
+      - daraban-net
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    environment:
+      - BASE_URL=/
+      - UPTIME_KUMA_WATCHDOG_EVERY-24-HOURS=0
+    ports:
+      - '127.0.0.1:3001:3001'
+    volumes:
+      - uptime-kuma-data:/app/data
+    networks:
+      - daraban-net
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    ports:
+      - '127.0.0.1:9100:9100'
+    networks:
+      - daraban-net
+    restart: unless-stopped
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    environment:
+      - DATA_SOURCE_NAME=postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(POSTGRES_DB)?sslmode=disable
+    ports:
+      - '127.0.0.1:9187:9187'
+    networks:
+      - daraban-net
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    environment:
+      - REDIS_ADDR=redis:6379
+    ports:
+      - '127.0.0.1:9121:9121'
+    networks:
+      - daraban-net
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  prometheus-rules:
+  grafana-data:
+  alertmanager-data:
+  uptime-kuma-data:
+
+networks:
+  daraban-net:
+    external: true  # Same net as app containers defined in docker-compose.yml

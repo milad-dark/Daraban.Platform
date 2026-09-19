@@ -1,0 +1,52 @@
+# =============================================================================
+# Alertmanager config (Task 8.4) — all alerts configured with a single
+# silent receiver until you add a real webhook/email in your repo's
+# deploy/monitoring/alertmanager.yml plus a corresponding webhook URL secret.
+# =============================================================================
+global:
+  smtp_smarthost: 'smtp.example.com:587'
+  smtp_from: 'alerts@example.com'
+  smtp_auth_username: 'alerts@example.com'
+  smtp_auth_password: '${ALERTMANAGER_SMTP_PASSWORD:-}'
+  resolve_timeout: 5m
+
+# --- receivers --------------------------------------------------------------
+receivers:
+  - name: 'telegraf-stackdriver'
+    webhook_configs:
+      - url: '${ALERTMANAGER_WEBHOOK_URL:-}'  # Set via gh secret
+        send_resolved: true
+        expect_2xx: true
+
+# --- route -------------------------------------------------------------------
+route:
+  group_by: ['alertname', 'severity', 'service']
+  group_wait: 10s
+  group_interval: 5m
+  repeat_interval: 4h
+  receiver: 'telegraf-stackdriver'
+  routes:
+    - match:
+        severity: critical
+      receiver: 'telegraf-stackdriver'
+    - match:
+        severity: warning
+      receiver: 'telegraf-stackdriver'
+
+# --- inhibit rules ------------------------------------------------------------
+inhibit_rules:
+  # Promote warning → critical when corresponding rule is still firing
+  - source_match:
+      severity: 'warning'
+      trend: 'worsening_by_last_hour'
+    target_match:
+      severity: 'critical'
+    equal: ['alertname', 'service']
+    for: 5m
+
+  # Silence overlapping health-down alerts (e.g. multiple db replicas)
+  - source_match:
+      severity: 'health_down'
+    target_match_re:
+      alertname: '.+_port_(|to_|overhead_of_)'
+    equal: ['instance']
